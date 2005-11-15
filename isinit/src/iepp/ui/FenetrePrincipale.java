@@ -16,7 +16,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  */
-
+// voici le commentaire NIT
 
 package iepp.ui;
 
@@ -24,6 +24,9 @@ import iepp.Application;
 import iepp.Projet;
 import iepp.application.CCreerReferentiel;
 import iepp.application.CExporterProcessus;
+import iepp.application.CExporterProcessusDPC;
+import iepp.application.CExporterProcessusPDF;
+import iepp.application.CExporterProcessusXMI;
 import iepp.application.CFermerProjet;
 import iepp.application.CGenererSite;
 import iepp.application.CNouveauProjet;
@@ -31,13 +34,13 @@ import iepp.application.COuvrirDP;
 import iepp.application.COuvrirReferentiel;
 import iepp.application.aedition.CImprimerDiagramme;
 import iepp.application.aedition.CZoomer;
+import iepp.application.ageneration.ArbreGeneration;
 import iepp.application.areferentiel.Referentiel;
 import iepp.application.averification.CVerification;
-import iepp.domaine.DefinitionProcessus;
+import iepp.ui.apropos.FenetrePropos;
 import iepp.ui.ireferentiel.VueReferentielArbre;
 import iepp.ui.iverification.PanneauVerification;
 import iepp.ui.preferences.FenetrePreference;
-import iepp.ui.apropos.FenetrePropos;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -50,7 +53,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Vector;
-import java.io.*;
 
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -69,11 +71,6 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 
 import util.IconManager;
-import util.TaskMonitorDialog;
-import iepp.application.CExporterProcessusXMI;
-import iepp.application.CExporterProcessusDPC;
-import iepp.application.ageneration.ArbreGeneration;
-import iepp.application.CExporterProcessusPDF;
 
 /**
  * Classe permettant de cr\uFFFDer et d'afficher la fen\uFFFDtre principale de l'outil
