@@ -43,12 +43,21 @@ import java.util.* ;
 
 import javax.swing.*;
 
+import org.jgraph.JGraph;
+import org.jgraph.graph.ConnectionSet;
+import org.jgraph.graph.DefaultGraphCell;
+import org.jgraph.graph.DefaultGraphModel;
+import org.jgraph.graph.GraphConstants;
+import org.jgraph.graph.GraphModel;
+
+import util.IconManager;
 import util.Vecteur;
 
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.dnd.DnDConstants;
@@ -63,7 +72,7 @@ import java.io.Serializable;
 /**
  * Classe permettant d'afficher un diagramme d'assemblage de composant
  */
-public class VueDPGraphe extends JComponent implements Observer, MouseListener, MouseMotionListener, Serializable, DropTargetListener
+public class VueDPGraphe extends JGraph implements Observer, MouseListener, MouseMotionListener, Serializable, DropTargetListener
 {
 
 	/**
@@ -76,6 +85,13 @@ public class VueDPGraphe extends JComponent implements Observer, MouseListener, 
 	*/
 	private MDDiagramme modele;
 
+	
+	/**
+	* Modèle du diagramme JGraph.
+	*/
+	private GraphModel Gmodele = new DefaultGraphModel();
+
+	
 	/**
 	* Eléments présents sur le diagramme.
 	*/
@@ -109,6 +125,9 @@ public class VueDPGraphe extends JComponent implements Observer, MouseListener, 
 		defProc.addObserver (this) ;
 		// le diagramme au départ est vide
 		this.setModele(new MDDiagramme());
+		
+		
+		this.setModel(Gmodele);
 
 		this.setOpaque(true);
 		this.setLayout(null);
@@ -158,6 +177,7 @@ public class VueDPGraphe extends JComponent implements Observer, MouseListener, 
 		super.paintComponent(g);
 		this.calculerDimension();
 
+		/*
 		// Couleur de remplissage
 		g.setColor(getModele().getFillColor());
 		g.fillRect(0,0,getWidth(),getHeight());
@@ -184,8 +204,9 @@ public class VueDPGraphe extends JComponent implements Observer, MouseListener, 
 		 // Permet de dessiner la représentation de l'outil (ex : cadre de sélection)
 		 if (this.diagramTool != null)
 		 {
-		 	 this.diagramTool.draw(g);
+			 //this.diagramTool.draw(g);
 		 } 
+		*/
 	}
 
 	
@@ -596,37 +617,37 @@ public class VueDPGraphe extends JComponent implements Observer, MouseListener, 
 
 	public void mouseClicked(MouseEvent e)
 	{
-		this.diagramTool.mouseClicked(e);
+		//this.diagramTool.mouseClicked(e);
 	}
 
 	public void mousePressed( MouseEvent e )
 	{
-		this.diagramTool.mousePressed(e);
+		//this.diagramTool.mousePressed(e);
 	}
 
 	public void mouseReleased( MouseEvent e ) 
 	{
-		this.diagramTool.mouseReleased(e);
+		//this.diagramTool.mouseReleased(e);
 	}
 
 	public void mouseEntered( MouseEvent e ) 
 	{
-		this.diagramTool.mouseEntered(e);
+		//this.diagramTool.mouseEntered(e);
 	}
 
 	public void mouseExited( MouseEvent e ) 
 	{
-		this.diagramTool.mouseExited(e);
+		//this.diagramTool.mouseExited(e);
 	}
 
 	public void mouseDragged( MouseEvent e ) 
 	{
-		this.diagramTool.mouseDragged(e);
+		//this.diagramTool.mouseDragged(e);
 	}
 
 	public void mouseMoved( MouseEvent e ) 
 	{
-		this.diagramTool.mouseMoved(e);
+		//this.diagramTool.mouseMoved(e);
 	}
 
 
@@ -647,9 +668,12 @@ public class VueDPGraphe extends JComponent implements Observer, MouseListener, 
 	 */
 	public void drop(DropTargetDropEvent dtde)
 	{
+		
 		// récupérer l'objet déplacé
 		Transferable transferable = dtde.getTransferable();
 		DataFlavor[] flavors = transferable.getTransferDataFlavors();
+		
+		String nomComp = new String(); 
 		
 		// récupérer l'endroit où l'utilisateur à déplacer l'objet
 		Point p = dtde.getLocation();
@@ -690,18 +714,47 @@ public class VueDPGraphe extends JComponent implements Observer, MouseListener, 
 				id = (IdObjetModele) obj ;
 			}
 			dtde.dropComplete(true);
-			CAjouterComposantGraphe c = new CAjouterComposantGraphe(id, p);
+			
+			/*CAjouterComposantGraphe c = new CAjouterComposantGraphe(id, p);
 			if (c.executer())
 			{
 				Application.getApplication().getProjet().setModified(true);
 			}
-			return;
+			*/
+			
+			nomComp = ((ComposantProcessus)id.getRef()).getNomComposant();
+			
+			
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
+		
 		dtde.dropComplete(false);	
+		
+		System.out.println("NomComp: "+nomComp);
+		DefaultGraphCell myCell = new DefaultGraphCell(nomComp);
+		
+		Map cellAttribute = GraphConstants.createMap();
+		Map myAttribute = new Hashtable();
+		myAttribute.put(myCell, cellAttribute);
+
+		Vector vecObj = new Vector();
+		vecObj.add(myCell);
+		
+		ImageIcon i = new ImageIcon(Application.getApplication().getConfigPropriete("dossierIcons")+ "composant.png");
+		
+		GraphConstants.setIcon(cellAttribute, i);
+		
+		GraphConstants.setBounds(cellAttribute, new Rectangle((int)p.getX(),(int)p.getY(),i.getIconWidth(),i.getIconHeight()+30));
+		//GraphConstants.setBorder(cellAttribute,BorderFactory.createLineBorder(Color.BLACK,2));
+		
+		this.getModel().insert(vecObj.toArray(), myAttribute, null, null,null );
+		
+		//this.updateUI();
+		this.repaint();
+		
 	}
 
 	/**
