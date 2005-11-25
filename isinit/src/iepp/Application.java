@@ -245,6 +245,7 @@ public class Application {
    */
   public void creerConfigDefaut() {
     this.config.put("dossierIcons", "ressources/icons/");
+    this.config.put("dossierImagesIepp", "ressources/imagesIepp/");
     this.config.put("titre", "IEPP");
     this.config.put("extensionLangue", "lng");
     this.config.put("dossierLangues", "ressources/langues/");
