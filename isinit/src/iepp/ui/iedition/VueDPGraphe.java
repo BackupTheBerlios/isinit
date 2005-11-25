@@ -743,7 +743,7 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener, Mous
 		Vector vecObj = new Vector();
 		vecObj.add(myCell);
 		
-		ImageIcon i = new ImageIcon(Application.getApplication().getConfigPropriete("dossierIcons")+ "composant.png");
+		ImageIcon i = new ImageIcon(Application.getApplication().getConfigPropriete("dossierImagesIepp")+ "composant.png");
 		
 		GraphConstants.setIcon(cellAttribute, i);
 		
