@@ -21,6 +21,7 @@ public class IeppCell extends DefaultGraphCell {
 		nomComposantCellule=nomComp;
 		portComposant = new DefaultPort();
 		attributs=GraphConstants.createMap();
+		this.add(portComposant);
 	}
 
 	public void setAttribut(Map map) {
@@ -47,11 +48,11 @@ public class IeppCell extends DefaultGraphCell {
 		return(nomComposantCellule);
 	}
 	
-	public void setProtComp(DefaultPort dp) {
+	public void setPortComp(DefaultPort dp) {
 		portComposant=dp;
 	}
 	
-	public DefaultPort getProtComp() {
+	public DefaultPort getPortComp() {
 		return(portComposant);
 	}
 }

@@ -19,15 +19,26 @@
  
 package iepp.application.aedition;
 
+import java.util.Map;
 import java.util.Vector;
+
+import org.jgraph.graph.ConnectionSet;
+import org.jgraph.graph.DefaultEdge;
+import org.jgraph.graph.DefaultGraphCell;
+import org.jgraph.graph.DefaultPort;
+import org.jgraph.graph.GraphConstants;
+import org.jgraph.graph.Port;
 
 import util.Vecteur;
 
 import iepp.application.CommandeNonAnnulable;
 import iepp.ui.iedition.VueDPGraphe;
+import iepp.ui.iedition.dessin.rendu.ComposantCell;
 import iepp.ui.iedition.dessin.rendu.FComposantProcessus;
 import iepp.ui.iedition.dessin.rendu.FElement;
 import iepp.ui.iedition.dessin.rendu.FProduit;
+import iepp.ui.iedition.dessin.rendu.IeppCell;
+import iepp.ui.iedition.dessin.rendu.ProduitCell;
 import iepp.ui.iedition.dessin.rendu.liens.FLien;
 import iepp.ui.iedition.dessin.rendu.liens.FLienInterface;
 import iepp.ui.iedition.dessin.vues.MDElement;
@@ -54,6 +65,15 @@ public class CLierInterface extends CommandeNonAnnulable
 	 */
 	private FLien lien;
 	
+	private Port portS;
+	 
+	private Port portD;
+	
+	private IeppCell cellS;
+	
+	private IeppCell cellD;
+	
+	private Map AllAttribute;
 	/**
 	* Constructeur de la commande, créé un lien entre un composant et un produit simple
 	* Créer une nouvelle figure pour le lien
@@ -63,9 +83,11 @@ public class CLierInterface extends CommandeNonAnnulable
 	* @param destination figure où arrive le lien
 	* @param pointsAncrageIntermediaires liste des points d'ancrages du lien à créer
 	*/
-	public CLierInterface(VueDPGraphe d, FLien l, FElement source, FElement destination, Vector pointsAncrageIntermediaires)
+	public CLierInterface(VueDPGraphe d, IeppCell source, IeppCell destination)
 	{
 		this.diagramme = d;
+		/*
+		
 		this.lien = l;
 		((MDLien) lien.getModele()).setSource((MDElement) source.getModele());
 		((MDLien) lien.getModele()).setDestination((MDElement) destination.getModele());
@@ -90,6 +112,13 @@ public class CLierInterface extends CommandeNonAnnulable
 		  Vecteur p = (Vecteur) pointsAncrageIntermediaires.elementAt(i);
 		  this.lien.creerPointAncrage(p, 1);
 		}
+		
+		*/
+		AllAttribute = GraphConstants.createMap();
+		cellS = source;
+		cellD = destination;
+		portS = source.getPortComp();
+		portD = destination.getPortComp();
 	}
 
 	/**
@@ -117,7 +146,28 @@ public class CLierInterface extends CommandeNonAnnulable
 	 */
 	public boolean executer()
 	{
-		diagramme.ajouterFigure(lien);
+		DefaultEdge lienComp = new DefaultEdge();
+		  
+		Map edgeAttribute = GraphConstants.createMap();
+		
+		AllAttribute.put(lienComp, edgeAttribute);
+
+		GraphConstants.setLineEnd(edgeAttribute, GraphConstants.ARROW_CLASSIC);
+		GraphConstants.setEndFill(edgeAttribute, true);
+		GraphConstants.setDisconnectable(edgeAttribute,false);
+		GraphConstants.setEditable(edgeAttribute,false);
+    
+        Vector vecObj = new Vector();
+        vecObj.add(lienComp);
+        vecObj.add(cellS);
+        vecObj.add(cellD);
+        
+        ConnectionSet cs = new ConnectionSet(lienComp, portS, portD);
+        
+		diagramme.getModel().insert(vecObj.toArray(), AllAttribute, cs, null, null);
+		
+		diagramme.repaint();
+		
 		return true;
 	}
 }

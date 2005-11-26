@@ -63,29 +63,11 @@ public class CZoomer extends CommandeNonAnnulable
 		if (p != null)
 		{
 			VueDPGraphe vue = p.getFenetreEdition().getVueDPGraphe();
-			// récupérer toutes les figures présentes dans le diagramme
-			Enumeration e = vue.elements();
-			while(e.hasMoreElements())
-			{
-				Figure  figure = (Figure) e.nextElement();
-				// récupérer le modèle de dessin courant pour les produits et les composants
-				if ((figure instanceof FProduit) 
-					|| (figure instanceof FComposantProcessus)
-					||(figure instanceof FProduitFusion))
-				{
-					MDElement md = (MDElement)figure.getModele();
-					// appliquer les transformations
-					int x = (int) (md.getX() * this.facteurZoom);
-					if (x == 0) md.setX(1); else md.setX(x);
-				  	int y = (int) (md.getY() * this.facteurZoom);
-				  	if (y == 0) md.setY(1); else md.setY(y);
-				  	int l = (int) (md.getLargeur() * this.facteurZoom);
-				  	if (l == 0) md.setLargeur(1); else md.setLargeur(l);
-				  	int h = (int) (md.getHauteur() * this.facteurZoom);
-				  	if (h == 0) md.setHauteur(1); else md.setHauteur(h);
-				}
-			}
+			
+			vue.setScale(vue.getScale()*this.facteurZoom);
+			
 			vue.getModele().setFacteurZoom(this.facteurZoom);
+			
 			vue.repaint();
 		}
 		return false;

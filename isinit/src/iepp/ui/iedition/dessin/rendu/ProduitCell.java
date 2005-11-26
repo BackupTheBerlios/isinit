@@ -1,6 +1,9 @@
 package iepp.ui.iedition.dessin.rendu;
 
+import iepp.ui.iedition.dessin.vues.MDProduit;
+
 import java.awt.Rectangle;
+import java.util.Map;
 
 import javax.swing.ImageIcon;
 
@@ -32,6 +35,43 @@ public class ProduitCell extends IeppCell {
 		//GraphConstants.setBorder(cellAttribute,BorderFactory.createLineBorder(Color.BLACK,2));
 	}
 
+	public ProduitCell(String nomComp, double abs, double ord, Map cellAttr ) {
+		super(nomComp);
+		
+		// On garde dans l'objet un trace de la position du composant sur le graph
+		abscisse=abs;
+		ordonnee=ord;		
+		ImageIcon i = new ImageIcon(getCheminImageComposant()+ imageComposant);
+		// On garde aussi une trace de la largeur et de la hauteur du composant
+		largeur=i.getIconWidth();
+		hauteur=i.getIconHeight();
+		GraphConstants.setIcon(cellAttr, i);
+		GraphConstants.setBounds(cellAttr, new Rectangle((int)abs,(int)ord,i.getIconWidth(),i.getIconHeight()+IeppCell.TAILLE_TEXTE));
+		GraphConstants.setAutoSize(cellAttr, true);
+		GraphConstants.setEditable(cellAttr, false);
+		GraphConstants.setSizeable (cellAttr, false);
+		//GraphConstants.setBorder(cellAttr,BorderFactory.createLineBorder(Color.BLACK,2));
+	}
+	
+	public ProduitCell(MDProduit mprod ) {
+		super(mprod.getNom());
+		
+		// On garde dans l'objet un trace de la position du composant sur le graph
+		abscisse=mprod.getX();
+		ordonnee=mprod.getY();		
+		
+		ImageIcon i = new ImageIcon(getCheminImageComposant()+ imageComposant);
+		// On garde aussi une trace de la largeur et de la hauteur du composant
+		
+		largeur=mprod.getLargeur();
+		hauteur=mprod.getHauteur();
+		
+		GraphConstants.setIcon(getAttributs(), i);
+		GraphConstants.setBounds(getAttributs(), new Rectangle((int)abscisse,(int)ordonnee,(int)largeur,(int)hauteur));
+		GraphConstants.setEditable(getAttributs(), false);
+		GraphConstants.setSizeable (getAttributs(), false);
+		GraphConstants.setFont(getAttributs(),mprod.getPolice());
+	}
 
 	public double getAbscisse() {
 		return abscisse;

@@ -715,12 +715,12 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener, Mous
 			}
 			dtde.dropComplete(true);
 			
-			/*CAjouterComposantGraphe c = new CAjouterComposantGraphe(id, p);
+			CAjouterComposantGraphe c = new CAjouterComposantGraphe(id, p);
 			if (c.executer())
 			{
 				Application.getApplication().getProjet().setModified(true);
 			}
-			*/
+			
 			
 			nomComp = ((ComposantProcessus)id.getRef()).getNomComposant();
 			
@@ -733,6 +733,7 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener, Mous
 		
 		dtde.dropComplete(false);	
 		
+		/*
 		System.out.println("NomComp: "+nomComp);
 		DefaultGraphCell myCell = new DefaultGraphCell(nomComp);
 		
@@ -754,6 +755,7 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener, Mous
 		
 		//this.updateUI();
 		this.repaint();
+		*/
 		
 	}
 
