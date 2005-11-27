@@ -446,6 +446,9 @@ RoleRacineArbre=Ensemble des rôles
 RoleSuppression=Supprimer
 RoleVersSuperRole=Aller vers la description principale du rôle
 RoleListeSousRole=Liste des rôles associés
+ResponsableTitle=Responsable
+MailTitle=Contact
+VersionTitle=Version
 
 #Messages 2Xmi
 2xmiAPropos=2Xmi est une bibliothèque offrant des fonctionnalités (configurables) d'exportation

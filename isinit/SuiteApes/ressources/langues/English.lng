@@ -443,6 +443,9 @@ RoleRacineArbre=Set of roles
 RoleSuppression=Delete
 RoleVersSuperRole=Go to the role main description
 RoleListeSousRole=List of associated roles
+ResponsableTitle=Responsible
+MailTitle=Contact
+VersionTitle=Version
 
 #Messages 2Xmi
 2xmiAPropos=2Xmi is a library wich offers export (configurable) functionnalities

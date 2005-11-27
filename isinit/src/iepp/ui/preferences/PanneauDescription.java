@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  */
 
 package iepp.ui.preferences;
@@ -37,14 +37,14 @@ import javax.swing.border.TitledBorder;
 public class PanneauDescription extends PanneauOption
 {
 	private JLabel mDescriptionLabel ;
-	
+
 	public static final String GENERAL_KEY = "GeneralTitle" ;
 	public static final String GENERATION_KEY = "GenerationTitle" ;
 	public static final String REPOSITORY_KEY = "RepositoryTitle" ;
 	public static final String DP_KEY = "Propriete_DPTitle" ;
-	
+
 	public PanneauDescription(String name)
-	{
+        {
 		this.mTitleLabel = new JLabel (name) ;
 		this.setLayout(new BorderLayout());
 		mPanel = new JPanel() ;
@@ -65,7 +65,7 @@ public class PanneauDescription extends PanneauOption
 		mPanel.add(mTitleLabel);
 
 		// linefeed
-		c.weighty = 0;      		
+		c.weighty = 0;
 		c.gridwidth = GridBagConstraints.REMAINDER; //end row
 		makeLabel(" ", gridbag, c);
 
@@ -74,29 +74,29 @@ public class PanneauDescription extends PanneauOption
 		c.fill = GridBagConstraints.BOTH;
 		c.gridwidth = GridBagConstraints.REMAINDER;;//next-to-last in row
 
-		
+
 		this.mDescriptionLabel = new JLabel();
 		this.setDescription(name);
 		gridbag.setConstraints(this.mDescriptionLabel, c);
 		mPanel.add(this.mDescriptionLabel);
 
-		//		linefeed 
+		//		linefeed
 		c.fill = GridBagConstraints.VERTICAL;
-		c.weighty = 2.0;     		
+		c.weighty = 2.0;
 		 c.gridwidth = GridBagConstraints.REMAINDER; //end row
 		makeLabel(" ", gridbag, c);
-   
+
 		this.add(new JLabel("    "),BorderLayout.WEST);
 		this.add(mPanel,BorderLayout.CENTER);
 	}
-	
+
 	public PanneauOption openPanel(String key)
 	{
-		this.setName(Application.getApplication().getTraduction(key)) ;
+                this.setName(Application.getApplication().getTraduction(key)) ;
 		this.setDescription (key);
 		return this ;
 	}
-	
+
 	public void setDescription(String key)
 	{
 		if (key.equals(GENERAL_KEY))

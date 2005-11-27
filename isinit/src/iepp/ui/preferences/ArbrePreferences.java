@@ -92,8 +92,14 @@ public class ArbrePreferences
     generationItem.add(new DefaultMutableTreeNode(new PreferenceTreeItem
                                                   (PanneauGeneration.GENERATION_PANEL_KEY, Application.getApplication().getTraduction(PanneauGeneration.GENERATION_PANEL_KEY), PreferenceTreeItem.GENERATION_PANEL)));
 
-    DefaultMutableTreeNode proprietesItem = new DefaultMutableTreeNode(new PreferenceTreeItem
-        (PanneauProprietesComposant.GENERAL_KEY, Application.getApplication().getTraduction(PanneauProprietesComposant.GENERAL_KEY), PreferenceTreeItem.COMPOSANT_DESCRIPTION_PANEL));
+    DefaultMutableTreeNode proprietesResponsableItem = new DefaultMutableTreeNode(new PreferenceTreeItem
+        (PanneauProprietesRespComp.RESPONSABLE_KEY, Application.getApplication().getTraduction(PanneauProprietesRespComp.RESPONSABLE_KEY), PreferenceTreeItem.COMPOSANT_DESCRIPTION_RESP_PANEL));
+
+    DefaultMutableTreeNode proprietesMailItem = new DefaultMutableTreeNode(new PreferenceTreeItem
+        (PanneauProprietesRespComp.MAIL_KEY, Application.getApplication().getTraduction(PanneauProprietesRespComp.MAIL_KEY), PreferenceTreeItem.COMPOSANT_DESCRIPTION_MAIL_PANEL));
+
+    DefaultMutableTreeNode proprietesVersionItem = new DefaultMutableTreeNode(new PreferenceTreeItem
+            (PanneauProprietesRespComp.VERSION_KEY, Application.getApplication().getTraduction(PanneauProprietesRespComp.VERSION_KEY), PreferenceTreeItem.COMPOSANT_DESCRIPTION_VERSION_PANEL));
 
     DefaultMutableTreeNode proprietesPAQItem = new DefaultMutableTreeNode(new PreferenceTreeItem
             (PanneauProprietesPaquetage.GENERAL_KEY, Application.getApplication().getTraduction(PanneauProprietesPaquetage.GENERAL_KEY), PreferenceTreeItem.PAQ_DESCRIPTION_PANEL));
@@ -112,7 +118,9 @@ public class ArbrePreferences
         root.add(generationItem);
         break;
       case FenetrePreference.TYPE_COMPOSANT:
-        root.add(proprietesItem);
+        root.add(proprietesResponsableItem);
+        root.add(proprietesMailItem);
+        root.add(proprietesVersionItem);
         break;
       case FenetrePreference.TYPE_PAQ:
         root.add(proprietesPAQItem);
@@ -122,7 +130,10 @@ public class ArbrePreferences
     this.setRootVisible(false);
     this.addTreeSelectionListener(gp);
     this.setModel(new DefaultTreeModel(root));
-    this.setPreferredSize(new Dimension(170, 50));
+    if (this.mPrefDiag.getType()== FenetrePreference.TYPE_COMPOSANT | this.mPrefDiag.getType()== FenetrePreference.TYPE_PAQ)
+      this.setPreferredSize(new Dimension(110, 50));
+    else
+      this.setPreferredSize(new Dimension(170, 50));
     this.expandAll(this, true);
   }
 
@@ -148,7 +159,9 @@ public class ArbrePreferences
           mPrefDiag.getRepertoireExportPanel().setVisible(false);
           //modif 2XMI Amandine
           mPrefDiag.getGenerationRole().setVisible(false);
-          mPrefDiag.getProprietesComposant().setVisible(false);
+          mPrefDiag.getProprietesRespComposant().setVisible(false);
+            mPrefDiag.getProprietesMailComposant().setVisible(false);
+            mPrefDiag.getProprietesVerComposant().setVisible(false);
           //mPrefDiag.getProprietesPaquetage().setVisible(false);
         }
         else if (panel == PreferenceTreeItem.DP_GENERATION_PANEL) {
@@ -164,7 +177,9 @@ public class ArbrePreferences
           mPrefDiag.getRepertoireExportPanel().setVisible(false);
           //modif 2XMI Amandine
           mPrefDiag.getGenerationRole().setVisible(false);
-          mPrefDiag.getProprietesComposant().setVisible(false);
+          mPrefDiag.getProprietesRespComposant().setVisible(false);
+            mPrefDiag.getProprietesMailComposant().setVisible(false);
+            mPrefDiag.getProprietesVerComposant().setVisible(false);
           //mPrefDiag.getProprietesPaquetage().setVisible(false);
         }
         else if (panel == PreferenceTreeItem.DP_DESCRIPTION_PANEL) {
@@ -180,7 +195,9 @@ public class ArbrePreferences
           mPrefDiag.getRepertoireExportPanel().setVisible(false);
           //modif 2XMI Amandine
           mPrefDiag.getGenerationRole().setVisible(false);
-          mPrefDiag.getProprietesComposant().setVisible(false);
+          mPrefDiag.getProprietesRespComposant().setVisible(false);
+            mPrefDiag.getProprietesMailComposant().setVisible(false);
+            mPrefDiag.getProprietesVerComposant().setVisible(false);
           //mPrefDiag.getProprietesPaquetage().setVisible(false);
         }
         else if (panel == PreferenceTreeItem.DIAGRAM_PANEL) {
@@ -196,7 +213,9 @@ public class ArbrePreferences
           mPrefDiag.getRepertoireExportPanel().setVisible(false);
           //modif 2XMI Amandine
           mPrefDiag.getGenerationRole().setVisible(false);
-          mPrefDiag.getProprietesComposant().setVisible(false);
+          mPrefDiag.getProprietesRespComposant().setVisible(false);
+            mPrefDiag.getProprietesMailComposant().setVisible(false);
+            mPrefDiag.getProprietesVerComposant().setVisible(false);
           //mPrefDiag.getProprietesPaquetage().setVisible(false);
         }
         else if (panel == PreferenceTreeItem.DP_PANEL) {
@@ -212,7 +231,9 @@ public class ArbrePreferences
           mPrefDiag.getRepertoireExportPanel().setVisible(false);
           //modif 2XMI Amandine
           mPrefDiag.getGenerationRole().setVisible(false);
-          mPrefDiag.getProprietesComposant().setVisible(false);
+          mPrefDiag.getProprietesRespComposant().setVisible(false);
+            mPrefDiag.getProprietesMailComposant().setVisible(false);
+            mPrefDiag.getProprietesVerComposant().setVisible(false);
           //mPrefDiag.getProprietesPaquetage().setVisible(false);
         }
         else if (panel == PreferenceTreeItem.REPOSITORY_PANEL) {
@@ -228,7 +249,9 @@ public class ArbrePreferences
           mPrefDiag.getRepertoireExportPanel().setVisible(false);
           //modif 2XMI Amandine
           mPrefDiag.getGenerationRole().setVisible(false);
-          mPrefDiag.getProprietesComposant().setVisible(false);
+          mPrefDiag.getProprietesRespComposant().setVisible(false);
+            mPrefDiag.getProprietesMailComposant().setVisible(false);
+            mPrefDiag.getProprietesVerComposant().setVisible(false);
           //mPrefDiag.getProprietesPaquetage().setVisible(false);
         }
         else if (panel == PreferenceTreeItem.GENERATION_PANEL) {
@@ -244,7 +267,9 @@ public class ArbrePreferences
           mPrefDiag.getRepertoireExportPanel().setVisible(false);
           //modif 2XMI Amandine
           mPrefDiag.getGenerationRole().setVisible(false);
-          mPrefDiag.getProprietesComposant().setVisible(false);
+          mPrefDiag.getProprietesRespComposant().setVisible(false);
+            mPrefDiag.getProprietesMailComposant().setVisible(false);
+            mPrefDiag.getProprietesVerComposant().setVisible(false);
           //mPrefDiag.getProprietesPaquetage().setVisible(false);
         }
         else if (panel == PreferenceTreeItem.DESC_PANEL) {
@@ -260,7 +285,9 @@ public class ArbrePreferences
           mPrefDiag.getRepertoireExportPanel().setVisible(false);
           //modif 2XMI Amandine
           mPrefDiag.getGenerationRole().setVisible(false);
-          mPrefDiag.getProprietesComposant().setVisible(false);
+          mPrefDiag.getProprietesRespComposant().setVisible(false);
+            mPrefDiag.getProprietesMailComposant().setVisible(false);
+            mPrefDiag.getProprietesVerComposant().setVisible(false);
           //mPrefDiag.getProprietesPaquetage().setVisible(false);
         }
         else if (panel == PreferenceTreeItem.LANGUAGE_PANEL) {
@@ -276,7 +303,9 @@ public class ArbrePreferences
           mPrefDiag.getRepertoireExportPanel().setVisible(false);
           //modif 2XMI Amandine
           mPrefDiag.getGenerationRole().setVisible(false);
-          mPrefDiag.getProprietesComposant().setVisible(false);
+          mPrefDiag.getProprietesRespComposant().setVisible(false);
+            mPrefDiag.getProprietesMailComposant().setVisible(false);
+            mPrefDiag.getProprietesVerComposant().setVisible(false);
           //mPrefDiag.getProprietesPaquetage().setVisible(false);
         }
         else if (panel == PreferenceTreeItem.EXPORT_DIRECTORY_PANEL) {
@@ -292,7 +321,9 @@ public class ArbrePreferences
           mPrefDiag.getRepertoireExportPanel().setVisible(true);
           //modif 2XMI Amandine
           mPrefDiag.getGenerationRole().setVisible(false);
-          mPrefDiag.getProprietesComposant().setVisible(false);
+          mPrefDiag.getProprietesRespComposant().setVisible(false);
+            mPrefDiag.getProprietesMailComposant().setVisible(false);
+            mPrefDiag.getProprietesVerComposant().setVisible(false);
           //mPrefDiag.getProprietesPaquetage().setVisible(false);
         }
         else if (panel == PreferenceTreeItem.ROLE_GENERATION_PANEL) {
@@ -308,10 +339,12 @@ public class ArbrePreferences
           mPrefDiag.getRepertoireExportPanel().setVisible(false);
           //modif 2XMI Amandine
           mPrefDiag.getGenerationRole().setVisible(true);
-          mPrefDiag.getProprietesComposant().setVisible(false);
+          mPrefDiag.getProprietesRespComposant().setVisible(false);
+            mPrefDiag.getProprietesMailComposant().setVisible(false);
+            mPrefDiag.getProprietesVerComposant().setVisible(false);
           //mPrefDiag.getProprietesPaquetage().setVisible(false);
         }
-        else if (panel == PreferenceTreeItem.COMPOSANT_DESCRIPTION_PANEL) {
+        else if (panel == PreferenceTreeItem.COMPOSANT_DESCRIPTION_RESP_PANEL) {
           mPrefDiag.getGenOptionPanel().setVisible(false);
           mPrefDiag.getDPGenPanel().setVisible(false);
           mPrefDiag.getDPDescPanel().setVisible(false);
@@ -324,10 +357,12 @@ public class ArbrePreferences
           mPrefDiag.getRepertoireExportPanel().setVisible(false);
           //modif 2XMI Amandine
           mPrefDiag.getGenerationRole().setVisible(false);
-          mPrefDiag.getProprietesComposant().setVisible(true);
+          mPrefDiag.getProprietesRespComposant().setVisible(true);
+            mPrefDiag.getProprietesMailComposant().setVisible(false);
+            mPrefDiag.getProprietesVerComposant().setVisible(false);
           //mPrefDiag.getProprietesPaquetage().setVisible(false);
         }
-        else if (panel == PreferenceTreeItem.PAQ_DESCRIPTION_PANEL) {
+        else if (panel == PreferenceTreeItem.COMPOSANT_DESCRIPTION_MAIL_PANEL) {
           mPrefDiag.getGenOptionPanel().setVisible(false);
           mPrefDiag.getDPGenPanel().setVisible(false);
           mPrefDiag.getDPDescPanel().setVisible(false);
@@ -340,11 +375,47 @@ public class ArbrePreferences
           mPrefDiag.getRepertoireExportPanel().setVisible(false);
           //modif 2XMI Amandine
           mPrefDiag.getGenerationRole().setVisible(false);
-          mPrefDiag.getProprietesComposant().setVisible(false);
-          //mPrefDiag.getProprietesPaquetage().setVisible(true);
+          mPrefDiag.getProprietesRespComposant().setVisible(false);
+            mPrefDiag.getProprietesMailComposant().setVisible(true);
+            mPrefDiag.getProprietesVerComposant().setVisible(false);
+          //mPrefDiag.getProprietesPaquetage().setVisible(false);
         }
-
-
+        else if(panel==PreferenceTreeItem.COMPOSANT_DESCRIPTION_VERSION_PANEL){
+            mPrefDiag.getGenOptionPanel().setVisible(false);
+            mPrefDiag.getDPGenPanel().setVisible(false);
+            mPrefDiag.getDPDescPanel().setVisible(false);
+            mPrefDiag.getDPPanel().setVisible(false);
+            mPrefDiag.getDiagrammePanel().setVisible(false);
+            mPrefDiag.getDescriptionPanel().setVisible(false);
+            mPrefDiag.getLanguagePanel().setVisible(false);
+            mPrefDiag.getGenerationPanel().setVisible(false);
+            mPrefDiag.getReferentielPanel().setVisible(false);
+            mPrefDiag.getRepertoireExportPanel().setVisible(false);
+            //modif 2XMI Amandine
+            mPrefDiag.getGenerationRole().setVisible(false);
+            mPrefDiag.getProprietesRespComposant().setVisible(false);
+            mPrefDiag.getProprietesMailComposant().setVisible(false);
+            mPrefDiag.getProprietesVerComposant().setVisible(true);
+            //mPrefDiag.getProprietesPaquetage().setVisible(false);
+          }
+          else if(panel==PreferenceTreeItem.PAQ_DESCRIPTION_PANEL){
+              mPrefDiag.getGenOptionPanel().setVisible(false);
+              mPrefDiag.getDPGenPanel().setVisible(false);
+              mPrefDiag.getDPDescPanel().setVisible(false);
+              mPrefDiag.getDPPanel().setVisible(false);
+              mPrefDiag.getDiagrammePanel().setVisible(false);
+              mPrefDiag.getDescriptionPanel().setVisible(false);
+              mPrefDiag.getLanguagePanel().setVisible(false);
+              mPrefDiag.getGenerationPanel().setVisible(false);
+              mPrefDiag.getReferentielPanel().setVisible(false);
+              mPrefDiag.getRepertoireExportPanel().setVisible(false);
+              //modif 2XMI Amandine
+              mPrefDiag.getGenerationRole().setVisible(false);
+              mPrefDiag.getProprietesRespComposant().setVisible(false);
+              mPrefDiag.getProprietesMailComposant().setVisible(false);
+              mPrefDiag.getProprietesVerComposant().setVisible(false);
+              //mPrefDiag.getProprietesPaquetage().setVisible(true);
+        }
         mPrefDiag.setInnerPanel(panel, key);
       }
     }

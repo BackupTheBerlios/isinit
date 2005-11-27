@@ -31,8 +31,10 @@ public class PreferenceTreeItem {
   public static final int EXPORT_DIRECTORY_PANEL = 10;
   //modif 2XMI Amandine
   public static final int ROLE_GENERATION_PANEL = 11;
-  public static final int COMPOSANT_DESCRIPTION_PANEL = 12;
-  public static final int PAQ_DESCRIPTION_PANEL = 13;
+  public static final int COMPOSANT_DESCRIPTION_RESP_PANEL = 12;
+  public static final int COMPOSANT_DESCRIPTION_MAIL_PANEL = 13;
+  public static final int COMPOSANT_DESCRIPTION_VERSION_PANEL = 14;
+  public static final int PAQ_DESCRIPTION_PANEL = 15;
 
   private String mKey;
   private String mValue;

@@ -26,7 +26,9 @@ import java.awt.event.ActionListener;
 
 import iepp.Application;
 import iepp.ui.FenetrePrincipale;
-import iepp.ui.preferences.PanneauProprietesComposant;
+import iepp.ui.preferences.PanneauProprietesRespComp;
+import iepp.ui.preferences.PanneauProprietesMailComp;
+import iepp.ui.preferences.PanneauProprietesVerComp;
 import iepp.ui.preferences.PanneauProprietesPaquetage;
 
 import javax.swing.BorderFactory;
@@ -60,7 +62,9 @@ public class FenetrePreference
   // debut modif 2xmi chaouk
   private PanneauRepertoireExport panneauRepertoireExport;
   // fin modif 2xmi chaouk
-  private PanneauProprietesComposant panneauProprietesComposant;
+  private PanneauProprietesRespComp panneauProprietesRespComposant;
+  private PanneauProprietesMailComp panneauProprietesMailComposant;
+  private PanneauProprietesVerComp panneauProprietesVerComposant;
   private PanneauProprietesPaquetage panneauProprietesPaquetage;
 
   private JButton apply;
@@ -80,6 +84,7 @@ public class FenetrePreference
 
   public FenetrePreference(FenetrePrincipale parent, int type) {
     super(parent, true);
+    initTailleFenetre();
     initFenetre(parent,type);
   }
 
@@ -88,6 +93,7 @@ public class FenetrePreference
   //reference conservee par le parametre composant
   public FenetrePreference(FenetrePrincipale parent, int type, IdObjetModele composant) {
       this.comp_proprietes = composant;
+      this.setSize(400, 300);
       initFenetre(parent, type);
   }
 
@@ -96,11 +102,15 @@ public class FenetrePreference
   //reference conservee par le parametre idPres
   public FenetrePreference(FenetrePrincipale parent, int type, long idPres) {
       this.idPres = idPres;
+      this.setSize(400, 300);
       initFenetre(parent, type);
   }
 
-  public void initFenetre(FenetrePrincipale parent, int type){
+  public void initTailleFenetre(){
       this.setSize(780, 700);
+  }
+
+  public void initFenetre(FenetrePrincipale parent, int type){
       this.type_courant = type;
 
       // gestionnaire de mise en page
@@ -188,8 +198,14 @@ public class FenetrePreference
     this.panneauRepertoireExport.setVisible(false);
     // fin modif 2xmi chaouk
 
-    this.panneauProprietesComposant = new PanneauProprietesComposant(Application.getApplication().getTraduction(PanneauProprietesComposant.GENERAL_KEY), this.comp_proprietes);
-    this.panneauProprietesComposant.setVisible(false);
+    this.panneauProprietesRespComposant = new PanneauProprietesRespComp(Application.getApplication().getTraduction(PanneauProprietesRespComp.RESPONSABLE_KEY), this.comp_proprietes);
+    this.panneauProprietesRespComposant.setVisible(false);
+
+    this.panneauProprietesMailComposant = new PanneauProprietesMailComp(Application.getApplication().getTraduction(PanneauProprietesMailComp.MAIL_KEY), this.comp_proprietes);
+    this.panneauProprietesMailComposant.setVisible(false);
+
+    this.panneauProprietesVerComposant = new PanneauProprietesVerComp(Application.getApplication().getTraduction(PanneauProprietesVerComp.VERSION_KEY), this.comp_proprietes);
+    this.panneauProprietesVerComposant.setVisible(false);
 
     //this.panneauProprietesPaquetage = new PanneauProprietesPaquetage(Application.getApplication().getTraduction(PanneauProprietesPaquetage.GENERAL_KEY), this.idPres);
     //this.panneauProprietesPaquetage.setVisible(false);
@@ -211,8 +227,8 @@ public class FenetrePreference
         this.setTitle(Application.getApplication().getTraduction("titre_generer_site"));
         break;
       case FenetrePreference.TYPE_COMPOSANT:
-        this.panneauProprietesComposant.setVisible(true);
-        this.setInnerPanel(PreferenceTreeItem.DESC_PANEL, panneauProprietesComposant.GENERAL_KEY);
+        this.panneauProprietesRespComposant.setVisible(true);
+        this.setInnerPanel(PreferenceTreeItem.DESC_PANEL, panneauProprietesRespComposant.RESPONSABLE_KEY);
         this.setTitle(Application.getApplication().getTraduction("Proprietes_COMPOSANT"));
         break;
      /* case FenetrePreference.TYPE_PAQ:
@@ -258,9 +274,16 @@ public class FenetrePreference
       case PreferenceTreeItem.ROLE_GENERATION_PANEL:
         panneau.add(this.panneauGenerationRole.openPanel(key), BorderLayout.CENTER);
         break;
-      case PreferenceTreeItem.COMPOSANT_DESCRIPTION_PANEL:
-        panneau.add(this.panneauProprietesComposant.openPanel(key), BorderLayout.CENTER);
+      case PreferenceTreeItem.COMPOSANT_DESCRIPTION_RESP_PANEL:
+        panneau.add(this.panneauProprietesRespComposant.openPanel(key), BorderLayout.CENTER);
         break;
+      case PreferenceTreeItem.COMPOSANT_DESCRIPTION_MAIL_PANEL:
+        panneau.add(this.panneauProprietesMailComposant.openPanel(key), BorderLayout.CENTER);
+        break;
+      case PreferenceTreeItem.COMPOSANT_DESCRIPTION_VERSION_PANEL:
+              panneau.add(this.panneauProprietesVerComposant.openPanel(key), BorderLayout.CENTER);
+              break;
+
       /*case PreferenceTreeItem.PAQ_DESCRIPTION_PANEL:
         panneau.add(this.panneauProprietesPaquetage.openPanel(key), BorderLayout.CENTER);
         break;*/
@@ -314,9 +337,18 @@ public class FenetrePreference
   }
   //fin modif 2XMI Amandine
 
-  public PanneauProprietesComposant getProprietesComposant () {
-    return this.panneauProprietesComposant;
+  public PanneauProprietesRespComp getProprietesRespComposant () {
+    return this.panneauProprietesRespComposant;
   }
+
+  public PanneauProprietesMailComp getProprietesMailComposant () {
+    return this.panneauProprietesMailComposant;
+  }
+
+  public PanneauProprietesVerComp getProprietesVerComposant () {
+      return this.panneauProprietesVerComposant;
+    }
+
 
   public PanneauProprietesPaquetage getProprietesPaquetage () {
     return this.panneauProprietesPaquetage;
