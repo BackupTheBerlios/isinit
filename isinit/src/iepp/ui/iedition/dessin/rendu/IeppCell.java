@@ -15,12 +15,14 @@ public class IeppCell extends DefaultGraphCell {
 	public String nomComposantCellule;
 	protected Map attributs;
 	protected DefaultPort portComposant;
+	protected String imageComposant;
 	
 	public IeppCell(String nomComp) {
 		super(nomComp);
 		nomComposantCellule=nomComp;
 		portComposant = new DefaultPort();
 		attributs=GraphConstants.createMap();
+		imageComposant = new String();
 		this.add(portComposant);
 	}
 
@@ -55,4 +57,19 @@ public class IeppCell extends DefaultGraphCell {
 	public DefaultPort getPortComp() {
 		return(portComposant);
 	}
+	
+	/**
+	 * @return Returns the imageComposant.
+	 */
+	public String getImageComposant() {
+		return imageComposant;
+	}
+
+	/**
+	 * @param imageComposant The imageComposant to set.
+	 */
+	public void setImageComposant(String imageComposant) {
+		this.imageComposant = imageComposant;
+	}
+	
 }

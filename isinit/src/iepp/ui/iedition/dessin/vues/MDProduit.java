@@ -43,7 +43,7 @@ public class MDProduit extends MDElement
         setLargeur(40);
         setHauteur(50);
         */
-		setLargeur(30 + (n.getRef().toString(n.getNumRang(),n.getNumType()).length()*6));
+		setLargeur(30);
 		setHauteur(75);
         police = new Font("Arial", Font.PLAIN, 12);
         this.produit = n ;

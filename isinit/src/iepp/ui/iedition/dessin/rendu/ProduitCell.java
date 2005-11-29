@@ -10,7 +10,7 @@ import javax.swing.ImageIcon;
 import org.jgraph.graph.GraphConstants;
 
 public class ProduitCell extends IeppCell {
-	protected String imageComposant="produit.png";
+	
 	protected double abscisse;
 	protected double ordonnee;
 	protected double largeur;
@@ -19,6 +19,8 @@ public class ProduitCell extends IeppCell {
 
 	public ProduitCell(String nomComp, double abs, double ord) {
 		super(nomComp);
+		
+		this.imageComposant ="produit.png";
 		
 		// On garde dans l'objet un trace de la position du composant sur le graph
 		abscisse=abs;
@@ -38,6 +40,8 @@ public class ProduitCell extends IeppCell {
 	public ProduitCell(String nomComp, double abs, double ord, Map cellAttr ) {
 		super(nomComp);
 		
+		this.imageComposant ="produit.png";
+		
 		// On garde dans l'objet un trace de la position du composant sur le graph
 		abscisse=abs;
 		ordonnee=ord;		
@@ -56,6 +60,8 @@ public class ProduitCell extends IeppCell {
 	public ProduitCell(MDProduit mprod ) {
 		super(mprod.getNom());
 		
+		this.imageComposant ="produit.png";
+		
 		// On garde dans l'objet un trace de la position du composant sur le graph
 		abscisse=mprod.getX();
 		ordonnee=mprod.getY();		
@@ -68,6 +74,7 @@ public class ProduitCell extends IeppCell {
 		
 		GraphConstants.setIcon(getAttributs(), i);
 		GraphConstants.setBounds(getAttributs(), new Rectangle((int)abscisse,(int)ordonnee,(int)largeur,(int)hauteur));
+		GraphConstants.setAutoSize(getAttributs(), true);
 		GraphConstants.setEditable(getAttributs(), false);
 		GraphConstants.setSizeable (getAttributs(), false);
 		GraphConstants.setFont(getAttributs(),mprod.getPolice());

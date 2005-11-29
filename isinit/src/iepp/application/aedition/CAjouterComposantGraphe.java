@@ -66,6 +66,11 @@ public class CAjouterComposantGraphe extends CommandeAnnulable
 	 */
 	private Vector vCellComposant = new Vector();
 	
+	/**
+	 * Liste des composants a séléctionner
+	 */
+	private Vector vSelection = new Vector();
+	
 	
 	/**
 	 * Création de la commande à partir du composant à ajouter
@@ -125,6 +130,7 @@ public class CAjouterComposantGraphe extends CommandeAnnulable
 		ComposantCell composantCell = new ComposantCell(mdcomp);
 		
 		vCellComposant.add(composantCell);
+		vSelection.add(composantCell);
 		AllAttrubiteCell.put(composantCell,composantCell.getAttributs());
 		
 		// Récupération des produits en entrée du composant
@@ -144,7 +150,7 @@ public class CAjouterComposantGraphe extends CommandeAnnulable
 			
 			ProduitCell produitCell = new ProduitCell(mprod);
 
-			vCellComposant.add(produitCell);
+			vSelection.add(produitCell);
 			AllAttrubiteCell.put(produitCell,produitCell.getAttributs());
 			
 			// Liaison du produit avec le composant
@@ -172,7 +178,7 @@ public class CAjouterComposantGraphe extends CommandeAnnulable
 
 			 ProduitCell produitCell = new ProduitCell(mprod);
 
-			 vCellComposant.add(produitCell);
+			 vSelection.add(produitCell);
 			 AllAttrubiteCell.put(produitCell,produitCell.getAttributs());
 			
 			 // Liaison du produit avec le composant
@@ -183,7 +189,7 @@ public class CAjouterComposantGraphe extends CommandeAnnulable
 		 }
 		 
 		 fenetre.getVueDPGraphe().getModel().insert(vCellComposant.toArray(), AllAttrubiteCell, null, null,null );
-		 fenetre.getVueDPGraphe().setSelectionCells(vCellComposant.toArray());
+		 fenetre.getVueDPGraphe().setSelectionCells(vSelection.toArray());
 		 
 		return (true);
 	}

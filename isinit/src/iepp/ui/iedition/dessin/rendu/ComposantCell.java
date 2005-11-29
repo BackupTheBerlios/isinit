@@ -12,7 +12,7 @@ import org.jgraph.graph.GraphConstants;
 
 public class ComposantCell extends IeppCell {
 	
-	protected String imageComposant="composant.png";
+	
 	protected double abscisse;
 	protected double ordonnee;
 	protected double largeur;
@@ -21,6 +21,8 @@ public class ComposantCell extends IeppCell {
 
 	public ComposantCell(String nomComp, double abs, double ord) {
 		super(nomComp);
+		
+		this.imageComposant="composant.png";
 		
 		// On garde dans l'objet un trace de la position du composant sur le graph
 		abscisse=abs;
@@ -40,6 +42,8 @@ public class ComposantCell extends IeppCell {
 	public ComposantCell(String nomComp, double abs, double ord, Map cellAttr ) {
 		super(nomComp);
 		
+		this.imageComposant="composant.png";
+		
 		// On garde dans l'objet un trace de la position du composant sur le graph
 		abscisse=abs;
 		ordonnee=ord;		
@@ -57,6 +61,8 @@ public class ComposantCell extends IeppCell {
 
 	public ComposantCell( MDComposantProcessus mdcomp ) {
 		super(mdcomp.getNom());
+		
+		this.imageComposant="composant.png";
 		
 		// On garde dans l'objet un trace de la position du composant sur le graph
 		abscisse=mdcomp.getX();

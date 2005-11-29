@@ -156,17 +156,20 @@ public class CLierInterface extends CommandeNonAnnulable
 		GraphConstants.setEndFill(edgeAttribute, true);
 		GraphConstants.setDisconnectable(edgeAttribute,false);
 		GraphConstants.setEditable(edgeAttribute,false);
-    
-        Vector vecObj = new Vector();
-        vecObj.add(lienComp);
-        vecObj.add(cellS);
+		
+		Vector vecObj = new Vector();
+        
+		vecObj.add(cellS);
         vecObj.add(cellD);
+        vecObj.add(lienComp);
         
         ConnectionSet cs = new ConnectionSet(lienComp, portS, portD);
-        
-		diagramme.getModel().insert(vecObj.toArray(), AllAttribute, cs, null, null);
+     
+        diagramme.getModel().insert(vecObj.toArray(), AllAttribute, null, null, null);
 		
-		diagramme.repaint();
+		diagramme.getModel().insert(null, null, cs, null, null);
+	        
+		diagramme.show();
 		
 		return true;
 	}

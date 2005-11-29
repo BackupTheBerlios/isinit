@@ -35,29 +35,22 @@ import iepp.ui.iedition.dessin.rendu.*;
 import iepp.ui.iedition.dessin.rendu.handle.Handle;
 import iepp.ui.iedition.dessin.rendu.liens.FLien;
 import iepp.ui.iedition.dessin.rendu.liens.FLienFusion;
+import iepp.ui.iedition.dessin.vues.ComposantView;
 import iepp.ui.iedition.dessin.vues.MDDiagramme;
 import iepp.ui.iedition.dessin.vues.MDElement;
 import iepp.ui.iedition.dessin.vues.MDLienClassic;
-
+import iepp.ui.iedition.dessin.vues.ProduitView;
 import java.util.* ;
-
-import javax.swing.*;
-
 import org.jgraph.JGraph;
-import org.jgraph.graph.ConnectionSet;
-import org.jgraph.graph.DefaultGraphCell;
+import org.jgraph.graph.CellMapper;
 import org.jgraph.graph.DefaultGraphModel;
-import org.jgraph.graph.GraphConstants;
 import org.jgraph.graph.GraphModel;
-
-import util.IconManager;
+import org.jgraph.graph.VertexView;
 import util.Vecteur;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.dnd.DnDConstants;
@@ -779,5 +772,26 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener, Mous
 			}
 		}
 		return null;
+	}
+
+	/** 
+	 * @see org.jgraph.JGraph#createVertexView(java.lang.Object, org.jgraph.graph.CellMapper)
+	 */
+	protected VertexView createVertexView(Object v, CellMapper cm) {
+		
+		// Return the appropriate view
+		if(v instanceof ComposantCell)
+		{
+			return new ComposantView(v, this, cm);
+		}
+		else if(v instanceof ProduitCell)
+		{
+		    return new ProduitView(v, this, cm);
+		}
+		else
+		{
+		    return new VertexView(v, this, cm);
+		}
+		
 	}
 }
