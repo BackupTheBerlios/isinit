@@ -258,6 +258,7 @@ public class GElement {
       res = "../" + res;
       aux = aux.getArbreParent();
     }
+    System.out.println(res);
     return (res);
   }
 
@@ -386,6 +387,7 @@ public class GElement {
    * @throws IOException
    */
   public void ajouterContenu(FileWriter fd) throws IOException {
+    System.out.println(this.element.toString());
     String contenu = this.element.getContenu();
     if (contenu != null) {
       //modif 2XMI Sébastien
@@ -408,6 +410,8 @@ public class GElement {
       //pris en compte des liens ftp et https
       try
       {
+        //pour eviter les levees d'exception quand le nom du contenu contient un espace
+        contenu = contenu.replaceAll(" ", "_");
         URI urr = new URI(contenu.replaceAll("\\\\", "/"));
         if (urr.getScheme() == null){
           //Le contenu represente un fichier en local
