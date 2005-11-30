@@ -43,7 +43,9 @@ import iepp.ui.iedition.dessin.vues.ProduitView;
 import java.util.* ;
 import org.jgraph.JGraph;
 import org.jgraph.graph.CellMapper;
+import org.jgraph.graph.DefaultGraphCell;
 import org.jgraph.graph.DefaultGraphModel;
+import org.jgraph.graph.GraphConstants;
 import org.jgraph.graph.GraphModel;
 import org.jgraph.graph.VertexView;
 import util.Vecteur;
@@ -585,6 +587,23 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener, Mous
 	  public void setOutilSelection()
 	  {
 		  this.setOutil(new OSelection(this));
+		  
+		  System.out.println(this.getModel().getRootCount());
+		  
+		  this.setSelectionCells(new Object[]{});
+			
+		  
+		  for(int i=0;i<this.getModel().getRootCount();i++){
+				if(this.getModel().getRootAt(i) instanceof IeppCell){
+					IeppCell cell = (IeppCell)this.getModel().getRootAt(i);
+					System.out.println((IeppCell)this.getModel().getRootAt(i));
+					
+					GraphConstants.setMoveable(cell.getAttributes(),true);
+				}
+			}
+				
+			// pour la prise en compte dans le graph
+			this.repaint();
 	  }
 
 	  /**
@@ -593,6 +612,24 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener, Mous
 	   public void setOutilLier()
 	   {
 		   this.setOutil(new OLier2Elements(this, Color.BLACK, new FLienFusion(new MDLienClassic())));
+
+		   System.out.println(this.getModel().getRootCount());
+		   
+		   
+		   this.setSelectionCells(new Object[]{});
+				   
+		   for(int i=0;i<this.getModel().getRootCount();i++){
+				if(this.getModel().getRootAt(i) instanceof IeppCell){
+					IeppCell cell = (IeppCell)this.getModel().getRootAt(i);
+					  System.out.println((IeppCell)this.getModel().getRootAt(i));
+					   
+					   
+					GraphConstants.setMoveable(cell.getAttributes(),false);
+				}
+			}
+				
+			// pour la prise en compte dans le graph
+		   this.repaint();
 	   }
 	   
 	   /**
