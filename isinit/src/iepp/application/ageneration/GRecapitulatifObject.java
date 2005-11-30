@@ -143,7 +143,7 @@ public class GRecapitulatifObject extends GElement
                           GElement elemCourant = (GElement) iterateurrole.next();
                           if (elemCourant.getElementPresentation().getElementModele() == idsousrole){
                             trouve=true;
-                            fd.write("<div class=\"elementliste\">&nbsp;&nbsp;&nbsp;<a href=\"" + elemCourant.getLienChemin(idsousrole) + "\" target=\"_new\" >" + idsousrole.toString() + "</a> - " + elemCourant.getNomRacine() + "</div>\n");
+                            fd.write("<div class=\"elementliste\">&nbsp;&nbsp;&nbsp;<a href=\"" + this.getLienChemin(idsousrole) + "\" target=\"_new\" >" + idsousrole.toString() + "</a> - " + elemCourant.getNomRacine() + "</div>\n");
                           }
                         }
                       }
