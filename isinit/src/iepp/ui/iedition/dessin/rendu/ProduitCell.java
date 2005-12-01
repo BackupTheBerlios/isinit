@@ -16,47 +16,6 @@ public class ProduitCell extends IeppCell {
 	protected double largeur;
 	protected double hauteur;
 	
-
-	public ProduitCell(String nomComp, double abs, double ord) {
-		super(nomComp);
-		
-		this.imageComposant ="produit.png";
-		
-		// On garde dans l'objet un trace de la position du composant sur le graph
-		abscisse=abs;
-		ordonnee=ord;		
-		ImageIcon i = new ImageIcon(getCheminImageComposant()+ imageComposant);
-		// On garde aussi une trace de la largeur et de la hauteur du composant
-		largeur=i.getIconWidth();
-		hauteur=i.getIconHeight();
-		GraphConstants.setIcon(getAttributs(), i);
-		GraphConstants.setBounds(getAttributs(), new Rectangle((int)abs,(int)ord,i.getIconWidth(),i.getIconHeight()+IeppCell.TAILLE_TEXTE));
-		GraphConstants.setAutoSize(getAttributs(), true);
-		GraphConstants.setEditable(getAttributs(), false);
-		GraphConstants.setSizeable (getAttributs(), false);
-		//GraphConstants.setBorder(cellAttribute,BorderFactory.createLineBorder(Color.BLACK,2));
-	}
-
-	public ProduitCell(String nomComp, double abs, double ord, Map cellAttr ) {
-		super(nomComp);
-		
-		this.imageComposant ="produit.png";
-		
-		// On garde dans l'objet un trace de la position du composant sur le graph
-		abscisse=abs;
-		ordonnee=ord;		
-		ImageIcon i = new ImageIcon(getCheminImageComposant()+ imageComposant);
-		// On garde aussi une trace de la largeur et de la hauteur du composant
-		largeur=i.getIconWidth();
-		hauteur=i.getIconHeight();
-		GraphConstants.setIcon(cellAttr, i);
-		GraphConstants.setBounds(cellAttr, new Rectangle((int)abs,(int)ord,i.getIconWidth(),i.getIconHeight()+IeppCell.TAILLE_TEXTE));
-		GraphConstants.setAutoSize(cellAttr, true);
-		GraphConstants.setEditable(cellAttr, false);
-		GraphConstants.setSizeable (cellAttr, false);
-		//GraphConstants.setBorder(cellAttr,BorderFactory.createLineBorder(Color.BLACK,2));
-	}
-	
 	public ProduitCell(MDProduit mprod ) {
 		super(mprod.getNom());
 		

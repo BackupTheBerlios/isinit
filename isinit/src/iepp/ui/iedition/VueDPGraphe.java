@@ -41,13 +41,19 @@ import iepp.ui.iedition.dessin.vues.MDElement;
 import iepp.ui.iedition.dessin.vues.MDLienClassic;
 import iepp.ui.iedition.dessin.vues.ProduitView;
 import java.util.* ;
+import java.lang.Object;
+
 import org.jgraph.JGraph;
 import org.jgraph.graph.CellMapper;
+import org.jgraph.graph.ConnectionSet;
+import org.jgraph.graph.DefaultEdge;
 import org.jgraph.graph.DefaultGraphCell;
 import org.jgraph.graph.DefaultGraphModel;
+import org.jgraph.graph.DefaultPort;
 import org.jgraph.graph.GraphConstants;
 import org.jgraph.graph.GraphModel;
 import org.jgraph.graph.VertexView;
+
 import util.Vecteur;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -108,6 +114,16 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener, Mous
 	 * sert à indiquer la taille setPreferedSize() du diagramme
 	 */
 	private Dimension zone_affichage ; 
+	
+	/**
+	 * Memorise la premiere cellule cliquee
+	 */
+	private MouseEvent firstMouseEvent;
+	
+	/**
+	 * 
+	 */
+	private boolean boutonLierActif;
 	
 	/**
 	 * Construire le diagramme à partir de la définition de processus et 
@@ -172,6 +188,9 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener, Mous
 		super.paintComponent(g);
 		this.calculerDimension();
 
+		//A regarder
+		//this.updateAutoSize()
+		
 		/*
 		// Couleur de remplissage
 		g.setColor(getModele().getFillColor());
@@ -586,6 +605,8 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener, Mous
 	  */
 	  public void setOutilSelection()
 	  {
+		  boutonLierActif = false;
+		  
 		  this.setOutil(new OSelection(this));
 		  
 		  System.out.println(this.getModel().getRootCount());
@@ -611,6 +632,8 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener, Mous
 	   */
 	   public void setOutilLier()
 	   {
+		   boutonLierActif = true;
+		   
 		   this.setOutil(new OLier2Elements(this, Color.BLACK, new FLienFusion(new MDLienClassic())));
 
 		   System.out.println(this.getModel().getRootCount());
@@ -652,12 +675,60 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener, Mous
 
 	public void mousePressed( MouseEvent e )
 	{
-		//this.diagramTool.mousePressed(e);
+		if(boutonLierActif == true){
+		
+			if ( this.getFirstCellForLocation(e.getX(),e.getY()) != null) {
+	        	firstMouseEvent = e;
+				
+			}else{
+				
+				firstMouseEvent = null;
+			}
+	        
+		 	
+	 	}
 	}
 
 	public void mouseReleased( MouseEvent e ) 
 	{
 		//this.diagramTool.mouseReleased(e);
+        System.out.println("mouseReleased");
+        
+        if(boutonLierActif == true){
+        	
+        	// verifier ke la ou l'on a relacher la souris , il y a un produit
+        	
+        	if (firstMouseEvent != null){
+        		
+        		Object cellSrc = this.getFirstCellForLocation(firstMouseEvent.getX(),firstMouseEvent.getY());
+    			Object cellDes = this.getFirstCellForLocation(e.getX(),e.getY());
+		
+    			if (((cellSrc instanceof ProduitCellEntree) && (cellDes instanceof ProduitCellSortie)) || (cellSrc instanceof ProduitCellSortie) && (cellDes instanceof ProduitCellEntree) ) {
+    				// verif ke les 2 soit un produit de type differents
+	    			
+    				
+    				System.out.println("SOURCE :"+cellSrc);
+    				System.out.println("DESTINATION :"+cellDes);
+	    				
+    				DefaultEdge edge = new DefaultEdge();
+    			    
+   			        DefaultPort portS = ((IeppCell)cellSrc).getPortComp();
+   			        DefaultPort portD = ((IeppCell)cellDes).getPortComp();
+
+    		        ConnectionSet cs = new ConnectionSet(edge, portS, portD);
+    		     
+   			        Vector vecObj = new Vector();
+   			        vecObj.add(edge);
+   			        
+   			        this.getModel().insert(vecObj.toArray(), null, cs, null, null);
+	        	}
+    			else {
+	    				System.out.println("SOURCE & DESTINATION identiques");
+    			}
+
+        	}
+        }
+        firstMouseEvent = null;
 	}
 
 	public void mouseEntered( MouseEvent e ) 
@@ -762,31 +833,6 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener, Mous
 		}
 		
 		dtde.dropComplete(false);	
-		
-		/*
-		System.out.println("NomComp: "+nomComp);
-		DefaultGraphCell myCell = new DefaultGraphCell(nomComp);
-		
-		Map cellAttribute = GraphConstants.createMap();
-		Map myAttribute = new Hashtable();
-		myAttribute.put(myCell, cellAttribute);
-
-		Vector vecObj = new Vector();
-		vecObj.add(myCell);
-		
-		ImageIcon i = new ImageIcon(Application.getApplication().getConfigPropriete("dossierImagesIepp")+ "composant.png");
-		
-		GraphConstants.setIcon(cellAttribute, i);
-		
-		GraphConstants.setBounds(cellAttribute, new Rectangle((int)p.getX(),(int)p.getY(),i.getIconWidth(),i.getIconHeight()+30));
-		//GraphConstants.setBorder(cellAttribute,BorderFactory.createLineBorder(Color.BLACK,2));
-		
-		this.getModel().insert(vecObj.toArray(), myAttribute, null, null,null );
-		
-		//this.updateUI();
-		this.repaint();
-		*/
-		
 	}
 
 	/**
