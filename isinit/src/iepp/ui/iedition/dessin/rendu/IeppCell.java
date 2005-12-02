@@ -44,6 +44,7 @@ public class IeppCell extends DefaultGraphCell {
 	
 	public void setNomCompCell(String s) {
 		nomComposantCellule=s;
+		this.setUserObject(nomComposantCellule);
 	}
 	
 	public String getNomCompCell() {

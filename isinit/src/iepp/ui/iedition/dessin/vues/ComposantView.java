@@ -1,5 +1,6 @@
 package iepp.ui.iedition.dessin.vues;
 
+import iepp.ui.iedition.dessin.rendu.ComposantCell;
 import iepp.ui.iedition.dessin.rendu.IeppCell;
 
 import java.awt.Point;
@@ -12,7 +13,10 @@ import javax.swing.ImageIcon;
 import org.jgraph.JGraph;
 import org.jgraph.graph.CellMapper;
 import org.jgraph.graph.CellViewRenderer;
+import org.jgraph.graph.GraphConstants;
 import org.jgraph.graph.VertexView;
+
+import sun.awt.font.GraphicComponent;
 
 public class ComposantView extends VertexView {
 

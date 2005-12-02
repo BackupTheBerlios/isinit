@@ -1,6 +1,7 @@
 package iepp.ui.iedition.dessin.vues;
 
 import iepp.ui.iedition.dessin.rendu.IeppCell;
+import iepp.ui.iedition.dessin.rendu.ProduitCell;
 
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -12,6 +13,7 @@ import javax.swing.ImageIcon;
 import org.jgraph.JGraph;
 import org.jgraph.graph.CellMapper;
 import org.jgraph.graph.CellViewRenderer;
+import org.jgraph.graph.GraphConstants;
 import org.jgraph.graph.VertexView;
 
 public class ProduitView extends VertexView {
@@ -34,7 +36,7 @@ public class ProduitView extends VertexView {
 		
 		ImageIcon i = new ImageIcon(((IeppCell)getCell()).getCheminImageComposant()+ ((IeppCell)getCell()).getImageComposant());
 		
-		if(((IeppCell)getCell()).getImageComposant().equals("produit.png")){
+		if(((IeppCell)getCell()).getImageComposant().equals("produit.png")  || ((IeppCell)getCell()).getImageComposant().equals("produitLie.png")){
 		
 			/*
 			 * 0       1

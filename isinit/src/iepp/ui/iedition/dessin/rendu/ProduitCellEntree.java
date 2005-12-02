@@ -4,9 +4,23 @@ import iepp.ui.iedition.dessin.vues.MDProduit;
 
 public class ProduitCellEntree extends ProduitCell {
 
-	public ProduitCellEntree(MDProduit mprod) {
+	protected ComposantCell compParent;
+	public ProduitCellEntree(MDProduit mprod , ComposantCell comp) {
 		super(mprod);
-		// TODO Auto-generated constructor stub
+
+		compParent = comp;
+	}
+	/**
+	 * @return Returns the compParent.
+	 */
+	public ComposantCell getCompParent() {
+		return compParent;
+	}
+	/**
+	 * @param compParent The compParent to set.
+	 */
+	public void setCompParent(ComposantCell compParent) {
+		this.compParent = compParent;
 	}
 
 }

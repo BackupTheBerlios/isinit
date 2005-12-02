@@ -45,6 +45,7 @@ import iepp.ui.iedition.dessin.vues.ComposantView;
 import iepp.ui.iedition.dessin.vues.MDDiagramme;
 import iepp.ui.iedition.dessin.vues.MDElement;
 import iepp.ui.iedition.dessin.vues.MDLienClassic;
+import iepp.ui.iedition.dessin.vues.MDProduit;
 import iepp.ui.iedition.dessin.vues.ProduitView;
 
 import java.awt.Color;
@@ -64,6 +65,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.io.Serializable;
 import java.util.Enumeration;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Vector;
@@ -690,7 +692,6 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener, Mous
 
 	public void mousePressed( MouseEvent e )
 	{
-		System.out.println("bool:"+boutonLierActif);
 		IeppCell ic = (IeppCell)this.getFirstCellForLocation(e.getX(),e.getY());
 		if(boutonLierActif == true){
 			GraphConstants.setMoveable(ic.getAttributes(), false);
@@ -706,17 +707,15 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener, Mous
 	 	}
 		else
 		{
-			GraphConstants.setMoveable(ic.getAttributes(), true);
-			this.repaint();
+			//GraphConstants.setMoveable(ic.getAttributes(), true);
+			//this.repaint();
 			firstMouseEvent = null;
 		}
 	}
 
 	public void mouseReleased( MouseEvent e ) 
 	{
-		//this.diagramTool.mouseReleased(e);
-        System.out.println("mouseReleased");
-        
+		
         if(boutonLierActif == true){
         	
         	// verifier ke la ou l'on a relacher la souris , il y a un produit
@@ -726,24 +725,71 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener, Mous
         		Object cellSrc = this.getFirstCellForLocation(firstMouseEvent.getX(),firstMouseEvent.getY());
     			Object cellDes = this.getFirstCellForLocation(e.getX(),e.getY());
 		
+    			Object cellEnt = null;
+    			Object cellSor = null;
+    			
     			if (((cellSrc instanceof ProduitCellEntree) && (cellDes instanceof ProduitCellSortie)) || (cellSrc instanceof ProduitCellSortie) && (cellDes instanceof ProduitCellEntree) ) {
     				// verif ke les 2 soit un produit de type differents
 	    			
+    				if(cellDes instanceof ProduitCellEntree){
+    					cellEnt = cellDes;
+    					cellSor = cellSrc;
+    				}else{
+    					cellEnt = cellSrc;
+    					cellSor = cellDes;
+    				}
     				
-    				System.out.println("SOURCE :"+cellSrc);
-    				System.out.println("DESTINATION :"+cellDes);
-	    				
-    				DefaultEdge edge = new DefaultEdge();
-    			    
-   			        DefaultPort portS = ((IeppCell)cellSrc).getPortComp();
-   			        DefaultPort portD = ((IeppCell)cellDes).getPortComp();
+    					
+    				DefaultEdge edge1 = new DefaultEdge();
+    				DefaultEdge edge2 = new DefaultEdge();
+    				
+    				ProduitCell newProdCell = new ProduitCell(((ProduitCell)cellSrc).getMprod());
+    				newProdCell.setNomCompCell(((ProduitCell)cellSrc).getNomCompCell() + "(" + ((ProduitCell)cellDes).getNomCompCell() + ")");
+    				newProdCell.setImageComposant("produitLie.png");
+    				
+    				Map AllAttribute = GraphConstants.createMap();
+    				Map edge1Attribute = GraphConstants.createMap();
+    				Map edge2Attribute = GraphConstants.createMap();
+    				
+    				
+    				AllAttribute.put(edge1, edge1Attribute);
+    				AllAttribute.put(edge2, edge2Attribute);
+    				AllAttribute.put(newProdCell,newProdCell.getAttributs());
 
-    		        ConnectionSet cs = new ConnectionSet(edge, portS, portD);
-    		     
-   			        Vector vecObj = new Vector();
-   			        vecObj.add(edge);
+    				GraphConstants.setLineEnd(edge1Attribute, GraphConstants.ARROW_CLASSIC);
+    				GraphConstants.setEndFill(edge1Attribute, true);
+    				GraphConstants.setDisconnectable(edge1Attribute,false);
+    				GraphConstants.setEditable(edge1Attribute,false);
+    				
+    				GraphConstants.setLineEnd(edge2Attribute, GraphConstants.ARROW_CLASSIC);
+    				GraphConstants.setEndFill(edge2Attribute, true);
+    				GraphConstants.setDisconnectable(edge2Attribute,false);
+    				GraphConstants.setEditable(edge2Attribute,false);
+    				
+    				
    			        
-   			        this.getModel().insert(vecObj.toArray(), null, cs, null, null);
+   			        DefaultPort portS = ((ProduitCellSortie)cellSor).getCompParent().getPortComp();
+   			        DefaultPort portDInt = ((ProduitCell)newProdCell).getPortComp();
+   			        DefaultPort portD = ((ProduitCellEntree)cellEnt).getCompParent().getPortComp();
+
+    		        ConnectionSet cs1 = new ConnectionSet(edge1, portS, portDInt);
+    		        ConnectionSet cs2 = new ConnectionSet(edge2, portDInt, portD);
+       		     
+   			        Vector vecObj = new Vector();
+   			        vecObj.add(newProdCell);
+   			        vecObj.add(edge1);
+   			        vecObj.add(edge2);
+   			        
+   			        this.getModel().insert(vecObj.toArray(), AllAttribute, null, null, null);
+   			        this.getModel().insert(null, null, cs1, null, null);
+   			        this.getModel().insert(null, null, cs2, null, null);
+   			        
+   			        vecObj.clear();
+   			        vecObj.add(cellSrc);
+   			        vecObj.add(cellDes);
+   			        
+   			        this.getModel().remove(vecObj.toArray());
+   			        
    			        
            	}
     			else {

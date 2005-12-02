@@ -17,9 +17,12 @@ public class ComposantCell extends IeppCell {
 	protected double ordonnee;
 	protected double largeur;
 	protected double hauteur;
+	protected MDComposantProcessus mdcomp;
 	
 	public ComposantCell( MDComposantProcessus mdcomp ) {
 		super(mdcomp.getNom());
+		
+		this.mdcomp = mdcomp;
 		
 		this.imageComposant="composant.png";
 		
@@ -37,6 +40,7 @@ public class ComposantCell extends IeppCell {
 		GraphConstants.setEditable(getAttributs(), false);
 		GraphConstants.setSizeable (getAttributs(), false);
 		GraphConstants.setFont(getAttributs(),mdcomp.getPolice());
+		
 	}
 	
 	public double getAbscisse() {
@@ -86,5 +90,19 @@ public class ComposantCell extends IeppCell {
 
 	public void setOrdonnee(double ordonnee) {
 		this.ordonnee = ordonnee;
+	}
+
+	/**
+	 * @return Returns the mdcomp.
+	 */
+	public MDComposantProcessus getMdcomp() {
+		return mdcomp;
+	}
+
+	/**
+	 * @param mdcomp The mdcomp to set.
+	 */
+	public void setMdcomp(MDComposantProcessus mdcomp) {
+		this.mdcomp = mdcomp;
 	}
 }

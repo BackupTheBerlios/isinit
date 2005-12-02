@@ -15,9 +15,14 @@ public class ProduitCell extends IeppCell {
 	protected double ordonnee;
 	protected double largeur;
 	protected double hauteur;
+	protected MDProduit mprod;
+	protected ComposantCell composant;
 	
 	public ProduitCell(MDProduit mprod ) {
 		super(mprod.getNom());
+		
+		
+		this.mprod = mprod;
 		
 		this.imageComposant ="produit.png";
 		
@@ -32,11 +37,13 @@ public class ProduitCell extends IeppCell {
 		hauteur=mprod.getHauteur();
 		
 		GraphConstants.setIcon(getAttributs(), i);
-		GraphConstants.setBounds(getAttributs(), new Rectangle((int)abscisse,(int)ordonnee,(int)largeur,(int)hauteur));
+		Rectangle r = new Rectangle((int)abscisse,(int)ordonnee,(int)largeur,(int)hauteur);
+		GraphConstants.setBounds(getAttributs(), r);
 		GraphConstants.setAutoSize(getAttributs(), true);
 		GraphConstants.setEditable(getAttributs(), false);
 		GraphConstants.setSizeable (getAttributs(), false);
 		GraphConstants.setFont(getAttributs(),mprod.getPolice());
+		
 	}
 
 	public double getAbscisse() {
@@ -66,6 +73,9 @@ public class ProduitCell extends IeppCell {
 
 	public void setImageComposant(String imageComposant) {
 		this.imageComposant = imageComposant;
+		ImageIcon i = new ImageIcon(getCheminImageComposant()+ imageComposant);
+		GraphConstants.setIcon(getAttributs(), i);
+		
 	}
 
 
@@ -86,5 +96,19 @@ public class ProduitCell extends IeppCell {
 
 	public void setOrdonnee(double ordonnee) {
 		this.ordonnee = ordonnee;
+	}
+
+	/**
+	 * @return Returns the mprod.
+	 */
+	public MDProduit getMprod() {
+		return mprod;
+	}
+
+	/**
+	 * @param mprod The mprod to set.
+	 */
+	public void setMprod(MDProduit mprod) {
+		this.mprod = mprod;
 	}
 }

@@ -34,6 +34,7 @@ import iepp.ui.iedition.dessin.vues.MDComposantProcessus;
 import iepp.ui.iedition.dessin.vues.MDProduit;
 
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.util.Map;
 import java.util.Vector;
 
@@ -151,7 +152,7 @@ public class CAjouterComposantGraphe extends CommandeAnnulable
 			///////////////////////////////////////////////////
 			fenetre.getVueDPGraphe().selectionneFigure(fprod);
 			
-			ProduitCellEntree produitCell = new ProduitCellEntree(mprod);
+			ProduitCellEntree produitCell = new ProduitCellEntree(mprod,composantCell);
 
 			vSelection.add(produitCell);
 			AllAttrubiteCell.put(produitCell,produitCell.getAttributs());
@@ -179,7 +180,7 @@ public class CAjouterComposantGraphe extends CommandeAnnulable
 			 //////////////////////////////////////////////////
 			 fenetre.getVueDPGraphe().selectionneFigure(fprod);
 
-			 ProduitCellSortie produitCell = new ProduitCellSortie(mprod);
+			 ProduitCellSortie produitCell = new ProduitCellSortie(mprod,composantCell);
 
 			 vSelection.add(produitCell);
 			 AllAttrubiteCell.put(produitCell,produitCell.getAttributs());
@@ -194,7 +195,7 @@ public class CAjouterComposantGraphe extends CommandeAnnulable
 		 fenetre.getVueDPGraphe().getModel().insert(vCellComposant.toArray(), AllAttrubiteCell, null, null,null );
 		 fenetre.getVueDPGraphe().setSelectionCells(vSelection.toArray());
 		 
-		return (true);
+		 return (true);
 	}
        
 	public boolean est_vide()
