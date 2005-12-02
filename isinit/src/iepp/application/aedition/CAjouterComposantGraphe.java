@@ -19,26 +19,29 @@
 
 package iepp.application.aedition;
 
+import iepp.Application;
+import iepp.application.CommandeAnnulable;
+import iepp.domaine.ComposantProcessus;
+import iepp.domaine.IdObjetModele;
+import iepp.ui.iedition.FenetreEdition;
+import iepp.ui.iedition.dessin.rendu.ComposantCell;
+import iepp.ui.iedition.dessin.rendu.FComposantProcessus;
+import iepp.ui.iedition.dessin.rendu.FProduit;
+import iepp.ui.iedition.dessin.rendu.ProduitCell;
+import iepp.ui.iedition.dessin.rendu.ProduitCellEntree;
+import iepp.ui.iedition.dessin.rendu.ProduitCellSortie;
+import iepp.ui.iedition.dessin.vues.MDComposantProcessus;
+import iepp.ui.iedition.dessin.vues.MDProduit;
+
 import java.awt.Point;
 import java.util.Map;
 import java.util.Vector;
 
 import org.jgraph.graph.GraphConstants;
 
-import util.ErrorManager;
+import com.sun.rsasign.m;
 
-import iepp.* ;
-import iepp.ui.iedition.*;
-import iepp.ui.iedition.dessin.rendu.ComposantCell;
-import iepp.ui.iedition.dessin.rendu.FComposantProcessus;
-import iepp.ui.iedition.dessin.rendu.FProduit;
-import iepp.ui.iedition.dessin.rendu.ProduitCell;
-import iepp.ui.iedition.dessin.rendu.liens.FLienInterface;
-import iepp.ui.iedition.dessin.vues.MDComposantProcessus;
-import iepp.ui.iedition.dessin.vues.MDLienDotted;
-import iepp.ui.iedition.dessin.vues.MDProduit;
-import iepp.application.CommandeAnnulable;
-import iepp.domaine.* ;
+import util.ErrorManager;
 
 /**
  * Commande annulable permettant d'ajouter un composant avec son interface
@@ -148,7 +151,7 @@ public class CAjouterComposantGraphe extends CommandeAnnulable
 			///////////////////////////////////////////////////
 			fenetre.getVueDPGraphe().selectionneFigure(fprod);
 			
-			ProduitCell produitCell = new ProduitCell(mprod);
+			ProduitCellEntree produitCell = new ProduitCellEntree(mprod);
 
 			vSelection.add(produitCell);
 			AllAttrubiteCell.put(produitCell,produitCell.getAttributs());
@@ -176,7 +179,7 @@ public class CAjouterComposantGraphe extends CommandeAnnulable
 			 //////////////////////////////////////////////////
 			 fenetre.getVueDPGraphe().selectionneFigure(fprod);
 
-			 ProduitCell produitCell = new ProduitCell(mprod);
+			 ProduitCellSortie produitCell = new ProduitCellSortie(mprod);
 
 			 vSelection.add(produitCell);
 			 AllAttrubiteCell.put(produitCell,produitCell.getAttributs());

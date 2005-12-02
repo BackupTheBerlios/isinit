@@ -87,7 +87,6 @@ public class CLierInterface extends CommandeNonAnnulable
 	{
 		this.diagramme = d;
 		/*
-		
 		this.lien = l;
 		((MDLien) lien.getModele()).setSource((MDElement) source.getModele());
 		((MDLien) lien.getModele()).setDestination((MDElement) destination.getModele());
@@ -158,15 +157,20 @@ public class CLierInterface extends CommandeNonAnnulable
 		GraphConstants.setEditable(edgeAttribute,false);
 		
 		Vector vecObj = new Vector();
-        
-		vecObj.add(cellS);
-        vecObj.add(cellD);
+		
+		if (!diagramme.getModel().contains(cellS))
+		{
+			vecObj.add(cellS);
+		}
+		if (!diagramme.getModel().contains(cellD))
+		{
+			vecObj.add(cellD);
+		}
         vecObj.add(lienComp);
         
         ConnectionSet cs = new ConnectionSet(lienComp, portS, portD);
      
         diagramme.getModel().insert(vecObj.toArray(), AllAttribute, null, null, null);
-		
 		diagramme.getModel().insert(null, null, cs, null, null);
 	        
 		diagramme.show();

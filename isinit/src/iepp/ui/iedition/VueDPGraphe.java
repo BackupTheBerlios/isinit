@@ -31,30 +31,22 @@ import iepp.application.areferentiel.Referentiel;
 import iepp.domaine.ComposantProcessus;
 import iepp.domaine.DefinitionProcessus;
 import iepp.domaine.IdObjetModele;
-import iepp.ui.iedition.dessin.rendu.*;
+import iepp.ui.iedition.dessin.rendu.ComposantCell;
+import iepp.ui.iedition.dessin.rendu.FElement;
+import iepp.ui.iedition.dessin.rendu.Figure;
+import iepp.ui.iedition.dessin.rendu.IeppCell;
+import iepp.ui.iedition.dessin.rendu.ProduitCell;
+import iepp.ui.iedition.dessin.rendu.ProduitCellEntree;
+import iepp.ui.iedition.dessin.rendu.ProduitCellSortie;
 import iepp.ui.iedition.dessin.rendu.handle.Handle;
 import iepp.ui.iedition.dessin.rendu.liens.FLien;
-import iepp.ui.iedition.dessin.rendu.liens.FLienFusion;
+import iepp.ui.iedition.dessin.rendu.liens.FLienClassic;
 import iepp.ui.iedition.dessin.vues.ComposantView;
 import iepp.ui.iedition.dessin.vues.MDDiagramme;
 import iepp.ui.iedition.dessin.vues.MDElement;
 import iepp.ui.iedition.dessin.vues.MDLienClassic;
 import iepp.ui.iedition.dessin.vues.ProduitView;
-import java.util.* ;
-import java.lang.Object;
 
-import org.jgraph.JGraph;
-import org.jgraph.graph.CellMapper;
-import org.jgraph.graph.ConnectionSet;
-import org.jgraph.graph.DefaultEdge;
-import org.jgraph.graph.DefaultGraphCell;
-import org.jgraph.graph.DefaultGraphModel;
-import org.jgraph.graph.DefaultPort;
-import org.jgraph.graph.GraphConstants;
-import org.jgraph.graph.GraphModel;
-import org.jgraph.graph.VertexView;
-
-import util.Vecteur;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -67,8 +59,26 @@ import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
-import java.awt.event.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.io.Serializable;
+import java.util.Enumeration;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.Vector;
+
+import org.jgraph.JGraph;
+import org.jgraph.graph.CellMapper;
+import org.jgraph.graph.ConnectionSet;
+import org.jgraph.graph.DefaultEdge;
+import org.jgraph.graph.DefaultGraphModel;
+import org.jgraph.graph.DefaultPort;
+import org.jgraph.graph.GraphConstants;
+import org.jgraph.graph.GraphModel;
+import org.jgraph.graph.VertexView;
+
+import util.Vecteur;
 
 /**
  * Classe permettant d'afficher un diagramme d'assemblage de composant
@@ -608,12 +618,12 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener, Mous
 		  boutonLierActif = false;
 		  
 		  this.setOutil(new OSelection(this));
-		  
-		  System.out.println(this.getModel().getRootCount());
-		  
+
+          this.setMoveable(true);
+
+          /*			
 		  this.setSelectionCells(new Object[]{});
-			
-		  
+
 		  for(int i=0;i<this.getModel().getRootCount();i++){
 				if(this.getModel().getRootAt(i) instanceof IeppCell){
 					IeppCell cell = (IeppCell)this.getModel().getRootAt(i);
@@ -624,8 +634,10 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener, Mous
 			}
 				
 			// pour la prise en compte dans le graph
-			this.repaint();
-	  }
+			 * 
+			 */
+		   this.update(this.getGraphics());
+		  }
 
 	  /**
 	   * Fixe l'outil courant en tant que OLier2Element.
@@ -634,7 +646,10 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener, Mous
 	   {
 		   boutonLierActif = true;
 		   
-		   this.setOutil(new OLier2Elements(this, Color.BLACK, new FLienFusion(new MDLienClassic())));
+		   this.setOutil(new OLier2Elements(this, Color.BLACK, new FLienClassic(new MDLienClassic())));
+
+		   this.setMoveable(false);
+/*
 
 		   System.out.println(this.getModel().getRootCount());
 		   
@@ -644,16 +659,16 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener, Mous
 		   for(int i=0;i<this.getModel().getRootCount();i++){
 				if(this.getModel().getRootAt(i) instanceof IeppCell){
 					IeppCell cell = (IeppCell)this.getModel().getRootAt(i);
-					  System.out.println((IeppCell)this.getModel().getRootAt(i));
-					   
-					   
+					  System.out.println("Lier:"+(IeppCell)this.getModel().getRootAt(i));
+					 
 					GraphConstants.setMoveable(cell.getAttributes(),false);
 				}
 			}
-				
+			
 			// pour la prise en compte dans le graph
-		   this.repaint();
-	   }
+			 */
+		   this.update(this.getGraphics());
+		}
 	   
 	   /**
 	    * Fixe l'outil courant en tant que OCreerElement
@@ -675,7 +690,11 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener, Mous
 
 	public void mousePressed( MouseEvent e )
 	{
+		System.out.println("bool:"+boutonLierActif);
+		IeppCell ic = (IeppCell)this.getFirstCellForLocation(e.getX(),e.getY());
 		if(boutonLierActif == true){
+			GraphConstants.setMoveable(ic.getAttributes(), false);
+			this.repaint();
 		
 			if ( this.getFirstCellForLocation(e.getX(),e.getY()) != null) {
 	        	firstMouseEvent = e;
@@ -684,9 +703,13 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener, Mous
 				
 				firstMouseEvent = null;
 			}
-	        
-		 	
 	 	}
+		else
+		{
+			GraphConstants.setMoveable(ic.getAttributes(), true);
+			this.repaint();
+			firstMouseEvent = null;
+		}
 	}
 
 	public void mouseReleased( MouseEvent e ) 
@@ -721,7 +744,8 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener, Mous
    			        vecObj.add(edge);
    			        
    			        this.getModel().insert(vecObj.toArray(), null, cs, null, null);
-	        	}
+   			        
+           	}
     			else {
 	    				System.out.println("SOURCE & DESTINATION identiques");
     			}
@@ -733,6 +757,7 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener, Mous
 
 	public void mouseEntered( MouseEvent e ) 
 	{
+		this.repaint();
 		//this.diagramTool.mouseEntered(e);
 	}
 
@@ -858,7 +883,7 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener, Mous
 	}
 
 	/** 
-	 * @see org.jgraph.JGraph#createVertexView(java.lang.Object, org.jgraph.graph.CellMapper)
+	 * @see JGraph#createVertexView(java.lang.Object, org.jgraph.graph.CellMapper)
 	 */
 	protected VertexView createVertexView(Object v, CellMapper cm) {
 		
