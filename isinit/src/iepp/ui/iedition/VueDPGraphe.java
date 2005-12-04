@@ -689,6 +689,7 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 						cellSor = cellDes;
 					}
 					
+					// On essaie de relier un produit en entree et en sortie d'un meme composant
 					if(((ProduitCellEntree)cellEnt).getCompParent().equals(((ProduitCellSortie)cellSor).getCompParent())){
 						return;
 					}
@@ -696,8 +697,11 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 					LienEdge edge1 = new LienEdge();
 					LienEdge edge2 = new LienEdge();
 
-					ProduitCell newProdCell = new ProduitCell(
-							((ProduitCell) cellSrc).getMprod());
+					MDProduit mdp1 = ((ProduitCell) cellSrc).getMprod();
+					MDProduit mdp2 = ((ProduitCell) cellDes).getMprod();
+					mdp1.setX((mdp1.getX()+mdp2.getX())/2);
+					mdp1.setY((mdp1.getY()+mdp2.getY())/2);
+					ProduitCell newProdCell = new ProduitCell(mdp1);
 					
 					if(!((ProduitCell)cellSrc).getNomCompCell().equalsIgnoreCase(((ProduitCell) cellDes).getNomCompCell())){
 					newProdCell.setNomCompCell(((ProduitCell) cellSrc)
