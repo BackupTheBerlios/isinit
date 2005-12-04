@@ -781,7 +781,6 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 	}
 
 	public void mouseEntered(MouseEvent e) {
-		this.repaint();
 		//this.diagramTool.mouseEntered(e);
 	}
 
