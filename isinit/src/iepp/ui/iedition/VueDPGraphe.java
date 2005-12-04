@@ -19,7 +19,6 @@ package iepp.ui.iedition;
  * 
  */
 
-
 import iepp.Application;
 import iepp.application.CAjouterComposantDP;
 import iepp.application.aedition.CAjouterComposantGraphe;
@@ -35,6 +34,7 @@ import iepp.ui.iedition.dessin.rendu.ComposantCell;
 import iepp.ui.iedition.dessin.rendu.FElement;
 import iepp.ui.iedition.dessin.rendu.Figure;
 import iepp.ui.iedition.dessin.rendu.IeppCell;
+import iepp.ui.iedition.dessin.rendu.LienEdge;
 import iepp.ui.iedition.dessin.rendu.ProduitCell;
 import iepp.ui.iedition.dessin.rendu.ProduitCellEntree;
 import iepp.ui.iedition.dessin.rendu.ProduitCellSortie;
@@ -85,107 +85,110 @@ import util.Vecteur;
 /**
  * Classe permettant d'afficher un diagramme d'assemblage de composant
  */
-public class VueDPGraphe extends JGraph implements Observer, MouseListener, MouseMotionListener, Serializable, DropTargetListener
-{
+public class VueDPGraphe extends JGraph implements Observer, MouseListener,
+		MouseMotionListener, Serializable, DropTargetListener {
 
 	/**
-	* Outil courant.
-	*/
+	 * Outil courant.
+	 */
 	private Outil diagramTool;
-	 
+
 	/**
-	* Modèle du diagramme.
-	*/
+	 * Modèle du diagramme.
+	 */
 	private MDDiagramme modele;
 
-	
 	/**
-	* Modèle du diagramme JGraph.
-	*/
+	 * Modèle du diagramme JGraph.
+	 */
 	private GraphModel Gmodele = new DefaultGraphModel();
 
-	
 	/**
-	* Eléments présents sur le diagramme.
-	*/
+	 * Eléments présents sur le diagramme.
+	 */
 	private Vector elements;
 
 	/**
-	* Liens présents sur le diagramme.
-	*/
+	 * Eléments présents sur le diagramme.
+	 */
+	private Vector listElements;
+	
+	/**
+	 * Liens présents sur le diagramme.
+	 */
 	private Vector liens;
 
 	/**
-	* Figures sélectionnés.
-	*/
+	 * Figures sélectionnés.
+	 */
 	private Vector selection;
-	
-	
+
 	/**
 	 * Dimension de la zone à afficher
 	 * sert à indiquer la taille setPreferedSize() du diagramme
 	 */
-	private Dimension zone_affichage ; 
-	
+	private Dimension zone_affichage;
+
 	/**
 	 * Memorise la premiere cellule cliquee
 	 */
 	private MouseEvent firstMouseEvent;
-	
+
 	/**
 	 * 
 	 */
 	private boolean boutonLierActif;
-	
+
 	/**
 	 * Construire le diagramme à partir de la définition de processus et 
 	 * d'un controleur
 	 * @param defProc, données à observer
 	 */
-	public VueDPGraphe (DefinitionProcessus defProc )
-	{
+	public VueDPGraphe(DefinitionProcessus defProc) {
 		// la vue observe le modèle
-		defProc.addObserver (this) ;
+		defProc.addObserver(this);
 		// le diagramme au départ est vide
 		this.setModele(new MDDiagramme());
-		
-		
+
 		this.setModel(Gmodele);
 
 		this.setOpaque(true);
 		this.setLayout(null);
-	
+
 		// initialiser les listes d'éléments
 		this.elements = new Vector();
 		this.liens = new Vector();
 		this.selection = new Vector();
-		
+		this.listElements = new Vector();
+
 		// par défault, on utilise l'outil de sélection
-		this.diagramTool = new OSelection(this);		
-		
+		this.diagramTool = new OSelection(this);
+
 		// ajouter les controleurs
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
-		
+
 		this.zone_affichage = this.getSize();
 		this.setPreferredSize(this.zone_affichage);
 		this.setAutoscrolls(true);
-		
+
 		// on met la couleur par défaut au diagramme
-		modele.setFillColor(new Color(Integer.parseInt(Application.getApplication().getConfigPropriete("couleur_fond_diagrmme"))));
-		
+		modele
+				.setFillColor(new Color(Integer.parseInt(Application
+						.getApplication().getConfigPropriete(
+								"couleur_fond_diagrmme"))));
+
 		//on peut aussi déposer des objets dans l'arbre drop target
-		 new DropTarget(this, DnDConstants.ACTION_COPY_OR_MOVE, this, true);
-		 
-		 this.setFocusable(true);
+		new DropTarget(this, DnDConstants.ACTION_COPY_OR_MOVE, this, true);
+
+		this.setFocusable(true);
 	}
 
 	/**
 	 * Méthode appelée quand l'objet du domaine observé est modifié
 	 * et qu'il appelle la méthode notifyObservers()
 	 */
-	public void update(Observable o, Object arg)
-	{
+	public void update(Observable o, Object arg) {
 		this.repaint();
 	}
 
@@ -193,734 +196,687 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener, Mous
 	//  Affichage
 	//-------------------------------------------------------------------------
 	/**
-	* Repeind le diagramme.
-	*/
-	public void paintComponent( Graphics g )
-	{
+	 * Repeind le diagramme.
+	 */
+	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		this.calculerDimension();
 
 		//A regarder
 		//this.updateAutoSize()
-		
+
 		/*
-		// Couleur de remplissage
-		g.setColor(getModele().getFillColor());
-		g.fillRect(0,0,getWidth(),getHeight());
+		 // Couleur de remplissage
+		 g.setColor(getModele().getFillColor());
+		 g.fillRect(0,0,getWidth(),getHeight());
 
-		// Dessine les liens
-		for (int i = 0; i < this.liens.size(); i++)
-		{
-			((FLien) (this.liens.elementAt(i))).paintComponent(g);
-		} 
-		
-		// Dessine les éléments
-		for (int i = 0; i < this.elements.size(); i++)
-		{
-		  ((FElement) (this.elements.elementAt(i))).paintComponent(g);
-		}
-		
+		 // Dessine les liens
+		 for (int i = 0; i < this.liens.size(); i++)
+		 {
+		 ((FLien) (this.liens.elementAt(i))).paintComponent(g);
+		 } 
+		 
+		 // Dessine les éléments
+		 for (int i = 0; i < this.elements.size(); i++)
+		 {
+		 ((FElement) (this.elements.elementAt(i))).paintComponent(g);
+		 }
+		 
 
-		// Dessine les poignées (handles)
-		for (int i = 0; i < this.selection.size(); i++)
-		{
-			((Figure) (this.selection.elementAt(i))).displayHandles(g);
-		} 
-		  
+		 // Dessine les poignées (handles)
+		 for (int i = 0; i < this.selection.size(); i++)
+		 {
+		 ((Figure) (this.selection.elementAt(i))).displayHandles(g);
+		 } 
+		 
 		 // Permet de dessiner la représentation de l'outil (ex : cadre de sélection)
 		 if (this.diagramTool != null)
 		 {
-			 //this.diagramTool.draw(g);
+		 //this.diagramTool.draw(g);
 		 } 
-		*/
+		 */
 	}
-
-	
 
 	//-------------------------------------------------------------------------
 	//                         Relations avec le modèle
 	//-------------------------------------------------------------------------
-	
+
 	/**
-	* Retourne le modèle représenté par le diagramme.
-	* @return le modèle de dessin associé au diagramme
-	*/
-	public MDDiagramme getModele()
-	{
+	 * Retourne le modèle représenté par le diagramme.
+	 * @return le modèle de dessin associé au diagramme
+	 */
+	public MDDiagramme getModele() {
 		return this.modele;
 	}
 
 	/**
-	* Fixe le modèle de dessin représenté par le diagramme.
-	* @param m, modèle de dessin à afficher
-	*/
-	public void setModele(MDDiagramme m)
-	{
+	 * Fixe le modèle de dessin représenté par le diagramme.
+	 * @param m, modèle de dessin à afficher
+	 */
+	public void setModele(MDDiagramme m) {
 		this.modele = m;
 	}
 
 	//---------------------------------------------------------------------
-    //                       Gestion des figures
-    //---------------------------------------------------------------------
+	//                       Gestion des figures
+	//---------------------------------------------------------------------
 
-   /**
-	* Recherche parmi les figures sélectionnées, si on a clické sur un handle.
-	* @param x, abscisse du click
-	* @param y, ordonnée du click
-	* @return le handle sur lequel on a cliqué, null su aucun handle n'est sélectionné
-	*/
-   public Handle chercherHandleFigure(int x, int y)
-   {
-		 int n = this.selection.size();
-		 Vecteur v = new Vecteur(x,y);
-		 Figure f;
-		 Handle h;
-		
-		 for(int i = 0 ; i < n ; i++)
-		 {
-			 f = (Figure) this.selection.elementAt(i);
-			 h = f.getHandle(v.x, v.y);
-			 if(h != null)
-			 {
-				 if (h.getVisible() == true)
-				 {
-				 	return h; 
-				 } 
-			 }
-		 }
-	 	return null;
-   }
-
-   /**
- 	* Recherche la figure sur laquelle on a clické
- 	* @param x, abscisse du click
-	* @param y, ordonnée du click
-	* @return la figure sur laquelle on a cliqué, null sinon
-	*/
-   public Figure chercherFigure(int x, int y)
-   {
-	 	Vecteur v = new Vecteur(x,y);
+	/**
+	 * Recherche parmi les figures sélectionnées, si on a clické sur un handle.
+	 * @param x, abscisse du click
+	 * @param y, ordonnée du click
+	 * @return le handle sur lequel on a cliqué, null su aucun handle n'est sélectionné
+	 */
+	public Handle chercherHandleFigure(int x, int y) {
+		int n = this.selection.size();
+		Vecteur v = new Vecteur(x, y);
 		Figure f;
-	 	int n;
+		Handle h;
 
-		 // Recherche parmi les éléments
-		 n = this.elements.size();
-		 for(int i = n - 1; i >= 0; i--)
-		 {
-			f = (Figure) this.elements.elementAt(i);
-			if(f.contient(v))
-			{
-				return f;
-			} 
-		 }
-	
-		 // Recherche parmi les liens
-		 n = this.liens.size();
-		 for(int i = n - 1; i >= 0; i--) 
-		 {
-			f = (Figure) this.liens.elementAt(i);
-			if(f.contient(v))
-			{
-				return f;
-			} 
-		 }
-		 return null;
-   }
-
-   /**
-   * Retourne tous les éléments du diagramme.
-   */
-   public Enumeration elements()
-   {
-	   return elements.elements();
-   }
-
-   /**
-   * Retourne tous les liens du diagramme.
-   */
-   public Enumeration liens()
-   {
-	   return liens.elements();
-   }
-   
-   public Vector getElements()
-   {
-   		return this.elements;
-   }
-   
-   public Vector getLiens()
-   {
-   		return this.liens;
-   }
-   
-   public void  setLiens(Vector l)
-   {
-   		this.liens = l;
-   }
-   
-   public void  setElements(Vector l)
-   {
-   		this.elements = l;
-   }
-   
-   
-   
-   /**
-   * Ajoute une figure au diagramme (élément ou lien).
-   * @param f, figure à ajouter au diagramme
-   */
-   public void ajouterFigure(Figure f)
-   {
-   		 // selon le type de la figure
-		 if (f instanceof FElement)
-		 {
-		  	this.elements.addElement(f);
-		 } 
-		 // lien
-		 else if (f instanceof FLien)
-		 {
-		   	this.liens.addElement(f);
-		   	((FLien) f).getSource().ajouterLien((FLien) f);
-		   	((FLien) f).getDestination().ajouterLien((FLien) f);
-		 }
-		
-		 // ajouter la figure au modèle de dessin		
-		 this.getModele().ajouterModeleFigure(f.getModele());
-		 // mettre à jour l'affichage
-		 this.repaint();
-   }
-
-   /**
-   * Supprime un élément du diagramme.
-   * @param f, l'élément à supprimer du diagramme
-   */
-   public void supprimerFigure(Figure f)
-   {
-   		// enlever l'élément de toutes les listes disponibles
-	   this.selection.removeElement(f);
-	   this.elements.removeElement(f);
-	   this.liens.removeElement(f);
-
-	   // enlever la figure du modèle de dessin
-	   this.getModele().supprimerModeleFigure(f.getModele());
-   }
-
-	  
-	  //---------------------------------------------------------------------
-	  //                       Gestion de la sélection
-	  //---------------------------------------------------------------------
-	
-	  /**
-	  * Retourne tous les éléments sélectionnés.
-	  */
-	  public Enumeration selectedElements()
-	  {
-		  return this.selection.elements();
-	  }
-	
-	  /**
-	  * Retourne le nombre d'éléments sélectionnés.
-	  */
-	  public int nbSelectedElements()
-	  {
-		  return this.selection.size();
-	  }
-	
-	  /**
-	  * Sélectionne une figure.
-	  */
-	  public void selectionneFigure(Figure figure)
-	  {
-		 if (!this.selection.contains(figure))
-		 {
-		   	this.selection.addElement(figure);
-		   	figure.setSelectionne(true);
-		 }
-	  }
-	
-	  /**
-	  * Dé-sélectionne une figure.
-	  */
-	  public void deSelectionneFigure(Figure figure)
-	  {
-		 this.selection.removeElement(figure);
-		 figure.setSelectionne(false);
-	  }
-	
-	  /**
-	  * Inverse la sélection d'une figure.
-	  */
-	  public void changeSelection(Figure figure)
-	  {
-		  if(this.selection.contains(figure))
-		  {
-			  this.deSelectionneFigure(figure);
-		  }
-		  else
-		  {
-			  this.selectionneFigure(figure);
-		  }
-	  }
-	
-	  /**
-	  * Inverse la sélection de toutes les figures comprises entre les deux points A (en haut à gauche)
-	  * et B (en bas à droite).
-	  */
-	  public void changeSelectionFigures(Vecteur A, Vecteur B)
-	  {
-		  Enumeration e = this.elements.elements();
-		  while(e.hasMoreElements())
-		  {
-			  Figure  figure = (Figure) e.nextElement();
-			  if (figure.appartient(A, B))
-			  {
-			  		this.changeSelection(figure);
-			  } 
-		  }
-	
-		  e = this.liens.elements();
-		  while(e.hasMoreElements())
-		  {
-			  Figure  figure = (Figure) e.nextElement();
-			  if (figure.appartient(A, B))
-			  {
-			  		this.changeSelection(figure);
-			  } 
-		  }
-	  }
-	
-	  /**
-	  * Désélectionne toutes les figures de la sélection.
-	  */
-	  public void clearSelection()
-	  {
-			Figure figure;
-			while(selection.size() > 0)
-			{
-		  		figure = (Figure) this.selection.elementAt(0);
-		  		this.deSelectionneFigure(figure);
+		for (int i = 0; i < n; i++) {
+			f = (Figure) this.selection.elementAt(i);
+			h = f.getHandle(v.x, v.y);
+			if (h != null) {
+				if (h.getVisible() == true) {
+					return h;
+				}
 			}
-	  }
-	  
-	  /**
-	   * Efface complètement le diagramme
-	   */
-	  public void effacerDiagramme()
-	  {
-	  	this.selection.removeAllElements();
-	  	this.liens.removeAllElements();
-	  	this.elements.removeAllElements();
-	  	this.repaint();
-   		
-	  }
+		}
+		return null;
+	}
+
+	/**
+	 * Recherche la figure sur laquelle on a clické
+	 * @param x, abscisse du click
+	 * @param y, ordonnée du click
+	 * @return la figure sur laquelle on a cliqué, null sinon
+	 */
+	public Figure chercherFigure(int x, int y) {
+		Vecteur v = new Vecteur(x, y);
+		Figure f;
+		int n;
+
+		// Recherche parmi les éléments
+		n = this.elements.size();
+		for (int i = n - 1; i >= 0; i--) {
+			f = (Figure) this.elements.elementAt(i);
+			if (f.contient(v)) {
+				return f;
+			}
+		}
+
+		// Recherche parmi les liens
+		n = this.liens.size();
+		for (int i = n - 1; i >= 0; i--) {
+			f = (Figure) this.liens.elementAt(i);
+			if (f.contient(v)) {
+				return f;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Retourne tous les éléments du diagramme.
+	 */
+	public Enumeration elements() {
+		return elements.elements();
+	}
+
+	/**
+	 * Retourne tous les liens du diagramme.
+	 */
+	public Enumeration liens() {
+		return liens.elements();
+	}
+
+	public Vector getElements() {
+		return this.elements;
+	}
+
+	public Vector getLiens() {
+		return this.liens;
+	}
+
+	public void setLiens(Vector l) {
+		this.liens = l;
+	}
+
+	public void setElements(Vector l) {
+		this.elements = l;
+	}
+
+	public void addElements(Vector l) {
+		this.listElements.add(l);
+	}
 	
-	  /**
-	  * Sélectionne tous les éléments du diagramme.
-	  */
-	  public void selectionnerTout()
-	  {
-		  Enumeration e = this.elements.elements();
-		  while(e.hasMoreElements())
-		  {
-			  Figure  figure = (Figure) e.nextElement();
-			  this.selectionneFigure(figure);
-		  }
-	
-		  e = this.liens.elements();
-		  while(e.hasMoreElements())
-		  {
-			  Figure  figure = (Figure) e.nextElement();
-			  this.selectionneFigure(figure);
-		  }
+	/**
+	 * Ajoute une figure au diagramme (élément ou lien).
+	 * @param f, figure à ajouter au diagramme
+	 */
+	public void ajouterFigure(Figure f) {
+		// selon le type de la figure
+		if (f instanceof FElement) {
+			this.elements.addElement(f);
+		}
+		// lien
+		else if (f instanceof FLien) {
+			this.liens.addElement(f);
+			((FLien) f).getSource().ajouterLien((FLien) f);
+			((FLien) f).getDestination().ajouterLien((FLien) f);
+		}
+
+		// ajouter la figure au modèle de dessin		
+		this.getModele().ajouterModeleFigure(f.getModele());
 		// mettre à jour l'affichage
 		this.repaint();
-	  }
+	}
 
-		/**
-		* Calculer la zone à afficher pour permettre le scrolling et l'encodage des images
-		* rectangle de la zone à afficher
-		*/
-		public void calculerDimension()
-		{
-			// récupérer les coordonnées de la figure la plus en bas à droit possible
-			int x = 0;
-			int y = 0;
-			
-			// récupérer les coordonnées de la figure la plus en haut à gauche
-			int x2 = this.getWidth();
-			int y2 = this.getHeight();
-			
-			Enumeration e = this.elements.elements();
-			while(e.hasMoreElements())
-			{
-				FElement  figure = (FElement) e.nextElement();
-				MDElement vue = (MDElement)figure.getModele();
-				if (vue.getX() + vue.getLargeur() > x )
-				{
-					x = vue.getX() + vue.getLargeur() ;
-					if ( figure.getFinChaine() > x )
-					{
-						x = figure.getFinChaine();
-					}
-				}
-				if (vue.getY() + vue.getHauteur() > y )
-				{
-					y = vue.getY() + vue.getHauteur() ;
-				}
-				if (vue.getX() < x2 )
-				{
-					x2 = vue.getX() ;
-					if ( figure.getDebutChaine() > 0 && figure.getDebutChaine() < x2 )
-					{
-						x2 = figure.getDebutChaine();
-					}
-				}
-				if (vue.getY() < y2 )
-				{
-					y2 = vue.getY();
-				}
+	/**
+	 * Supprime un élément du diagramme.
+	 * @param f, l'élément à supprimer du diagramme
+	 */
+	public void supprimerFigure(Figure f) {
+		// enlever l'élément de toutes les listes disponibles
+		this.selection.removeElement(f);
+		this.elements.removeElement(f);
+		this.liens.removeElement(f);
+
+		// enlever la figure du modèle de dessin
+		this.getModele().supprimerModeleFigure(f.getModele());
+	}
+
+	//---------------------------------------------------------------------
+	//                       Gestion de la sélection
+	//---------------------------------------------------------------------
+
+	/**
+	 * Retourne tous les éléments sélectionnés.
+	 */
+	public Enumeration selectedElements() {
+		return this.selection.elements();
+	}
+
+	/**
+	 * Retourne le nombre d'éléments sélectionnés.
+	 */
+	public int nbSelectedElements() {
+		return this.selection.size();
+	}
+
+	/**
+	 * Sélectionne une figure.
+	 */
+	public void selectionneFigure(Figure figure) {
+		if (!this.selection.contains(figure)) {
+			this.selection.addElement(figure);
+			figure.setSelectionne(true);
+		}
+	}
+
+	/**
+	 * Dé-sélectionne une figure.
+	 */
+	public void deSelectionneFigure(Figure figure) {
+		this.selection.removeElement(figure);
+		figure.setSelectionne(false);
+	}
+
+	/**
+	 * Inverse la sélection d'une figure.
+	 */
+	public void changeSelection(Figure figure) {
+		if (this.selection.contains(figure)) {
+			this.deSelectionneFigure(figure);
+		} else {
+			this.selectionneFigure(figure);
+		}
+	}
+
+	/**
+	 * Inverse la sélection de toutes les figures comprises entre les deux points A (en haut à gauche)
+	 * et B (en bas à droite).
+	 */
+	public void changeSelectionFigures(Vecteur A, Vecteur B) {
+		Enumeration e = this.elements.elements();
+		while (e.hasMoreElements()) {
+			Figure figure = (Figure) e.nextElement();
+			if (figure.appartient(A, B)) {
+				this.changeSelection(figure);
 			}
-			
-			this.zone_affichage.height = y + 45 ;
-			this.zone_affichage.width = x + 50 ;
-			this.setPreferredSize(this.zone_affichage);
-			this.revalidate();
 		}
 
-		public Dimension getZoneAffichage()
-		{
-			return this.zone_affichage ;
+		e = this.liens.elements();
+		while (e.hasMoreElements()) {
+			Figure figure = (Figure) e.nextElement();
+			if (figure.appartient(A, B)) {
+				this.changeSelection(figure);
+			}
+		}
+	}
+
+	/**
+	 * Désélectionne toutes les figures de la sélection.
+	 */
+	public void clearSelection() {
+		Figure figure;
+		while (selection.size() > 0) {
+			figure = (Figure) this.selection.elementAt(0);
+			this.deSelectionneFigure(figure);
+		}
+	}
+
+	/**
+	 * Efface complètement le diagramme
+	 */
+	public void effacerDiagramme() {
+		this.selection.removeAllElements();
+		this.liens.removeAllElements();
+		this.elements.removeAllElements();
+		this.repaint();
+
+	}
+
+	/**
+	 * Sélectionne tous les éléments du diagramme.
+	 */
+	public void selectionnerTout() {
+		Enumeration e = this.elements.elements();
+		while (e.hasMoreElements()) {
+			Figure figure = (Figure) e.nextElement();
+			this.selectionneFigure(figure);
 		}
 
-	  //-------------------------------------------------------------------------
-	  //                           Gestion des outils
-	  //-------------------------------------------------------------------------
-
-	  /**
-	  * Renvoie l'outil courant.
-	  */
-	  public Outil getOutil()
-	  {
-		  return this.diagramTool;
-	  }
-
-	  /**
-	  * Fixe l'outil courant.
-	  */
-	  public void setOutil(Outil o)
-	  {
-		  this.diagramTool = o;
-	  }
-	  
-	  /**
-	  * Fixe l'outil courant en tant que OSelection.
-	  */
-	  public void setOutilSelection()
-	  {
-		  boutonLierActif = false;
-		  
-		  this.setOutil(new OSelection(this));
-
-          this.setMoveable(true);
-
-          /*			
-		  this.setSelectionCells(new Object[]{});
-
-		  for(int i=0;i<this.getModel().getRootCount();i++){
-				if(this.getModel().getRootAt(i) instanceof IeppCell){
-					IeppCell cell = (IeppCell)this.getModel().getRootAt(i);
-					System.out.println((IeppCell)this.getModel().getRootAt(i));
-					
-					GraphConstants.setMoveable(cell.getAttributes(),true);
-				}
-			}
-				
-			// pour la prise en compte dans le graph
-			 * 
-			 */
-		   this.update(this.getGraphics());
-		  }
-
-	  /**
-	   * Fixe l'outil courant en tant que OLier2Element.
-	   */
-	   public void setOutilLier()
-	   {
-		   boutonLierActif = true;
-		   
-		   this.setOutil(new OLier2Elements(this, Color.BLACK, new FLienClassic(new MDLienClassic())));
-
-		   this.setMoveable(false);
-/*
-
-		   System.out.println(this.getModel().getRootCount());
-		   
-		   
-		   this.setSelectionCells(new Object[]{});
-				   
-		   for(int i=0;i<this.getModel().getRootCount();i++){
-				if(this.getModel().getRootAt(i) instanceof IeppCell){
-					IeppCell cell = (IeppCell)this.getModel().getRootAt(i);
-					  System.out.println("Lier:"+(IeppCell)this.getModel().getRootAt(i));
-					 
-					GraphConstants.setMoveable(cell.getAttributes(),false);
-				}
-			}
-			
-			// pour la prise en compte dans le graph
-			 */
-		   this.update(this.getGraphics());
+		e = this.liens.elements();
+		while (e.hasMoreElements()) {
+			Figure figure = (Figure) e.nextElement();
+			this.selectionneFigure(figure);
 		}
-	   
-	   /**
-	    * Fixe l'outil courant en tant que OCreerElement
-	    */
-	   public void setOutilCreerElement(FElement e)
-	   {
-	        this.setOutil(new OCreerElement(this, new Color(153, 0, 51), e));
-	   }
-	  
-	  
+		// mettre à jour l'affichage
+		this.repaint();
+	}
+
+	/**
+	 * Calculer la zone à afficher pour permettre le scrolling et l'encodage des images
+	 * rectangle de la zone à afficher
+	 */
+	public void calculerDimension() {
+		// récupérer les coordonnées de la figure la plus en bas à droit possible
+		int x = 0;
+		int y = 0;
+
+		// récupérer les coordonnées de la figure la plus en haut à gauche
+		int x2 = this.getWidth();
+		int y2 = this.getHeight();
+
+		Enumeration e = this.elements.elements();
+		while (e.hasMoreElements()) {
+			FElement figure = (FElement) e.nextElement();
+			MDElement vue = (MDElement) figure.getModele();
+			if (vue.getX() + vue.getLargeur() > x) {
+				x = vue.getX() + vue.getLargeur();
+				if (figure.getFinChaine() > x) {
+					x = figure.getFinChaine();
+				}
+			}
+			if (vue.getY() + vue.getHauteur() > y) {
+				y = vue.getY() + vue.getHauteur();
+			}
+			if (vue.getX() < x2) {
+				x2 = vue.getX();
+				if (figure.getDebutChaine() > 0 && figure.getDebutChaine() < x2) {
+					x2 = figure.getDebutChaine();
+				}
+			}
+			if (vue.getY() < y2) {
+				y2 = vue.getY();
+			}
+		}
+
+		this.zone_affichage.height = y + 45;
+		this.zone_affichage.width = x + 50;
+		this.setPreferredSize(this.zone_affichage);
+		this.revalidate();
+	}
+
+	public Dimension getZoneAffichage() {
+		return this.zone_affichage;
+	}
+
+	//-------------------------------------------------------------------------
+	//                           Gestion des outils
+	//-------------------------------------------------------------------------
+
+	/**
+	 * Renvoie l'outil courant.
+	 */
+	public Outil getOutil() {
+		return this.diagramTool;
+	}
+
+	/**
+	 * Fixe l'outil courant.
+	 */
+	public void setOutil(Outil o) {
+		this.diagramTool = o;
+	}
+
+	/**
+	 * Fixe l'outil courant en tant que OSelection.
+	 */
+	public void setOutilSelection() {
+		boutonLierActif = false;
+
+		this.setOutil(new OSelection(this));
+
+		this.setMoveable(true);
+
+		/*			
+		 this.setSelectionCells(new Object[]{});
+
+		 for(int i=0;i<this.getModel().getRootCount();i++){
+		 if(this.getModel().getRootAt(i) instanceof IeppCell){
+		 IeppCell cell = (IeppCell)this.getModel().getRootAt(i);
+		 System.out.println((IeppCell)this.getModel().getRootAt(i));
+		 
+		 GraphConstants.setMoveable(cell.getAttributes(),true);
+		 }
+		 }
+		 
+		 // pour la prise en compte dans le graph
+		 * 
+		 */
+		this.update(this.getGraphics());
+	}
+
+	/**
+	 * Fixe l'outil courant en tant que OLier2Element.
+	 */
+	public void setOutilLier() {
+		boutonLierActif = true;
+
+		this.setOutil(new OLier2Elements(this, Color.BLACK, new FLienClassic(
+				new MDLienClassic())));
+
+		this.setMoveable(false);
+		/*
+
+		 System.out.println(this.getModel().getRootCount());
+		 
+		 
+		 this.setSelectionCells(new Object[]{});
+		 
+		 for(int i=0;i<this.getModel().getRootCount();i++){
+		 if(this.getModel().getRootAt(i) instanceof IeppCell){
+		 IeppCell cell = (IeppCell)this.getModel().getRootAt(i);
+		 System.out.println("Lier:"+(IeppCell)this.getModel().getRootAt(i));
+		 
+		 GraphConstants.setMoveable(cell.getAttributes(),false);
+		 }
+		 }
+		 
+		 // pour la prise en compte dans le graph
+		 */
+		this.update(this.getGraphics());
+	}
+
+	/**
+	 * Fixe l'outil courant en tant que OCreerElement
+	 */
+	public void setOutilCreerElement(FElement e) {
+		this.setOutil(new OCreerElement(this, new Color(153, 0, 51), e));
+	}
+
 	//---------------------------------------------------------------------
 	//    Gestion des actions sur le diagramme
 	//---------------------------------------------------------------------
 
-	public void mouseClicked(MouseEvent e)
-	{
+	public void mouseClicked(MouseEvent e) {
 		//this.diagramTool.mouseClicked(e);
 	}
 
-	public void mousePressed( MouseEvent e )
-	{
-		IeppCell ic = (IeppCell)this.getFirstCellForLocation(e.getX(),e.getY());
-		if(boutonLierActif == true){
-			GraphConstants.setMoveable(ic.getAttributes(), false);
-			this.repaint();
-		
-			if ( this.getFirstCellForLocation(e.getX(),e.getY()) != null) {
-	        	firstMouseEvent = e;
-				
-			}else{
-				
+	public void mousePressed(MouseEvent e) {
+		if (this.getFirstCellForLocation(e.getX(), e.getY()) instanceof IeppCell) {
+			IeppCell ic = (IeppCell) this.getFirstCellForLocation(e.getX(), e
+					.getY());
+			if (boutonLierActif == true) {
+				GraphConstants.setMoveable(ic.getAttributes(), false);
+				this.repaint();
+
+				if (this.getFirstCellForLocation(e.getX(), e.getY()) != null) {
+					firstMouseEvent = e;
+
+				} else {
+
+					firstMouseEvent = null;
+				}
+			} else {
+				GraphConstants.setMoveable(ic.getAttributes(), true);
+				this.repaint();
 				firstMouseEvent = null;
 			}
-	 	}
-		else
-		{
-			//GraphConstants.setMoveable(ic.getAttributes(), true);
-			//this.repaint();
+		} else {
 			firstMouseEvent = null;
 		}
 	}
 
-	public void mouseReleased( MouseEvent e ) 
-	{
-		
-        if(boutonLierActif == true){
-        	
-        	// verifier ke la ou l'on a relacher la souris , il y a un produit
-        	
-        	if (firstMouseEvent != null){
-        		
-        		Object cellSrc = this.getFirstCellForLocation(firstMouseEvent.getX(),firstMouseEvent.getY());
-    			Object cellDes = this.getFirstCellForLocation(e.getX(),e.getY());
-		
-    			Object cellEnt = null;
-    			Object cellSor = null;
-    			
-    			if (((cellSrc instanceof ProduitCellEntree) && (cellDes instanceof ProduitCellSortie)) || (cellSrc instanceof ProduitCellSortie) && (cellDes instanceof ProduitCellEntree) ) {
-    				// verif ke les 2 soit un produit de type differents
-	    			
-    				if(cellDes instanceof ProduitCellEntree){
-    					cellEnt = cellDes;
-    					cellSor = cellSrc;
-    				}else{
-    					cellEnt = cellSrc;
-    					cellSor = cellDes;
-    				}
-    				
-    					
-    				DefaultEdge edge1 = new DefaultEdge();
-    				DefaultEdge edge2 = new DefaultEdge();
-    				
-    				ProduitCell newProdCell = new ProduitCell(((ProduitCell)cellSrc).getMprod());
-    				newProdCell.setNomCompCell(((ProduitCell)cellSrc).getNomCompCell() + "(" + ((ProduitCell)cellDes).getNomCompCell() + ")");
-    				newProdCell.setImageComposant("produitLie.png");
-    				
-    				Map AllAttribute = GraphConstants.createMap();
-    				Map edge1Attribute = GraphConstants.createMap();
-    				Map edge2Attribute = GraphConstants.createMap();
-    				
-    				
-    				AllAttribute.put(edge1, edge1Attribute);
-    				AllAttribute.put(edge2, edge2Attribute);
-    				AllAttribute.put(newProdCell,newProdCell.getAttributs());
+	public void mouseReleased(MouseEvent e) {
 
-    				GraphConstants.setLineEnd(edge1Attribute, GraphConstants.ARROW_CLASSIC);
-    				GraphConstants.setEndFill(edge1Attribute, true);
-    				GraphConstants.setDisconnectable(edge1Attribute,false);
-    				GraphConstants.setEditable(edge1Attribute,false);
-    				
-    				GraphConstants.setLineEnd(edge2Attribute, GraphConstants.ARROW_CLASSIC);
-    				GraphConstants.setEndFill(edge2Attribute, true);
-    				GraphConstants.setDisconnectable(edge2Attribute,false);
-    				GraphConstants.setEditable(edge2Attribute,false);
-    				
-    				
-   			        
-   			        DefaultPort portS = ((ProduitCellSortie)cellSor).getCompParent().getPortComp();
-   			        DefaultPort portDInt = ((ProduitCell)newProdCell).getPortComp();
-   			        DefaultPort portD = ((ProduitCellEntree)cellEnt).getCompParent().getPortComp();
+		if (boutonLierActif == true) {
 
-    		        ConnectionSet cs1 = new ConnectionSet(edge1, portS, portDInt);
-    		        ConnectionSet cs2 = new ConnectionSet(edge2, portDInt, portD);
-       		     
-   			        Vector vecObj = new Vector();
-   			        vecObj.add(newProdCell);
-   			        vecObj.add(edge1);
-   			        vecObj.add(edge2);
-   			        
-   			        this.getModel().insert(vecObj.toArray(), AllAttribute, null, null, null);
-   			        this.getModel().insert(null, null, cs1, null, null);
-   			        this.getModel().insert(null, null, cs2, null, null);
-   			        
-   			        vecObj.clear();
-   			        vecObj.add(cellSrc);
-   			        vecObj.add(cellDes);
-   			        
-   			        this.getModel().remove(vecObj.toArray());
-   			        
-   			        
-           	}
-    			else {
-	    				System.out.println("SOURCE & DESTINATION identiques");
-    			}
+			// verifier ke la ou l'on a relacher la souris , il y a un produit
 
-        	}
-        }
-        firstMouseEvent = null;
+			if (firstMouseEvent != null) {
+
+				Object cellSrc = this.getFirstCellForLocation(firstMouseEvent
+						.getX(), firstMouseEvent.getY());
+				Object cellDes = this.getFirstCellForLocation(e.getX(), e
+						.getY());
+
+				Object cellEnt = null;
+				Object cellSor = null;
+
+				if (((cellSrc instanceof ProduitCellEntree) && (cellDes instanceof ProduitCellSortie))
+						|| (cellSrc instanceof ProduitCellSortie)
+						&& (cellDes instanceof ProduitCellEntree)) {
+					// verif ke les 2 soit un produit de type differents
+
+					if (cellDes instanceof ProduitCellEntree) {
+						cellEnt = cellDes;
+						cellSor = cellSrc;
+					} else {
+						cellEnt = cellSrc;
+						cellSor = cellDes;
+					}
+					
+					if(((ProduitCellEntree)cellEnt).getCompParent().equals(((ProduitCellSortie)cellSor).getCompParent())){
+						return;
+					}
+
+					LienEdge edge1 = new LienEdge();
+					LienEdge edge2 = new LienEdge();
+
+					ProduitCell newProdCell = new ProduitCell(
+							((ProduitCell) cellSrc).getMprod());
+					
+					if(!((ProduitCell)cellSrc).getNomCompCell().equalsIgnoreCase(((ProduitCell) cellDes).getNomCompCell())){
+					newProdCell.setNomCompCell(((ProduitCell) cellSrc)
+							.getNomCompCell()
+							+ "("
+							+ ((ProduitCell) cellDes).getNomCompCell()
+							+ ")");
+					}
+					
+					
+					newProdCell.setImageComposant("produitLie.png");
+
+					Map AllAttribute = GraphConstants.createMap();
+
+					AllAttribute.put(edge1, edge1.getEdgeAttribute());
+					AllAttribute.put(edge2, edge2.getEdgeAttribute());
+					AllAttribute.put(newProdCell, newProdCell.getAttributs());
+
+					DefaultPort portS = ((ProduitCellSortie) cellSor)
+							.getCompParent().getPortComp();
+					DefaultPort portDInt = ((ProduitCell) newProdCell)
+							.getPortComp();
+					DefaultPort portD = ((ProduitCellEntree) cellEnt)
+							.getCompParent().getPortComp();
+
+					ConnectionSet cs1 = new ConnectionSet(edge1, portS,
+							portDInt);
+					ConnectionSet cs2 = new ConnectionSet(edge2, portDInt,
+							portD);
+
+					Vector vecObj = new Vector();
+					vecObj.add(newProdCell);
+					vecObj.add(edge1);
+					vecObj.add(edge2);
+
+					this.getModel().insert(vecObj.toArray(), AllAttribute,
+							null, null, null);
+					this.getModel().insert(null, null, cs1, null, null);
+					this.getModel().insert(null, null, cs2, null, null);
+
+					vecObj.clear();
+					
+					/*if(listElements.contains(cellSrc)){
+						IeppCell temp = (IeppCell)elements.elementAt(elements.indexOf(cellSrc));
+						System.out.println(temp);
+						System.out.println(temp.getListeLien());
+						vecObj.add(temp.getListeLien());
+					}
+					if(listElements.contains(cellDes)){
+						IeppCell temp = (IeppCell)elements.elementAt(elements.indexOf(cellSrc));
+						System.out.println(temp);
+						System.out.println(temp.getListeLien());
+						vecObj.add(temp.getListeLien());
+					}*/
+					
+					for(int i = 0;i<((ProduitCell) cellSrc).getListeLien().size();i++)
+						vecObj.add(((ProduitCell) cellSrc).getListeLien().get(i));
+					
+					for(int i = 0;i<((ProduitCell) cellDes).getListeLien().size();i++)
+						vecObj.add(((ProduitCell) cellDes).getListeLien().get(i));
+						
+					vecObj.add(((ProduitCell) cellSrc).getPortComp());
+					vecObj.add(((ProduitCell) cellDes).getPortComp());
+					vecObj.add(cellSrc);
+					vecObj.add(cellDes);
+
+					this.getModel().remove(vecObj.toArray());
+					this.repaint();
+
+				} else {
+					//System.out.println("SOURCE & DESTINATION identiques");
+				}
+
+			}
+		}
+		firstMouseEvent = null;
 	}
 
-	public void mouseEntered( MouseEvent e ) 
-	{
+	public void mouseEntered(MouseEvent e) {
 		this.repaint();
 		//this.diagramTool.mouseEntered(e);
 	}
 
-	public void mouseExited( MouseEvent e ) 
-	{
+	public void mouseExited(MouseEvent e) {
 		//this.diagramTool.mouseExited(e);
 	}
 
-	public void mouseDragged( MouseEvent e ) 
-	{
+	public void mouseDragged(MouseEvent e) {
 		//this.diagramTool.mouseDragged(e);
 	}
 
-	public void mouseMoved( MouseEvent e ) 
-	{
+	public void mouseMoved(MouseEvent e) {
 		//this.diagramTool.mouseMoved(e);
 	}
-
 
 	//---------------------------------------------------------------------
 	//    gestion du drop sur le diagramme
 	//---------------------------------------------------------------------
-	
 
-	public void dragEnter(DropTargetDragEvent arg0){}
-	public void dragOver(DropTargetDragEvent arg0) {}
-	public void dropActionChanged(DropTargetDragEvent arg0) {}
-	public void dragExit(DropTargetEvent arg0) {}
+	public void dragEnter(DropTargetDragEvent arg0) {
+	}
+
+	public void dragOver(DropTargetDragEvent arg0) {
+	}
+
+	public void dropActionChanged(DropTargetDragEvent arg0) {
+	}
+
+	public void dragExit(DropTargetEvent arg0) {
+	}
 
 	/**
 	 * Récupère l'élément qui a été glissé déposé sur le diagramme
 	 * cet élément est obligatoirement un idcomposant
 	 * @see java.awt.dnd.DropTargetListener#drop(java.awt.dnd.DropTargetDropEvent)
 	 */
-	public void drop(DropTargetDropEvent dtde)
-	{
-		
+	public void drop(DropTargetDropEvent dtde) {
+
 		// récupérer l'objet déplacé
 		Transferable transferable = dtde.getTransferable();
 		DataFlavor[] flavors = transferable.getTransferDataFlavors();
-		
-		String nomComp = new String(); 
-		
+
 		// récupérer l'endroit où l'utilisateur à déplacer l'objet
 		Point p = dtde.getLocation();
-		
-		try
-		{
+
+		try {
 			// Récupérer l'objet transferré par glissement
-			Object obj = transferable.getTransferData(flavors[0]) ; 
-			IdObjetModele id = null;	// composant à afficher
+			Object obj = transferable.getTransferData(flavors[0]);
+			IdObjetModele id = null; // composant à afficher
 			// Si c'est un Long, il s'agit en fait de l'id du composant dans le référentiel
 			// => Charger le composant
-			if (obj instanceof Long)
-			{
+			if (obj instanceof Long) {
 				// Récupérer l'id
-				long idComp = ((Long)obj).longValue() ;
+				long idComp = ((Long) obj).longValue();
 				// Ajouter le composant à la DP
-				CAjouterComposantDP commande = new CAjouterComposantDP (idComp) ;
-				if (commande.executer())
-				{
+				CAjouterComposantDP commande = new CAjouterComposantDP(idComp);
+				if (commande.executer()) {
 					Application.getApplication().getProjet().setModified(true);
 				}
 				// Récupérer sa référence et remplir l'Id
-				Referentiel ref = Application.getApplication().getReferentiel() ;
-				ComposantProcessus comp = (ComposantProcessus) ref.chercherReference (idComp) ;
-				if ( comp != null )
-				{
-					id = comp.getIdComposant() ;
-				}
-				else
-				{
+				Referentiel ref = Application.getApplication().getReferentiel();
+				ComposantProcessus comp = (ComposantProcessus) ref
+						.chercherReference(idComp);
+				if (comp != null) {
+					id = comp.getIdComposant();
+				} else {
 					dtde.dropComplete(false);
 					return;
 				}
 			}
 			// Sinon c'est un vrai id, à récupérer
-			else
-			{
-				id = (IdObjetModele) obj ;
+			else {
+				id = (IdObjetModele) obj;
 			}
 			dtde.dropComplete(true);
-			
+
 			CAjouterComposantGraphe c = new CAjouterComposantGraphe(id, p);
-			if (c.executer())
-			{
+			if (c.executer()) {
 				Application.getApplication().getProjet().setModified(true);
 			}
-			
-			
-			nomComp = ((ComposantProcessus)id.getRef()).getNomComposant();
-			
-			
-		}
-		catch (Exception e)
-		{
+
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		dtde.dropComplete(false);	
+
+		dtde.dropComplete(false);
 	}
 
 	/**
 	 * @param IdObjetModele de l'objet
 	 * @return FElement si l'objet est present dans le graphe, null sinon
 	 */
-	public FElement contient(IdObjetModele id)
-	{
+	public FElement contient(IdObjetModele id) {
 		FElement courant;
-		
-		for (int i = 0; i<this.elements.size(); i++)
-		{
-			courant = (FElement)this.elements.elementAt(i);
-			if (courant.getModele().getId() != null)
-			{
-				if (courant.getModele().getId().equals(id))
-				{
+
+		for (int i = 0; i < this.elements.size(); i++) {
+			courant = (FElement) this.elements.elementAt(i);
+			if (courant.getModele().getId() != null) {
+				if (courant.getModele().getId().equals(id)) {
 					return courant;
 				}
 			}
@@ -932,20 +888,15 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener, Mous
 	 * @see JGraph#createVertexView(java.lang.Object, org.jgraph.graph.CellMapper)
 	 */
 	protected VertexView createVertexView(Object v, CellMapper cm) {
-		
+
 		// Return the appropriate view
-		if(v instanceof ComposantCell)
-		{
+		if (v instanceof ComposantCell) {
 			return new ComposantView(v, this, cm);
+		} else if (v instanceof ProduitCell) {
+			return new ProduitView(v, this, cm);
+		} else {
+			return new VertexView(v, this, cm);
 		}
-		else if(v instanceof ProduitCell)
-		{
-		    return new ProduitView(v, this, cm);
-		}
-		else
-		{
-		    return new VertexView(v, this, cm);
-		}
-		
+
 	}
 }

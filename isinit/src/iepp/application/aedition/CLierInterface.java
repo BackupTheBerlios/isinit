@@ -19,6 +19,7 @@
  
 package iepp.application.aedition;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Vector;
 
@@ -38,6 +39,7 @@ import iepp.ui.iedition.dessin.rendu.FComposantProcessus;
 import iepp.ui.iedition.dessin.rendu.FElement;
 import iepp.ui.iedition.dessin.rendu.FProduit;
 import iepp.ui.iedition.dessin.rendu.IeppCell;
+import iepp.ui.iedition.dessin.rendu.LienEdge;
 import iepp.ui.iedition.dessin.rendu.ProduitCell;
 import iepp.ui.iedition.dessin.rendu.liens.FLien;
 import iepp.ui.iedition.dessin.rendu.liens.FLienInterface;
@@ -145,17 +147,10 @@ public class CLierInterface extends CommandeNonAnnulable
 	 */
 	public boolean executer()
 	{
-		DefaultEdge lienComp = new DefaultEdge();
+		LienEdge lienComp = new LienEdge();
 		  
-		Map edgeAttribute = GraphConstants.createMap();
-		
-		AllAttribute.put(lienComp, edgeAttribute);
-
-		GraphConstants.setLineEnd(edgeAttribute, GraphConstants.ARROW_CLASSIC);
-		GraphConstants.setEndFill(edgeAttribute, true);
-		GraphConstants.setDisconnectable(edgeAttribute,false);
-		GraphConstants.setEditable(edgeAttribute,false);
-		
+		AllAttribute.put(lienComp, lienComp.getEdgeAttribute());
+	
 		Vector vecObj = new Vector();
 		
 		if (!diagramme.getModel().contains(cellS))
@@ -166,7 +161,13 @@ public class CLierInterface extends CommandeNonAnnulable
 		{
 			vecObj.add(cellD);
 		}
+		
+		((IeppCell)cellS).ajoutLien(lienComp);
+		((IeppCell)cellD).ajoutLien(lienComp);
+		
         vecObj.add(lienComp);
+        
+        //diagramme.setLiens(vecObj);
         
         ConnectionSet cs = new ConnectionSet(lienComp, portS, portD);
      

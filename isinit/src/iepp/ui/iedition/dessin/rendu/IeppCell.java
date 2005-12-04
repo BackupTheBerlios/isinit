@@ -3,6 +3,8 @@ package iepp.ui.iedition.dessin.rendu;
 import iepp.Application;
 
 import java.util.Map;
+import java.util.Vector;
+
 import org.jgraph.graph.DefaultGraphCell;
 import org.jgraph.graph.DefaultPort;
 import org.jgraph.graph.GraphConstants;
@@ -16,9 +18,11 @@ public class IeppCell extends DefaultGraphCell {
 	protected Map attributs;
 	protected DefaultPort portComposant;
 	protected String imageComposant;
+	protected Vector listeLien;
 	
 	public IeppCell(String nomComp) {
 		super(nomComp);
+		listeLien = new Vector();
 		nomComposantCellule=nomComp;
 		portComposant = new DefaultPort();
 		attributs=GraphConstants.createMap();
@@ -57,6 +61,14 @@ public class IeppCell extends DefaultGraphCell {
 	
 	public DefaultPort getPortComp() {
 		return(portComposant);
+	}
+	
+	public void ajoutLien(LienEdge lien){
+		listeLien.add(lien);
+	}
+	
+	public Vector getListeLien(){
+		return listeLien;
 	}
 	
 	/**

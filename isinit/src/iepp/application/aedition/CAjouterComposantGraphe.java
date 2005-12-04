@@ -193,7 +193,8 @@ public class CAjouterComposantGraphe extends CommandeAnnulable
 		 }
 		 
 		 fenetre.getVueDPGraphe().getModel().insert(vCellComposant.toArray(), AllAttrubiteCell, null, null,null );
-		 fenetre.getVueDPGraphe().setSelectionCells(vSelection.toArray());
+		 fenetre.getVueDPGraphe().addElements(vSelection);
+		fenetre.getVueDPGraphe().setSelectionCells(vSelection.toArray());
 		 
 		 return (true);
 	}

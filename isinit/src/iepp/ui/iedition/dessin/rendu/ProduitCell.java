@@ -4,6 +4,7 @@ import iepp.ui.iedition.dessin.vues.MDProduit;
 
 import java.awt.Rectangle;
 import java.util.Map;
+import java.util.Vector;
 
 import javax.swing.ImageIcon;
 
@@ -17,6 +18,7 @@ public class ProduitCell extends IeppCell {
 	protected double hauteur;
 	protected MDProduit mprod;
 	protected ComposantCell composant;
+	
 	
 	public ProduitCell(MDProduit mprod ) {
 		super(mprod.getNom());
@@ -50,26 +52,21 @@ public class ProduitCell extends IeppCell {
 		return abscisse;
 	}
 
-
 	public void setAbscisse(double abscisse) {
 		this.abscisse = abscisse;
 	}
-
 
 	public double getHauteur() {
 		return hauteur;
 	}
 
-
 	public void setHauteur(double hauteur) {
 		this.hauteur = hauteur;
 	}
 
-
 	public String getImageComposant() {
 		return imageComposant;
 	}
-
 
 	public void setImageComposant(String imageComposant) {
 		this.imageComposant = imageComposant;
@@ -77,7 +74,6 @@ public class ProduitCell extends IeppCell {
 		GraphConstants.setIcon(getAttributs(), i);
 		
 	}
-
 
 	public double getLargeur() {
 		return largeur;
