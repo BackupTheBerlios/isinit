@@ -140,6 +140,10 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 	private boolean boutonLierActif;
 
 	/**
+	 * Memorise le lieu de départ d'un élément qu'on déplace dans la fenêtre JGraph 
+	 */
+	private MouseEvent mouseDelta;
+	/**
 	 * Construire le diagramme à partir de la définition de processus et 
 	 * d'un controleur
 	 * @param defProc, données à observer
@@ -189,8 +193,11 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 	 * et qu'il appelle la méthode notifyObservers()
 	 */
 	public void update(Observable o, Object arg) {
+
 		this.repaint();
 	}
+	
+
 
 	//-------------------------------------------------------------------------
 	//  Affichage
@@ -201,9 +208,10 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		this.calculerDimension();
-
+		
+		
 		//A regarder
-		//this.updateAutoSize()
+		//this.updateAutoSize();
 
 		/*
 		 // Couleur de remplissage
@@ -501,6 +509,7 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 	 * rectangle de la zone à afficher
 	 */
 	public void calculerDimension() {
+	
 		// récupérer les coordonnées de la figure la plus en bas à droit possible
 		int x = 0;
 		int y = 0;
@@ -510,18 +519,25 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 		int y2 = this.getHeight();
 
 		Enumeration e = this.elements.elements();
+
 		while (e.hasMoreElements()) {
+
 			FElement figure = (FElement) e.nextElement();
 			MDElement vue = (MDElement) figure.getModele();
+			
+			//System.out.println("(" + vue.getX() + " " + vue.getY());
 			if (vue.getX() + vue.getLargeur() > x) {
 				x = vue.getX() + vue.getLargeur();
+				
 				if (figure.getFinChaine() > x) {
 					x = figure.getFinChaine();
 				}
+				
 			}
 			if (vue.getY() + vue.getHauteur() > y) {
 				y = vue.getY() + vue.getHauteur();
 			}
+			
 			if (vue.getX() < x2) {
 				x2 = vue.getX();
 				if (figure.getDebutChaine() > 0 && figure.getDebutChaine() < x2) {
@@ -531,17 +547,21 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 			if (vue.getY() < y2) {
 				y2 = vue.getY();
 			}
+			
 		}
 
-		this.zone_affichage.height = y + 45;
-		this.zone_affichage.width = x + 50;
+		// récupère le facteur de zoom
+		double zoom = this.getModele().getFacteurZoom();
+		// on ajoute 45 à x et à y pour que l'image ait une taille correcte
+		this.zone_affichage.setSize(zoom * (x + 45), zoom*(y +45));
 		this.setPreferredSize(this.zone_affichage);
-		this.revalidate();
+		this.revalidate();	
 	}
 
 	public Dimension getZoneAffichage() {
 		return this.zone_affichage;
 	}
+
 
 	//-------------------------------------------------------------------------
 	//                           Gestion des outils
@@ -634,11 +654,17 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 	public void mouseClicked(MouseEvent e) {
 		//this.diagramTool.mouseClicked(e);
 	}
-
+	
+	
 	public void mousePressed(MouseEvent e) {
+		// Enregistre l'évênement utilisée pour la mise en place de la scroll barre
+		mouseDelta = e;
+		
+		
 		if (this.getFirstCellForLocation(e.getX(), e.getY()) instanceof IeppCell) {
 			IeppCell ic = (IeppCell) this.getFirstCellForLocation(e.getX(), e
 					.getY());
+			
 			if (boutonLierActif == true) {
 				GraphConstants.setMoveable(ic.getAttributes(), false);
 				this.repaint();
@@ -660,8 +686,55 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 		}
 	}
 
-	public void mouseReleased(MouseEvent e) {
 
+	
+
+	public void mouseReleased(MouseEvent e) {
+		
+		// Julie ( A revoir) Met à jour la liste des figures sélectionnées
+		this.clearSelection();
+		
+		Object tab[] = this.getSelectionCells();
+		for (int k=0; k< this.getSelectionCount(); k++) {
+			if (tab[k] instanceof IeppCell) {
+				IeppCell cell = (IeppCell)tab[k];
+				if (cell instanceof ComposantCell) {
+					MDElement vue = ((ComposantCell)cell).getMdcomp();
+					this.selectionneFigure((chercherFigure(vue.getX(), vue.getY())));
+				} else if ((cell instanceof ProduitCellEntree) || (cell instanceof ProduitCellSortie)){
+					MDElement vue = ((ProduitCell)cell).getMprod();
+					this.selectionneFigure((chercherFigure(vue.getX(), vue.getY())));
+	
+				} 
+			}
+		}
+	
+		// récupération du facteur de zoom
+		double zoom = this.getModele().getFacteurZoom();
+		//Mise a jour des élements déplacés pour la scrollbar
+		tab = this.getSelectionCells();
+		//Pour chaque cellule, on met a jour la taille de la fenetre JGraph
+		for (int k=0; k< this.getSelectionCount(); k++) {
+			if (tab[k] instanceof IeppCell) {
+				IeppCell cell = (IeppCell)tab[k];
+				if (cell instanceof ComposantCell) {
+					MDElement vue = ((ComposantCell)cell).getMdcomp();
+					vue.setX(vue.getX() + (int)((e.getX() - mouseDelta.getX())/zoom));
+					vue.setY(vue.getY() + (int)((e.getY() - mouseDelta.getY())/zoom));
+	
+				} else if ((cell instanceof ProduitCellEntree) || (cell instanceof ProduitCellSortie)){
+					MDElement vue = ((ProduitCell)cell).getMprod();
+					vue.setX(vue.getX() + (int)((e.getX() - mouseDelta.getX())/zoom));
+					vue.setY(vue.getY() + (int)((e.getY() - mouseDelta.getY())/zoom));
+	
+				} else {
+					//System.out.println("erreur " + cell.getClass().getName());
+				}
+			}
+		}
+
+		
+		// Gestion des liens
 		if (boutonLierActif == true) {
 
 			// verifier ke la ou l'on a relacher la souris , il y a un produit
@@ -699,6 +772,7 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 
 					MDProduit mdp1 = ((ProduitCell) cellSrc).getMprod();
 					MDProduit mdp2 = ((ProduitCell) cellDes).getMprod();
+					
 					mdp1.setX((mdp1.getX()+mdp2.getX())/2);
 					mdp1.setY((mdp1.getY()+mdp2.getY())/2);
 					ProduitCell newProdCell = new ProduitCell(mdp1);
@@ -788,8 +862,78 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 		//this.diagramTool.mouseExited(e);
 	}
 
+	//private MouseEvent mouseDelta;
+	
 	public void mouseDragged(MouseEvent e) {
 		//this.diagramTool.mouseDragged(e);
+		
+		/*
+		if (mouseDelta == null)
+			mouseDelta = e;
+		*/
+		/*
+		for (int i = 0; i < this.selection.size(); i++){
+
+			FElement figure = ((FElement) (this.selection.elementAt(i)));
+			MDElement vue = (MDElement) figure.getModele();
+						
+			vue.setX(vue.getX() + e.getX() - mouseDelta.getX());
+			vue.setY(vue.getY() + e.getY() - mouseDelta.getY());
+
+		} 
+		mouseDelta = e;
+		*/
+		
+		/*
+		Object tab[] = this.getSelectionCells();
+		for (int k=0; k< this.getSelectionCount(); k++) {
+			IeppCell cell = (IeppCell)tab[k];
+			if (cell instanceof ComposantCell) {
+				MDElement vue = ((ComposantCell)cell).getMdcomp();
+				vue.setX(vue.getX() + e.getX() - mouseDelta.getX());
+				vue.setY(vue.getY() + e.getY() - mouseDelta.getY());
+
+			} else if ((cell instanceof ProduitCellEntree) || (cell instanceof ProduitCellSortie)){
+				MDElement vue = ((ProduitCell)cell).getMprod();
+				vue.setX(vue.getX() + e.getX() - mouseDelta.getX());
+				vue.setY(vue.getY() + e.getY() - mouseDelta.getY());
+
+			} else {
+				//System.out.println("erreur " + cell.getClass().getName());
+			}
+			
+
+		}
+		mouseDelta = e;
+		*/
+		
+		/*
+		if (this.getFirstCellForLocation(e.getX(), e.getY()) instanceof IeppCell) {
+			IeppCell ic = (IeppCell) this.getFirstCellForLocation(e.getX(), e
+					.getY());
+		
+				GraphConstants.setHorizontalAlignment(ic.getAttributes(), 10);
+				this.repaint();
+		}
+		*/
+		/*
+		if (cell != null) {
+		if (cell instanceof ComposantCell) {
+			((ComposantCell)cell).setAbscisse(e.getX());
+			((ComposantCell)cell).setOrdonnee(e.getY());
+		} else if ((cell instanceof ProduitCellEntree) || (cell instanceof ProduitCellSortie)){
+			((ProduitCell)cell).setAbscisse(e.getX());
+			((ProduitCell)cell).setOrdonnee(e.getY());
+
+		} else {
+			System.out.println("erreur " + cell.getClass().getName());
+		}
+		}
+		*/
+		//FElement figure = (FElement)elements.elementAt(elements.indexOf(cellpp));
+		//MDElement vue = (MDElement) figure.getModele();
+		//vue.setX(e.getX());
+		//vue.setY(e.getY());
 	}
 
 	public void mouseMoved(MouseEvent e) {
@@ -867,6 +1011,7 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 		}
 
 		dtde.dropComplete(false);
+		
 	}
 
 	/**
