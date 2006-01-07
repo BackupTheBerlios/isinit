@@ -49,6 +49,7 @@ import iepp.ui.iedition.dessin.vues.MDElement;
 import iepp.ui.iedition.dessin.vues.MDLienClassic;
 import iepp.ui.iedition.dessin.vues.MDProduit;
 import iepp.ui.iedition.dessin.vues.ProduitView;
+import iepp.ui.iedition.popup.PopupDiagramme;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -680,8 +681,7 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 		
 		
 		if (this.getFirstCellForLocation(e.getX(), e.getY()) instanceof IeppCell) {
-			IeppCell ic = (IeppCell) this.getFirstCellForLocation(e.getX(), e
-					.getY());
+			IeppCell ic = (IeppCell) this.getFirstCellForLocation(e.getX(), e.getY());
 			
 			if (boutonLierActif == true) {
 				GraphConstants.setMoveable(ic.getAttributes(), false);
@@ -701,6 +701,15 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 			}
 		} else {
 			firstMouseEvent = null;
+	
+			// Hubert : menu contextuel
+			// le test du bouton droit de la souris n'est pas le mm que dans la version 2xmi
+			// pas de isTriggerPopup() ...
+			if(e.getButton()==MouseEvent.BUTTON3)
+			{
+				this.showPopupMenuDiagramme(e.getX(),e.getY());
+			}
+           
 		}
 	}
 
@@ -1064,5 +1073,16 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 			return new VertexView(v, this, cm);
 		}
 
+	}
+	
+	/**
+	 * Affiche le menu popup (contextuel) pour un diagramme.
+	 */
+	// Hubert : ajout fonction pour afficher le menu contextuel
+	// la position de la fenetre par rapport au graph
+	protected void showPopupMenuDiagramme(int x,int y)
+	{
+	    PopupDiagramme p = new PopupDiagramme(this, x, y);
+	    p.show(this,x,y);
 	}
 }

@@ -48,7 +48,7 @@ public class PopupDiagramme extends JPopupMenu implements ActionListener
 	private JMenuItem 	exportJPEG,
 						exportPNG,
 						imprimer,
-						modifierCouleur,
+						//modifierCouleur,
 						selectionnerTout;
 	
     /**
@@ -74,7 +74,7 @@ public class PopupDiagramme extends JPopupMenu implements ActionListener
 		// création des items
 		this.exportPNG = new JMenuItem(Application.getApplication().getTraduction("Exporter_PNG"), IconManager.getInstance().getIcon(Application.getApplication().getConfigPropriete("dossierIcons") + "png.png"));
 		this.exportJPEG = new JMenuItem(Application.getApplication().getTraduction("Exporter_JPEG"), IconManager.getInstance().getIcon(Application.getApplication().getConfigPropriete("dossierIcons") + "jpeg.png"));
-		this.modifierCouleur = new JMenuItem(Application.getApplication().getTraduction("Modifier_Couleur"));
+		//this.modifierCouleur = new JMenuItem(Application.getApplication().getTraduction("Modifier_Couleur"));
 		this.imprimer = new JMenuItem(Application.getApplication().getTraduction("Imprimer"));
 		this.selectionnerTout = new JMenuItem(Application.getApplication().getTraduction("Selectionner_Tout"));
 		
@@ -82,13 +82,13 @@ public class PopupDiagramme extends JPopupMenu implements ActionListener
 		this.add(this.exportPNG);
 		this.add(this.exportJPEG);
 		this.addSeparator();
-		this.add(this.modifierCouleur);
+		//this.add(this.modifierCouleur);
 		this.add(this.imprimer);
 		this.add(this.selectionnerTout);
 		// pouvoir réagr aux clicks des utilisateurs
 		this.exportPNG.addActionListener(this);
 		this.exportJPEG.addActionListener(this);
-		this.modifierCouleur.addActionListener(this);
+		//this.modifierCouleur.addActionListener(this);
 		this.imprimer.addActionListener(this);
 		this.selectionnerTout.addActionListener(this);
 	}
@@ -108,7 +108,8 @@ public class PopupDiagramme extends JPopupMenu implements ActionListener
 			CExporterPNG c = new CExporterPNG(this.diagramme);
 			c.executer();
 	     }
-		 else if (event.getSource() == this.modifierCouleur)
+		 /*
+	     else if (event.getSource() == this.modifierCouleur)
 		 {
 			Color couleur = JColorChooser.showDialog(Application.getApplication().getFenetrePrincipale(), Application.getApplication().getTraduction("Modifier_Couleur"), diagramme.getModele().getFillColor());
 			if (couleur != null)
@@ -117,6 +118,7 @@ public class PopupDiagramme extends JPopupMenu implements ActionListener
 				diagramme.repaint();
 			}
 		 }
+		 */
 		 else if (event.getSource() == this.selectionnerTout)
 		 {
 		    this.diagramme.selectionnerTout();
