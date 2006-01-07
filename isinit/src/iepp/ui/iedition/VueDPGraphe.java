@@ -31,6 +31,7 @@ import iepp.domaine.ComposantProcessus;
 import iepp.domaine.DefinitionProcessus;
 import iepp.domaine.IdObjetModele;
 import iepp.ui.iedition.dessin.rendu.ComposantCell;
+import iepp.ui.iedition.dessin.rendu.FComposantProcessus;
 import iepp.ui.iedition.dessin.rendu.FElement;
 import iepp.ui.iedition.dessin.rendu.Figure;
 import iepp.ui.iedition.dessin.rendu.IeppCell;
@@ -42,6 +43,7 @@ import iepp.ui.iedition.dessin.rendu.handle.Handle;
 import iepp.ui.iedition.dessin.rendu.liens.FLien;
 import iepp.ui.iedition.dessin.rendu.liens.FLienClassic;
 import iepp.ui.iedition.dessin.vues.ComposantView;
+import iepp.ui.iedition.dessin.vues.MDComposantProcessus;
 import iepp.ui.iedition.dessin.vues.MDDiagramme;
 import iepp.ui.iedition.dessin.vues.MDElement;
 import iepp.ui.iedition.dessin.vues.MDLienClassic;
@@ -126,9 +128,10 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 	/**
 	 * Dimension de la zone à afficher
 	 * sert à indiquer la taille setPreferedSize() du diagramme
-	 */
+	*/
 	private Dimension zone_affichage;
-
+	
+	
 	/**
 	 * Memorise la premiere cellule cliquee
 	 */
@@ -172,8 +175,9 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
 
+		
 		this.zone_affichage = this.getSize();
-		this.setPreferredSize(this.zone_affichage);
+		//this.setPreferredSize(this.zone_affichage);
 		this.setAutoscrolls(true);
 
 		// on met la couleur par défaut au diagramme
@@ -213,24 +217,33 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 		//A regarder
 		//this.updateAutoSize();
 
-		/*
+		
 		 // Couleur de remplissage
-		 g.setColor(getModele().getFillColor());
-		 g.fillRect(0,0,getWidth(),getHeight());
+		 //g.setColor(getModele().getFillColor());
+		 //g.fillRect(0,0,getWidth(),getHeight());
 
 		 // Dessine les liens
+		 System.out.println("Début lien");
 		 for (int i = 0; i < this.liens.size(); i++)
 		 {
-		 ((FLien) (this.liens.elementAt(i))).paintComponent(g);
+			 System.out.println(this.liens.elementAt(i).toString());
+		   //((FLien) (this.liens.elementAt(i))).paintComponent(g);
 		 } 
-		 
+		 System.out.println("Fin lien et début elem");
 		 // Dessine les éléments
 		 for (int i = 0; i < this.elements.size(); i++)
 		 {
-		 ((FElement) (this.elements.elementAt(i))).paintComponent(g);
+			 System.out.println(this.elements.elementAt(i).toString());
+			 
+			 
+			/* if (i==0){
+				 ComposantCell composantCell = new ComposantCell((MDComposantProcessus)(((FElement)(this.elements.elementAt(i))).getModele()));
+				 System.out.println(composantCell.toString());
+				 getModel().insert( new Object[]{composantCell}, composantCell.getAttributes(), null, null,null );
+			 }*/
 		 }
-		 
-
+		 System.out.println("Fin elem");
+		 /*
 		 // Dessine les poignées (handles)
 		 for (int i = 0; i < this.selection.size(); i++)
 		 {
@@ -509,7 +522,8 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 	 * rectangle de la zone à afficher
 	 */
 	public void calculerDimension() {
-	
+
+		/*
 		// récupérer les coordonnées de la figure la plus en bas à droit possible
 		int x = 0;
 		int y = 0;
@@ -556,8 +570,10 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 		this.zone_affichage.setSize(zoom * (x + 45), zoom*(y +45));
 		this.setPreferredSize(this.zone_affichage);
 		this.revalidate();	
+		*/
 	}
 
+	
 	public Dimension getZoneAffichage() {
 		return this.zone_affichage;
 	}
@@ -645,6 +661,8 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 	 */
 	public void setOutilCreerElement(FElement e) {
 		this.setOutil(new OCreerElement(this, new Color(153, 0, 51), e));
+		
+		//llkh
 	}
 
 	//---------------------------------------------------------------------
