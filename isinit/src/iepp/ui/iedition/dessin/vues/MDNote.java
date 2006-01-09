@@ -41,7 +41,7 @@ public class MDNote extends MDElement {
         setHauteur(40);
         police = new Font("Arial", Font.PLAIN, 12);
     }
-
+  
     /**
     Retourne le message de la note
     */

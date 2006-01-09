@@ -20,6 +20,16 @@ public class IeppCell extends DefaultGraphCell {
 	protected String imageComposant;
 	protected Vector listeLien;
 	
+	public IeppCell() {
+		super();
+		listeLien = new Vector();
+		nomComposantCellule = new String();
+		portComposant = new DefaultPort();
+		attributs=GraphConstants.createMap();
+		imageComposant = new String();
+		this.add(portComposant);
+	}
+	
 	public IeppCell(String nomComp) {
 		super(nomComp);
 		listeLien = new Vector();
