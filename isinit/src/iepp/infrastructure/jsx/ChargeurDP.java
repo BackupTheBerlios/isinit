@@ -115,6 +115,11 @@ public class ChargeurDP extends MonitoredTaskBase
 					int dernierId = ((Integer)v.get(4)).intValue();
 					this.projetCharge = new Projet(dp, diag, elements, liens, dernierId);
 					this.print(Application.getApplication().getTraduction("dp_succes"));
+					
+					// modif NIT Guillaume
+					// On charge le processus
+					this.projetCharge.getFenetreEdition().getVueDPGraphe().charger( );
+					// fin modif NIT Guillaume
 				}
 				catch (Exception e1)
 				{
