@@ -705,11 +705,12 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 			// Hubert : menu contextuel
 			// le test du bouton droit de la souris n'est pas le mm que dans la version 2xmi
 			// pas de isTriggerPopup() ...
-			if(e.getButton()==MouseEvent.BUTTON3)
+			/*if(e.getButton()==MouseEvent.BUTTON3)
 			{
 				this.showPopupMenuDiagramme(e.getX(),e.getY());
 			}
-           
+           	*/
+			
 		}
 	}
 
@@ -717,7 +718,14 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 	
 
 	public void mouseReleased(MouseEvent e) {
-		
+		//Hubert : popup menu sur le graph (hors cellules)
+		if (!(this.getFirstCellForLocation(e.getX(), e.getY()) instanceof IeppCell))
+		{
+			if (e.isPopupTrigger())
+          	{
+				showPopupMenuDiagramme(e.getX(), e.getY());
+         	}
+		}
 		// Julie ( A revoir) Met à jour la liste des figures sélectionnées
 		this.clearSelection();
 		
