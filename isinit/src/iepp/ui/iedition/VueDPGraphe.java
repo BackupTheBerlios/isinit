@@ -39,6 +39,7 @@ import iepp.ui.iedition.dessin.rendu.LienEdge;
 import iepp.ui.iedition.dessin.rendu.ProduitCell;
 import iepp.ui.iedition.dessin.rendu.ProduitCellEntree;
 import iepp.ui.iedition.dessin.rendu.ProduitCellSortie;
+import iepp.ui.iedition.dessin.rendu.TextCell;
 import iepp.ui.iedition.dessin.rendu.handle.Handle;
 import iepp.ui.iedition.dessin.rendu.liens.FLien;
 import iepp.ui.iedition.dessin.rendu.liens.FLienClassic;
@@ -47,10 +48,11 @@ import iepp.ui.iedition.dessin.vues.MDComposantProcessus;
 import iepp.ui.iedition.dessin.vues.MDDiagramme;
 import iepp.ui.iedition.dessin.vues.MDElement;
 import iepp.ui.iedition.dessin.vues.MDLienClassic;
+import iepp.ui.iedition.dessin.vues.MDNote;
 import iepp.ui.iedition.dessin.vues.MDProduit;
 import iepp.ui.iedition.dessin.vues.ProduitView;
+import iepp.ui.iedition.dessin.vues.TextView;
 import iepp.ui.iedition.popup.PopupDiagramme;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -139,10 +141,17 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 	private MouseEvent firstMouseEvent;
 
 	/**
-	 * 
+	 * Gestion des boutons pour les cliques de souris (Lier)
 	 */
 	private boolean boutonLierActif;
 
+	/**
+	 * Gestion des boutons pour les cliques de souris (Note)
+	 */
+	private boolean boutonNoteActif;
+	private TextCell note;
+	
+	
 	/**
 	 * Memorise le lieu de départ d'un élément qu'on déplace dans la fenêtre JGraph 
 	 */
@@ -176,6 +185,9 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
 
+		
+		boutonLierActif = false;
+		boutonNoteActif = false;
 		
 		this.zone_affichage = this.getSize();
 		//this.setPreferredSize(this.zone_affichage);
@@ -214,7 +226,7 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 		super.paintComponent(g);
 		this.calculerDimension();
 		
-		
+		/*
 		//A regarder
 		//this.updateAutoSize();
 
@@ -237,14 +249,14 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 			 System.out.println(this.elements.elementAt(i).toString());
 			 
 			 
-			/* if (i==0){
+			 if (i==0){
 				 ComposantCell composantCell = new ComposantCell((MDComposantProcessus)(((FElement)(this.elements.elementAt(i))).getModele()));
 				 System.out.println(composantCell.toString());
 				 getModel().insert( new Object[]{composantCell}, composantCell.getAttributes(), null, null,null );
-			 }*/
+			 }
 		 }
 		 System.out.println("Fin elem");
-		 /*
+		 
 		 // Dessine les poignées (handles)
 		 for (int i = 0; i < this.selection.size(); i++)
 		 {
@@ -492,9 +504,9 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 	 * Efface complètement le diagramme
 	 */
 	public void effacerDiagramme() {
-		this.selection.removeAllElements();
-		this.liens.removeAllElements();
-		this.elements.removeAllElements();
+		//this.selection.removeAllElements();
+		//this.liens.removeAllElements();
+		//this.elements.removeAllElements();
 		this.repaint();
 
 	}
@@ -661,9 +673,9 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 	 * Fixe l'outil courant en tant que OCreerElement
 	 */
 	public void setOutilCreerElement(FElement e) {
-		this.setOutil(new OCreerElement(this, new Color(153, 0, 51), e));
-		
-		//llkh
+		//this.setOutil(new OCreerElement(this, new Color(153, 0, 51), e));
+		boutonNoteActif = true;
+		note = new TextCell((MDNote)e.getModele());
 	}
 
 	//---------------------------------------------------------------------
@@ -676,41 +688,67 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 	
 	
 	public void mousePressed(MouseEvent e) {
-		// Enregistre l'évênement utilisée pour la mise en place de la scroll barre
+		// Enregistre l'évênement utilisée pour la mise en place de la scroll
+		// barre
 		mouseDelta = e;
-		
-		
-		if (this.getFirstCellForLocation(e.getX(), e.getY()) instanceof IeppCell) {
-			IeppCell ic = (IeppCell) this.getFirstCellForLocation(e.getX(), e.getY());
-			
-			if (boutonLierActif == true) {
-				GraphConstants.setMoveable(ic.getAttributes(), false);
-				this.repaint();
 
-				if (this.getFirstCellForLocation(e.getX(), e.getY()) != null) {
-					firstMouseEvent = e;
+		if (boutonNoteActif == true) {
+
+			Map NoteAttribute = GraphConstants.createMap();
+			note.setAbscisse(e.getX());
+			note.setOrdonnee(e.getY());
+			NoteAttribute.put(note, note.getAttributs());
+
+			this.getModel().insert(new Object[] { note }, NoteAttribute, null,
+					null, null);
+
+			boutonNoteActif = false;
+
+			// reprendre l'outil de séléction
+			Application.getApplication().getProjet().getFenetreEdition()
+					.setOutilSelection();
+		} else {
+
+			if (this.getFirstCellForLocation(e.getX(), e.getY()) instanceof IeppCell) {
+				IeppCell ic = (IeppCell) this.getFirstCellForLocation(e.getX(),
+						e.getY());
+
+			} else {
+				if (this.getFirstCellForLocation(e.getX(), e.getY()) instanceof IeppCell) {
+					IeppCell ic = (IeppCell) this.getFirstCellForLocation(e
+							.getX(), e.getY());
+
+					if (boutonLierActif == true) {
+						GraphConstants.setMoveable(ic.getAttributes(), false);
+						this.repaint();
+
+						if (this.getFirstCellForLocation(e.getX(), e.getY()) != null) {
+							firstMouseEvent = e;
+
+						} else {
+
+							firstMouseEvent = null;
+						}
+					} else {
+						GraphConstants.setMoveable(ic.getAttributes(), true);
+						this.repaint();
+						firstMouseEvent = null;
+					}
 
 				} else {
-
 					firstMouseEvent = null;
+
+					// Hubert : menu contextuel
+					// le test du bouton droit de la souris n'est pas le mm que
+					// dans la version 2xmi
+					// pas de isTriggerPopup() ...
+					/*
+					 * if(e.getButton()==MouseEvent.BUTTON3) {
+					 * this.showPopupMenuDiagramme(e.getX(),e.getY()); }
+					 */
+
 				}
-			} else {
-				GraphConstants.setMoveable(ic.getAttributes(), true);
-				this.repaint();
-				firstMouseEvent = null;
 			}
-		} else {
-			firstMouseEvent = null;
-	
-			// Hubert : menu contextuel
-			// le test du bouton droit de la souris n'est pas le mm que dans la version 2xmi
-			// pas de isTriggerPopup() ...
-			/*if(e.getButton()==MouseEvent.BUTTON3)
-			{
-				this.showPopupMenuDiagramme(e.getX(),e.getY());
-			}
-           	*/
-			
 		}
 	}
 
@@ -1077,6 +1115,8 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 			return new ComposantView(v, this, cm);
 		} else if (v instanceof ProduitCell) {
 			return new ProduitView(v, this, cm);
+		} else if (v instanceof TextCell) {
+			return new TextView(v, this, cm);
 		} else {
 			return new VertexView(v, this, cm);
 		}
