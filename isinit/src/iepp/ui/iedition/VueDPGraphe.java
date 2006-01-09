@@ -22,7 +22,6 @@ package iepp.ui.iedition;
 import iepp.Application;
 import iepp.application.CAjouterComposantDP;
 import iepp.application.aedition.CAjouterComposantGraphe;
-import iepp.application.aedition.aoutil.OCreerElement;
 import iepp.application.aedition.aoutil.OLier2Elements;
 import iepp.application.aedition.aoutil.OSelection;
 import iepp.application.aedition.aoutil.Outil;
@@ -33,6 +32,9 @@ import iepp.domaine.IdObjetModele;
 import iepp.ui.iedition.dessin.rendu.ComposantCell;
 import iepp.ui.iedition.dessin.rendu.FComposantProcessus;
 import iepp.ui.iedition.dessin.rendu.FElement;
+import iepp.ui.iedition.dessin.rendu.FNote;
+import iepp.ui.iedition.dessin.rendu.FProduit;
+import iepp.ui.iedition.dessin.rendu.FProduitFusion;
 import iepp.ui.iedition.dessin.rendu.Figure;
 import iepp.ui.iedition.dessin.rendu.IeppCell;
 import iepp.ui.iedition.dessin.rendu.LienEdge;
@@ -53,6 +55,7 @@ import iepp.ui.iedition.dessin.vues.MDProduit;
 import iepp.ui.iedition.dessin.vues.ProduitView;
 import iepp.ui.iedition.dessin.vues.TextView;
 import iepp.ui.iedition.popup.PopupDiagramme;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -78,7 +81,6 @@ import java.util.Vector;
 import org.jgraph.JGraph;
 import org.jgraph.graph.CellMapper;
 import org.jgraph.graph.ConnectionSet;
-import org.jgraph.graph.DefaultEdge;
 import org.jgraph.graph.DefaultGraphModel;
 import org.jgraph.graph.DefaultPort;
 import org.jgraph.graph.GraphConstants;
@@ -220,6 +222,184 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 	//  Affichage
 	//-------------------------------------------------------------------------
 	/**
+	 * Charge le diagramme
+	 */
+	public void charger() {
+		 // Dessine les éléments
+		 for (int i = 0; i < this.elements.size(); i++)
+		 {
+			 if ( this.elements.elementAt(i) instanceof FComposantProcessus )
+			 {
+				 // On recupere l'identifiant de l'objet
+				 IdObjetModele idcp = ((Figure)(this.elements.elementAt(i))).getModele().getId();
+				 
+				 // On cree la collection d'objets et la map
+				 Vector vecObj = new Vector();
+				 Map AllAttribute = GraphConstants.createMap();
+				 
+				 // On cree le produit correspond a l'identifiant
+				 MDComposantProcessus mdp = new MDComposantProcessus(idcp);
+					
+				 // On recupere les coordonnees
+				 int x = ((MDElement) ((FElement) (this.elements.elementAt(i))).getModele()).getX();
+				 int y = ((MDElement) ((FElement) (this.elements.elementAt(i))).getModele()).getY();
+				 
+				 // On les met a jour
+				 mdp.setX( x );
+				 mdp.setY( y );
+				 
+				 // On cree la cellule
+				 ComposantCell newProdCell = new ComposantCell( mdp );
+					
+				 vecObj.add(newProdCell);
+				 
+				 AllAttribute.put(newProdCell, newProdCell.getAttributs());
+
+				 getModel().insert( vecObj.toArray(), AllAttribute, null, null,null );
+				 
+				 vecObj.clear();
+				 
+				 this.repaint();
+			 }
+			 else if ( this.elements.elementAt(i) instanceof FProduit )
+			 {
+				 // On recupere l'identifiant de l'objet
+				 IdObjetModele idcp = ((Figure)(this.elements.elementAt(i))).getModele().getId();
+				 
+				 // On cree la collection d'objets et la map
+				 Vector vecObj = new Vector();
+				 Map AllAttribute = GraphConstants.createMap();
+				 
+				 // On cree le produit correspond a l'identifiant
+				 MDProduit mdp = new MDProduit(idcp);
+					
+				 // On recupere les coordonnees
+				 int x = ((MDElement) ((FElement) (this.elements.elementAt(i))).getModele()).getX();
+				 int y = ((MDElement) ((FElement) (this.elements.elementAt(i))).getModele()).getY();
+				 
+				 // On les met a jour
+				 mdp.setX( x );
+				 mdp.setY( y );
+				 
+				 // On cree la cellule
+				 ProduitCell newProdCell = new ProduitCell( mdp );
+					
+				 vecObj.add(newProdCell);
+				 
+				 AllAttribute.put(newProdCell, newProdCell.getAttributs());
+
+				 getModel().insert( vecObj.toArray(), AllAttribute, null, null,null );
+				 
+				 vecObj.clear();
+				 
+				 this.repaint();
+			 }
+			 else if ( this.elements.elementAt(i) instanceof FProduitFusion )
+			 {
+				 // On recupere l'identifiant de l'objet
+				 IdObjetModele idcp = ((Figure)(this.elements.elementAt(i))).getModele().getId();
+				 
+				 // On cree la collection d'objets et la map
+				 Vector vecObj = new Vector();
+				 Map AllAttribute = GraphConstants.createMap();
+				 
+				 // On cree le produit correspond a l'identifiant
+				 MDProduit mdp = new MDProduit(idcp);
+					
+				 // On recupere les coordonnees
+				 int x = ((MDElement) ((FElement) (this.elements.elementAt(i))).getModele()).getX();
+				 int y = ((MDElement) ((FElement) (this.elements.elementAt(i))).getModele()).getY();
+				 
+				 // On les met a jour
+				 mdp.setX( x );
+				 mdp.setY( y );
+				 
+				 // On cree la cellule
+				 ProduitCell newProdCell = new ProduitCell( mdp );
+
+				 newProdCell.setImageComposant("produitLie.png");
+
+				 vecObj.add(newProdCell);
+				 
+				 AllAttribute.put(newProdCell, newProdCell.getAttributs());
+
+				 getModel().insert( vecObj.toArray(), AllAttribute, null, null,null );
+				 
+				 vecObj.clear();
+				 
+				 this.repaint();
+			 }
+			 else if ( this.elements.elementAt(i) instanceof FNote )
+			 {
+				 MDNote mdn = new MDNote();
+				 
+				 TextCell note = new TextCell(mdn);
+				 
+				 Map NoteAttribute = GraphConstants.createMap();
+				 //note.set = ((MDElement) ((FElement) (this.elements.elementAt(i))).getModele()).getId();
+				 note.setAbscisse(((MDElement) ((FElement) (this.elements.elementAt(i))).getModele()).getX());
+				 note.setOrdonnee(((MDElement) ((FElement) (this.elements.elementAt(i))).getModele()).getY());
+				 note.setLargeur(((MDElement) ((FElement) (this.elements.elementAt(i))).getModele()).getLargeur());
+				 note.setHauteur(((MDElement) ((FElement) (this.elements.elementAt(i))).getModele()).getHauteur());
+				 note.setNomCompCell(((MDNote) ((FElement) (this.elements.elementAt(i))).getModele()).getMessage());
+				 NoteAttribute.put(note, note.getAttributs());
+
+				 this.getModel().insert(new Object[] { note }, NoteAttribute, null, null, null);
+			 }
+			 else
+			 {
+				 System.out.println( ((FElement) (this.elements.elementAt(i))).toString() );
+			 }
+		}
+		 // Dessine les liens
+		 for (int i = 0; i < this.liens.size(); i++)
+		 {
+			 // On recupere la cellule source
+			 FElement fe1 = ((FLien) (this.liens.elementAt(i))).getSource();
+			 int x1 = ((MDElement) fe1.getModele()).getX()+1;
+			 int y1 = ((MDElement) fe1.getModele()).getY()+1;
+			 Object cell1 = this.getFirstCellForLocation(x1, y1);
+			 
+			 // On recupere la cellule destination
+			 FElement fe2 = ((FLien) (this.liens.elementAt(i))).getDestination();
+			 int x2 = ((MDElement) fe2.getModele()).getX()+1;
+			 int y2 = ((MDElement) fe2.getModele()).getY()+1;
+			 Object cell2 = this.getFirstCellForLocation(x2, y2);
+			 
+			 // On cree un edge pour la connection
+			 LienEdge edge = new LienEdge();
+			 
+			 // on cree la map
+			 Map AllAttribute = GraphConstants.createMap();
+
+			 // On ajoute l'edge
+			 AllAttribute.put(edge, edge.getEdgeAttribute());
+
+			 // On recupere les ports
+			 DefaultPort portS = ((IeppCell) cell1).getPortComp();
+			 DefaultPort portD = ((IeppCell) cell2).getPortComp();
+
+			 ConnectionSet cs = new ConnectionSet(edge, portS, portD);
+
+			 // On l'ajoute au modele
+			 Vector vecObj = new Vector();
+			 vecObj.add(edge);
+
+			 this.getModel().insert(vecObj.toArray(), AllAttribute, null, null, null);
+			 this.getModel().insert(null, null, cs, null, null);
+
+			 vecObj.clear();
+		 }
+		 /*
+		  * // Dessine les poignées (handles)
+		  * for (int i = 0; i < this.selection.size(); i++)
+		  * {
+		  * 	((Figure) (this.selection.elementAt(i))).displayHandles(g);
+		  * } 
+		  */
+	}
+	
+	/**
 	 * Repeind le diagramme.
 	 */
 	public void paintComponent(Graphics g) {
@@ -227,47 +407,41 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 		this.calculerDimension();
 		
 		/*
-		//A regarder
-		//this.updateAutoSize();
-
-		
-		 // Couleur de remplissage
-		 //g.setColor(getModele().getFillColor());
-		 //g.fillRect(0,0,getWidth(),getHeight());
-
-		 // Dessine les liens
-		 System.out.println("Début lien");
-		 for (int i = 0; i < this.liens.size(); i++)
-		 {
-			 System.out.println(this.liens.elementAt(i).toString());
-		   //((FLien) (this.liens.elementAt(i))).paintComponent(g);
-		 } 
-		 System.out.println("Fin lien et début elem");
-		 // Dessine les éléments
-		 for (int i = 0; i < this.elements.size(); i++)
-		 {
-			 System.out.println(this.elements.elementAt(i).toString());
-			 
-			 
-			 if (i==0){
-				 ComposantCell composantCell = new ComposantCell((MDComposantProcessus)(((FElement)(this.elements.elementAt(i))).getModele()));
-				 System.out.println(composantCell.toString());
-				 getModel().insert( new Object[]{composantCell}, composantCell.getAttributes(), null, null,null );
-			 }
-		 }
-		 System.out.println("Fin elem");
-		 
-		 // Dessine les poignées (handles)
-		 for (int i = 0; i < this.selection.size(); i++)
-		 {
-		 ((Figure) (this.selection.elementAt(i))).displayHandles(g);
-		 } 
-		 
-		 // Permet de dessiner la représentation de l'outil (ex : cadre de sélection)
-		 if (this.diagramTool != null)
-		 {
-		 //this.diagramTool.draw(g);
-		 } 
+		 * modif NIT Guillaume 
+		 * 
+		 * Ancien affichage des composants
+		 * 
+		 * 		
+		 * super.paintComponent(g);
+		 * this.calculerDimension();
+		 * 
+		 * // Couleur de remplissage
+		 * g.setColor(getModele().getFillColor());
+		 * g.fillRect(0,0,getWidth(),getHeight());
+		 * 
+		 * // Dessine les liens
+		 * for (int i = 0; i < this.liens.size(); i++)
+		 * {
+		 * 	((FLien) (this.liens.elementAt(i))).paintComponent(g);
+		 * } 
+		 * 
+		 * // Dessine les éléments
+		 * for (int i = 0; i < this.elements.size(); i++)
+		 * {
+		 * 	((FElement) (this.elements.elementAt(i))).paintComponent(g);
+		 * }
+		 * 
+		 * // Dessine les poignées (handles)
+		 * for (int i = 0; i < this.selection.size(); i++)
+		 * {
+		 * 	((Figure) (this.selection.elementAt(i))).displayHandles(g);
+		 * } 
+		 * 
+		 * // Permet de dessiner la représentation de l'outil (ex : cadre de sélection)
+		 * if (this.diagramTool != null)
+		 * {
+		 *  this.diagramTool.draw(g);
+		 * } 
 		 */
 	}
 
