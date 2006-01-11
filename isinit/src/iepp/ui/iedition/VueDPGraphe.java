@@ -762,6 +762,8 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 
 	
 	public Dimension getZoneAffichage() {
+		this.zone_affichage.height = this.getHeight();
+		this.zone_affichage.width = this.getWidth();
 		return this.zone_affichage;
 	}
 
@@ -789,6 +791,7 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 	 */
 	public void setOutilSelection() {
 		boutonLierActif = false;
+		boutonNoteActif = false;
 
 		this.setOutil(new OSelection(this));
 
@@ -817,6 +820,7 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 	 */
 	public void setOutilLier() {
 		boutonLierActif = true;
+		boutonNoteActif = false;
 
 		this.setOutil(new OLier2Elements(this, Color.BLACK, new FLienClassic(
 				new MDLienClassic())));
