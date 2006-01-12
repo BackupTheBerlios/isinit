@@ -85,6 +85,7 @@ import org.jgraph.graph.DefaultGraphModel;
 import org.jgraph.graph.DefaultPort;
 import org.jgraph.graph.GraphConstants;
 import org.jgraph.graph.GraphModel;
+import org.jgraph.graph.PortView;
 import org.jgraph.graph.VertexView;
 
 import util.Vecteur;
@@ -869,6 +870,7 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 		// Enregistre l'évênement utilisée pour la mise en place de la scroll
 		// barre
 		mouseDelta = e;
+		
 
 		if (boutonNoteActif == true) {
 
@@ -888,14 +890,9 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 		} else {
 
 			if (this.getFirstCellForLocation(e.getX(), e.getY()) instanceof IeppCell) {
-				IeppCell ic = (IeppCell) this.getFirstCellForLocation(e.getX(),
-						e.getY());
-
-			} else {
-				if (this.getFirstCellForLocation(e.getX(), e.getY()) instanceof IeppCell) {
 					IeppCell ic = (IeppCell) this.getFirstCellForLocation(e
 							.getX(), e.getY());
-
+					
 					if (boutonLierActif == true) {
 						GraphConstants.setMoveable(ic.getAttributes(), false);
 						this.repaint();
@@ -926,7 +923,7 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 					 */
 
 				}
-			}
+			
 		}
 	}
 
@@ -1115,7 +1112,7 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 
 	//private MouseEvent mouseDelta;
 	
-	public void mouseDragged(MouseEvent e) {
+	public void mouseDragged(MouseEvent event) {
 		//this.diagramTool.mouseDragged(e);
 		
 		/*
@@ -1185,10 +1182,27 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 		//MDElement vue = (MDElement) figure.getModele();
 		//vue.setX(e.getX());
 		//vue.setY(e.getY());
+		
+		
+	}
+	
+	public void overlay(JGraph gpgraph, Graphics g, boolean clear) {
+		//super.overlay(gpgraph, g, clear);
+		if (gpgraph != null) {
+			// Sometimes when loading a graph something gets
+			// out of sequence and the GPGraph object hasn't
+			// been created at this point. Missing the
+			// PaintPort() call is minor compared to the NPE
+			//paintPort(this.getGraphics());
+		}
 	}
 
-	public void mouseMoved(MouseEvent e) {
+	protected PortView port;
+	
+	public void mouseMoved(MouseEvent event) {
 		//this.diagramTool.mouseMoved(e);
+		
+				
 	}
 
 	//---------------------------------------------------------------------
