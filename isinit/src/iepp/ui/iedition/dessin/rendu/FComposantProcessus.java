@@ -26,6 +26,7 @@ import iepp.ui.iedition.dessin.vues.MDElement;
 import iepp.ui.iedition.popup.PopupFComposantProcessus;
 
 import java.awt.*;
+import java.awt.event.MouseEvent;
 
 /**
  * Figure du composant processus
@@ -54,8 +55,22 @@ public class FComposantProcessus extends FElement
 
     public void doOnRightClick(VueDPGraphe parent, int x, int y)
     {
+    	
     	PopupFComposantProcessus p = new PopupFComposantProcessus(this);
     	p.show(parent, x, y);	
+    }
+    
+    public void mouseReleased(MouseEvent e)
+    {
+    	System.out.println("beeeeeeeed");
+    	//Hubert : popup menu sur le graph (hors cellules et lien)
+		/*if (!((this.getFirstCellForLocation(e.getX(), e.getY()) instanceof IeppCell)||(this.getFirstCellForLocation(e.getX(), e.getY()) instanceof LienEdge)))
+		{
+			if (e.isPopupTrigger())
+          	{
+				showPopupMenuDiagramme(e.getX(), e.getY());
+         	}
+		}*/
     }
     
     /**
@@ -63,9 +78,10 @@ public class FComposantProcessus extends FElement
      * Appelée uniquement depuis la méhode paint() du diagramme.
      * @param g, contexte graphique 2D
      */
-    public void paintComponent(Graphics g) {
-      MDElement m = (MDElement) this.getModele();
-      drawBody(g, m.getFillColor(), m.getLineColor(), 0, 0, 0, 0);
+    public void paintComponent(Graphics g)
+    {
+    	MDElement m = (MDElement) this.getModele();
+    	drawBody(g, m.getFillColor(), m.getLineColor(), 0, 0, 0, 0);
     }
 
    /**
@@ -73,8 +89,9 @@ public class FComposantProcessus extends FElement
      * Appelée uniquement pour les déplacements de figures avec la souris.
      * @param g, contexte graphique 2D
      */
-    public void drawElementShadow(Graphics g, Color shadowLineColor, int decalageX, int decalageY, int resizeX, int resizeY) {
-      drawBody(g, null, shadowLineColor, decalageX, decalageY, resizeX, resizeY);
+    public void drawElementShadow(Graphics g, Color shadowLineColor, int decalageX, int decalageY, int resizeX, int resizeY)
+    {
+    	drawBody(g, null, shadowLineColor, decalageX, decalageY, resizeX, resizeY);
     }
 
     /**

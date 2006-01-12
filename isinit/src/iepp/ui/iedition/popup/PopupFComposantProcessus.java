@@ -42,14 +42,12 @@ public class PopupFComposantProcessus extends JPopupMenu implements ActionListen
 	 * Items du menu à afficher
 	 */
 	private JMenuItem supprimer;
-        private JMenuItem renommer;
+	private JMenuItem renommer;
 
 	/**
 	* composant sur lequel on a cliqué.
 	*/
 	private FComposantProcessus compo;
-
-
 
 	/**
 	 * Création du menu contextuel
@@ -64,15 +62,14 @@ public class PopupFComposantProcessus extends JPopupMenu implements ActionListen
 
 		// ajouter les items au menu
 		this.add(this.supprimer);
-                if (this.compo.getModele().getId().estComposantVide())
-                    {
-                this.add(this.renommer);//modif 2xmi youssef
-                }
+		if(this.compo.getModele().getId().estComposantVide())
+        {
+			this.add(this.renommer);//modif 2xmi youssef
+        }
 
-// pouvoir réagr aux clicks des utilisateurs
+		// pouvoir réagr aux clicks des utilisateurs
 		this.supprimer.addActionListener(this);
-                this.renommer.addActionListener(this);//modif 2xmi youssef
-
+		this.renommer.addActionListener(this);//modif 2xmi youssef
 	}
 
 	/**
@@ -88,10 +85,10 @@ public class PopupFComposantProcessus extends JPopupMenu implements ActionListen
 				Application.getApplication().getProjet().setModified(true);
 			}
 		 }
-                 if (event.getSource() == this.renommer)
-                 {
-                   //Modif 2xmi appel du constructeur avec Fenetre Principal en paramètre pour centrage de la fenetre de renommage
-                   DialogRenommerComposant c = new DialogRenommerComposant(Application.getApplication().getFenetrePrincipale(),this.compo.getModele().getId());
-                 }
+         if (event.getSource() == this.renommer)
+         {
+           //Modif 2xmi appel du constructeur avec Fenetre Principal en paramètre pour centrage de la fenetre de renommage
+           DialogRenommerComposant c = new DialogRenommerComposant(Application.getApplication().getFenetrePrincipale(),this.compo.getModele().getId());
+         }
 	 }
 }
