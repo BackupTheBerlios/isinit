@@ -931,8 +931,8 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 	
 
 	public void mouseReleased(MouseEvent e) {
-		//Hubert : popup menu sur le graph (hors cellules)
-		if (!(this.getFirstCellForLocation(e.getX(), e.getY()) instanceof IeppCell))
+		//Hubert : popup menu sur le graph (hors cellules et lien)
+		if (!((this.getFirstCellForLocation(e.getX(), e.getY()) instanceof IeppCell)||(this.getFirstCellForLocation(e.getX(), e.getY()) instanceof LienEdge)))
 		{
 			if (e.isPopupTrigger())
           	{
