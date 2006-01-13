@@ -19,11 +19,14 @@ package iepp.ui.iedition.dessin.tools;
  * 
  */
 
+import iepp.Application;
+import iepp.ui.iedition.dessin.rendu.IeppCell;
 import iepp.ui.iedition.dessin.rendu.LienEdge;
 import iepp.ui.iedition.dessin.rendu.ProduitCell;
 import iepp.ui.iedition.dessin.rendu.ProduitCellEntree;
 import iepp.ui.iedition.dessin.rendu.ProduitCellSortie;
 import iepp.ui.iedition.dessin.vues.MDProduit;
+import iepp.ui.iedition.popup.PopupDiagramme;
 
 import java.awt.Color;
 import java.awt.Cursor;
@@ -46,13 +49,15 @@ import org.jgraph.graph.PortView;
  * This tool allows to create edges in the graph It use the prototype design
  * pattern to clone edges
  * 
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class EdgeTool extends Tool {
 	protected JGraph mGraph;
 
 	protected DefaultEdge mPrototype;
 
+	protected BasicMarqueeHandler lastHandler;
+	
 	protected EdgeHandler mHandler = new EdgeHandler();
 
 	protected boolean mStable = true;
@@ -69,6 +74,7 @@ public class EdgeTool extends Tool {
 
 	public void install(JGraph graph) {
 		mGraph = graph;
+		lastHandler = graph.getMarqueeHandler();
 		graph.setMarqueeHandler(mHandler);
 		graph.setMoveable(false);
 		graph.setSizeable(false);
@@ -77,6 +83,7 @@ public class EdgeTool extends Tool {
 
 	public void uninstall(JGraph graph) {
 		mGraph = null;
+		graph.setMarqueeHandler(lastHandler);
 		graph.setMoveable(true);
 		graph.setSizeable(true);
 		graph.setPortsVisible(false);
@@ -113,6 +120,17 @@ public class EdgeTool extends Tool {
 		}
 
 		public void mouseReleased(MouseEvent e) {
+			
+			
+			if (!((mGraph.getFirstCellForLocation(e.getX(), e.getY()) instanceof IeppCell)||(mGraph.getFirstCellForLocation(e.getX(), e.getY()) instanceof LienEdge)))
+			{
+				if (e.isPopupTrigger())
+	          	{
+					PopupDiagramme p = new PopupDiagramme(Application.getApplication().getProjet().getFenetreEdition().getVueDPGraphe(), e.getX(), e.getY());
+				    p.show(mGraph,e.getX(),e.getY());
+			 	}
+			}
+			
 			if (e != null && !e.isConsumed() && mPort != null
 					&& mFirstPort != null && mFirstPort != mPort) {
 
@@ -140,6 +158,7 @@ public class EdgeTool extends Tool {
 					// On essaie de relier un produit en entree et en sortie d'un meme composant
 					if (((ProduitCellEntree) cellEnt).getCompParent().equals(
 							((ProduitCellSortie) cellSor).getCompParent())) {
+						mGraph.repaint();
 						return;
 					}
 
@@ -213,17 +232,23 @@ public class EdgeTool extends Tool {
 					mGraph.getModel().remove(vecObj.toArray());
 
 					e.consume();
+					
+					mGraph.repaint();
+					
+					// reprendre l'outil de séléction
+					Application.getApplication().getProjet().getFenetreEdition().setOutilSelection();
 
 				} else {
+					mGraph.repaint();
 					// System.out.println("SOURCE & DESTINATION identiques");
 				}
 
 				e.consume();
-				mGraph.repaint();
-
+				
 
 			} else {
 				mStable = false;
+				mGraph.repaint();
 			}
 
 			mFirstPort = mPort = null;
