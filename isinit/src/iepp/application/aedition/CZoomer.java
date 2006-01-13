@@ -19,17 +19,10 @@
 
 package iepp.application.aedition;
 
-import java.util.Enumeration;
-
 import iepp.Application;
 import iepp.Projet;
 import iepp.application.CommandeNonAnnulable;
 import iepp.ui.iedition.VueDPGraphe;
-import iepp.ui.iedition.dessin.rendu.FComposantProcessus;
-import iepp.ui.iedition.dessin.rendu.FProduit;
-import iepp.ui.iedition.dessin.rendu.FProduitFusion;
-import iepp.ui.iedition.dessin.rendu.Figure;
-import iepp.ui.iedition.dessin.vues.MDElement;
 
 /**
  * Classe permettant d'effectuer un zoom sur le diagramme d'assemblage
