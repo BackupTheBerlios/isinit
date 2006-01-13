@@ -1,33 +1,9 @@
-/*
- * APES is a Process Engineering Software
- * Copyright (C) 2003-2004 IPSquad
- * team@ipsquad.tuxfamily.org
- *
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- */
-
 package iepp.ui.iedition.dessin.tools;
 
-import iepp.Application;
-import iepp.ui.iedition.dessin.rendu.IeppCell;
 import iepp.ui.iedition.dessin.rendu.LienEdge;
 import iepp.ui.iedition.dessin.rendu.ProduitCell;
 import iepp.ui.iedition.dessin.rendu.ProduitCellEntree;
 import iepp.ui.iedition.dessin.rendu.ProduitCellSortie;
-import iepp.ui.iedition.dessin.rendu.TextCell;
 import iepp.ui.iedition.dessin.vues.MDProduit;
 
 import java.awt.Color;
@@ -36,7 +12,6 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
-import java.util.Hashtable;
 import java.util.Map;
 import java.util.Vector;
 
@@ -46,14 +21,13 @@ import org.jgraph.graph.ConnectionSet;
 import org.jgraph.graph.DefaultEdge;
 import org.jgraph.graph.DefaultPort;
 import org.jgraph.graph.GraphConstants;
-import org.jgraph.graph.Port;
 import org.jgraph.graph.PortView;
 
 /**
  * This tool allows to create edges in the graph It use the prototype design
  * pattern to clone edges
  * 
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class EdgeTool extends Tool {
 	protected JGraph mGraph;
@@ -124,28 +98,6 @@ public class EdgeTool extends Tool {
 					&& mFirstPort != null && mFirstPort != mPort) {
 
 				mGraph.clearSelection();
-				/*
-				 * ConnectionSet cs = new ConnectionSet(); Port firstPort =
-				 * (Port) mFirstPort.getCell(); Port port = (Port)
-				 * mPort.getCell();
-				 * 
-				 * LienEdge edge = null; if(mFirstPort.getParentView().getCell()
-				 * instanceof TextCell || mPort.getParentView().getCell()
-				 * instanceof TextCell) { edge = new LienEdge(); } else { edge =
-				 * new LienEdge();//(DefaultEdge) mPrototype.clone();
-				 * edge.setSource(firstPort); edge.setTarget(port); }
-				 * 
-				 * cs.connect(edge, firstPort, port);
-				 * 
-				 * Map attr = edge.getEdgeAttribute();
-				 * 
-				 * Map attributes = new Hashtable(); attributes.put(edge, attr);
-				 * 
-				 * createEdge(edge, cs, attributes);
-				 * 
-				 * e.consume();
-				 * 
-				 */
 
 				Object cellSrc = mFirstPort.getParentView().getCell();
 				Object cellDes = mPort.getParentView().getCell();
@@ -166,8 +118,7 @@ public class EdgeTool extends Tool {
 						cellSor = cellDes;
 					}
 
-					// On essaie de relier un produit en entree et en sortie
-					// d'un meme composant
+					// On essaie de relier un produit en entree et en sortie d'un meme composant
 					if (((ProduitCellEntree) cellEnt).getCompParent().equals(
 							((ProduitCellSortie) cellSor).getCompParent())) {
 						return;
