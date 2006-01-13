@@ -45,6 +45,7 @@ import iepp.ui.iedition.dessin.rendu.TextCell;
 import iepp.ui.iedition.dessin.rendu.handle.Handle;
 import iepp.ui.iedition.dessin.rendu.liens.FLien;
 import iepp.ui.iedition.dessin.rendu.liens.FLienClassic;
+import iepp.ui.iedition.dessin.tools.EdgeTool;
 import iepp.ui.iedition.dessin.vues.ComposantView;
 import iepp.ui.iedition.dessin.vues.MDComposantProcessus;
 import iepp.ui.iedition.dessin.vues.MDDiagramme;
@@ -153,6 +154,7 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 	 */
 	private boolean boutonNoteActif;
 	private TextCell note;
+	EdgeTool edgeTool = new EdgeTool(new LienEdge());
 	
 	
 	/**
@@ -794,9 +796,11 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 		boutonLierActif = false;
 		boutonNoteActif = false;
 
+		edgeTool.uninstall(this);
+		
 		this.setOutil(new OSelection(this));
 
-		this.setMoveable(true);
+		
 
 		/*			
 		 this.setSelectionCells(new Object[]{});
@@ -826,7 +830,7 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 		this.setOutil(new OLier2Elements(this, Color.BLACK, new FLienClassic(
 				new MDLienClassic())));
 
-		this.setMoveable(false);
+		edgeTool.install(this);
 		/*
 
 		 System.out.println(this.getModel().getRootCount());
@@ -855,6 +859,7 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 		//this.setOutil(new OCreerElement(this, new Color(153, 0, 51), e));
 		boutonNoteActif = true;
 		note = new TextCell((MDNote)e.getModele());
+		edgeTool.uninstall(this);
 	}
 
 	//---------------------------------------------------------------------
@@ -894,7 +899,6 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 							.getX(), e.getY());
 					
 					if (boutonLierActif == true) {
-						GraphConstants.setMoveable(ic.getAttributes(), false);
 						this.repaint();
 
 						if (this.getFirstCellForLocation(e.getX(), e.getY()) != null) {
@@ -905,7 +909,6 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 							firstMouseEvent = null;
 						}
 					} else {
-						GraphConstants.setMoveable(ic.getAttributes(), true);
 						this.repaint();
 						firstMouseEvent = null;
 					}
@@ -1315,6 +1318,8 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 
 	}
 	
+	
+
 	/**
 	 * Affiche le menu popup (contextuel) pour un diagramme.
 	 */
