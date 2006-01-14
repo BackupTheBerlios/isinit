@@ -27,20 +27,18 @@ import iepp.ui.iedition.FenetreEdition;
 import iepp.ui.iedition.dessin.rendu.ComposantCell;
 import iepp.ui.iedition.dessin.rendu.FComposantProcessus;
 import iepp.ui.iedition.dessin.rendu.FProduit;
-import iepp.ui.iedition.dessin.rendu.ProduitCell;
 import iepp.ui.iedition.dessin.rendu.ProduitCellEntree;
 import iepp.ui.iedition.dessin.rendu.ProduitCellSortie;
+import iepp.ui.iedition.dessin.rendu.liens.FLienInterface;
 import iepp.ui.iedition.dessin.vues.MDComposantProcessus;
+import iepp.ui.iedition.dessin.vues.MDLienDotted;
 import iepp.ui.iedition.dessin.vues.MDProduit;
 
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.util.Map;
 import java.util.Vector;
 
 import org.jgraph.graph.GraphConstants;
-
-import com.sun.rsasign.m;
 
 import util.ErrorManager;
 
@@ -157,10 +155,16 @@ public class CAjouterComposantGraphe extends CommandeAnnulable
 			vSelection.add(produitCell);
 			AllAttrubiteCell.put(produitCell,produitCell.getAttributs());
 			
+			///////////////////////////////////////////////////
 			// Liaison du produit avec le composant
+
 			CLierInterface c = new CLierInterface(fenetre.getVueDPGraphe(),
-												  produitCell,
-												  composantCell);
+												  new FLienInterface(new MDLienDotted()),
+												  fcomp,
+												  fprod,
+												  new Vector(),
+												  composantCell,
+												  produitCell);
 			c.executer();
 		}
 
@@ -185,10 +189,16 @@ public class CAjouterComposantGraphe extends CommandeAnnulable
 			 vSelection.add(produitCell);
 			 AllAttrubiteCell.put(produitCell,produitCell.getAttributs());
 			
+			 ///////////////////////////////////////////////////
 			 // Liaison du produit avec le composant
+
 			 CLierInterface c = new CLierInterface(fenetre.getVueDPGraphe(),
-												   composantCell,
-												   produitCell);
+					 							   new FLienInterface(new MDLienDotted()),
+					 							   fcomp,
+					 							   fprod,
+					 							   new Vector(),
+					 							   composantCell,
+					 							   produitCell);
 			 c.executer();
 		 }
 		 

@@ -85,10 +85,11 @@ public class CLierInterface extends CommandeNonAnnulable
 	* @param destination figure où arrive le lien
 	* @param pointsAncrageIntermediaires liste des points d'ancrages du lien à créer
 	*/
-	public CLierInterface(VueDPGraphe d, IeppCell source, IeppCell destination)
+	//public CLierInterface(VueDPGraphe d, IeppCell source, IeppCell destination)
+	public CLierInterface(VueDPGraphe d, FLien l, FElement source, FElement destination, Vector pointsAncrageIntermediaires, IeppCell ieppsource, IeppCell ieppdestination)
 	{
 		this.diagramme = d;
-		/*
+		
 		this.lien = l;
 		((MDLien) lien.getModele()).setSource((MDElement) source.getModele());
 		((MDLien) lien.getModele()).setDestination((MDElement) destination.getModele());
@@ -114,12 +115,11 @@ public class CLierInterface extends CommandeNonAnnulable
 		  this.lien.creerPointAncrage(p, 1);
 		}
 		
-		*/
 		AllAttribute = GraphConstants.createMap();
-		cellS = source;
-		cellD = destination;
-		portS = source.getPortComp();
-		portD = destination.getPortComp();
+		cellS = ieppsource;
+		cellD = ieppdestination;
+		portS = ieppsource.getPortComp();
+		portD = ieppdestination.getPortComp();
 	}
 
 	/**
@@ -168,6 +168,7 @@ public class CLierInterface extends CommandeNonAnnulable
         vecObj.add(lienComp);
         
         //diagramme.setLiens(vecObj);
+        diagramme.ajouterFigure( this.lien );
         
         ConnectionSet cs = new ConnectionSet(lienComp, portS, portD);
      

@@ -22,6 +22,7 @@ package iepp.ui.iedition;
 import iepp.Application;
 import iepp.application.CAjouterComposantDP;
 import iepp.application.aedition.CAjouterComposantGraphe;
+import iepp.application.aedition.CLier2Produits;
 import iepp.application.aedition.aoutil.OLier2Elements;
 import iepp.application.aedition.aoutil.OSelection;
 import iepp.application.aedition.aoutil.Outil;
@@ -934,6 +935,11 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 	
 
 	public void mouseReleased(MouseEvent e) {
+		/* Modif NIT Guillaume */
+		// Indique que'une sauvarde sera necessaire
+		Application.getApplication().getProjet().setModified(true);
+		/* Fin modif NIT Guillaume */
+
 		//Hubert : popup menu sur le graph (hors cellules et lien)
 		if (!((this.getFirstCellForLocation(e.getX(), e.getY()) instanceof IeppCell)||(this.getFirstCellForLocation(e.getX(), e.getY()) instanceof LienEdge)))
 		{
@@ -945,6 +951,7 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 		// Julie ( A revoir) Met à jour la liste des figures sélectionnées
 		this.clearSelection();
 		
+		/*
 		Object tab[] = this.getSelectionCells();
 		for (int k=0; k< this.getSelectionCount(); k++) {
 			if (tab[k] instanceof IeppCell) {
@@ -959,11 +966,12 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 				} 
 			}
 		}
+		*/
 	
 		// récupération du facteur de zoom
 		double zoom = this.getModele().getFacteurZoom();
 		//Mise a jour des élements déplacés pour la scrollbar
-		tab = this.getSelectionCells();
+		Object tab[] = this.getSelectionCells();
 		//Pour chaque cellule, on met a jour la taille de la fenetre JGraph
 		for (int k=0; k< this.getSelectionCount(); k++) {
 			if (tab[k] instanceof IeppCell) {
@@ -991,7 +999,6 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 			// verifier ke la ou l'on a relacher la souris , il y a un produit
 
 			if (firstMouseEvent != null) {
-
 				Object cellSrc = this.getFirstCellForLocation(firstMouseEvent
 						.getX(), firstMouseEvent.getY());
 				Object cellDes = this.getFirstCellForLocation(e.getX(), e
@@ -1082,6 +1089,7 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 						vecObj.add(temp.getListeLien());
 					}*/
 					
+					/*
 					for(int i = 0;i<((ProduitCell) cellSrc).getListeLien().size();i++)
 						vecObj.add(((ProduitCell) cellSrc).getListeLien().get(i));
 					
@@ -1096,10 +1104,10 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 					this.getModel().remove(vecObj.toArray());
 					this.repaint();
 
+				*/
 				} else {
 					//System.out.println("SOURCE & DESTINATION identiques");
 				}
-
 			}
 		}
 		firstMouseEvent = null;
@@ -1118,7 +1126,7 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 	public void mouseDragged(MouseEvent event) {
 		//this.diagramTool.mouseDragged(e);
 		
-		/*
+		/* 
 		if (mouseDelta == null)
 			mouseDelta = e;
 		*/
