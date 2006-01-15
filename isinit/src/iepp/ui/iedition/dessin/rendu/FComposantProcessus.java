@@ -56,8 +56,8 @@ public class FComposantProcessus extends FElement
     public void doOnRightClick(VueDPGraphe parent, int x, int y)
     {
     	
-    	PopupFComposantProcessus p = new PopupFComposantProcessus(this);
-    	p.show(parent, x, y);	
+    	//PopupFComposantProcessus p = new PopupFComposantProcessus(this);
+    	//p.show(parent, x, y);	
     }
     
     public void mouseReleased(MouseEvent e)

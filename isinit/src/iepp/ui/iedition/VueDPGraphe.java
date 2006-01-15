@@ -30,6 +30,7 @@ import iepp.application.areferentiel.Referentiel;
 import iepp.domaine.ComposantProcessus;
 import iepp.domaine.DefinitionProcessus;
 import iepp.domaine.IdObjetModele;
+import iepp.domaine.Produit;
 import iepp.ui.iedition.dessin.rendu.ComposantCell;
 import iepp.ui.iedition.dessin.rendu.FComposantProcessus;
 import iepp.ui.iedition.dessin.rendu.FElement;
@@ -57,6 +58,7 @@ import iepp.ui.iedition.dessin.vues.MDProduit;
 import iepp.ui.iedition.dessin.vues.ProduitView;
 import iepp.ui.iedition.dessin.vues.TextView;
 import iepp.ui.iedition.popup.PopupDiagramme;
+import iepp.ui.iedition.popup.PopupFComposantProcessus;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -577,9 +579,21 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 			((FLien) f).getSource().ajouterLien((FLien) f);
 			((FLien) f).getDestination().ajouterLien((FLien) f);
 		}
-
-		// ajouter la figure au modèle de dessin		
 		this.getModele().ajouterModeleFigure(f.getModele());
+		// ajouter la figure au modèle de dessin
+		/*if (f instanceof ComposantCell)
+		{
+			ComposantCell cc=(ComposantCell)f;
+			this.getModele().ajouterModeleFigure(cc.getMdcomp());
+		}
+		else
+		{
+			if (f instanceof ProduitCell)
+			{
+				ProduitCell pc=(ProduitCell)f;
+				this.getModele().ajouterModeleFigure(pc.getMprod());
+			}
+		}*/
 		// mettre à jour l'affichage
 		this.repaint();
 	}
@@ -913,7 +927,44 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 						this.repaint();
 						firstMouseEvent = null;
 					}
-
+					if(e.getButton()==MouseEvent.BUTTON3) {
+						/*if (ic instanceof ComposantCell)
+						{
+							// selection des cellules impliquées par le clic
+							Object[] cells=this.getSelectionCells();
+							// on supprime les liens
+							Vector liens=ic.getListeLien();
+							LienEdge[] li=new LienEdge[liens.size()];
+							for (int j=0; j<liens.size();j++)
+							{
+								li[j]=(LienEdge)liens.elementAt(j);
+							}
+							this.getModel().remove((Object[])li);
+	
+							// on supprime les ports
+							for (int i = 0; i<cells.length;i++)
+							{
+								IeppCell cell=(IeppCell) cells[i];
+								cell.remove(cell.getPortComp());
+							}
+							// on supprime les images
+							ComposantCell ce=(ComposantCell) ic;
+							Vector entree=ce.getMdcomp().getComposant().getProduits();
+							
+							//FElement f=contient((IdObjetModele)entree.elementAt(0));
+							//Object[]pr=new Object[1];
+							//pr[0]=f;
+							/*FElement[] pr=new FElement[entree.size()];
+							for (int k=0; k<entree.size();k++)
+							{
+								pr[k]=(IdObjetModele)entree.elementAt(k);
+							}
+							//this.getModel().remove((Object[])pr);
+							
+							this.getModel().remove(cells);
+						}*/
+					}
+					
 				} else {
 					firstMouseEvent = null;
 
@@ -929,6 +980,7 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 				}
 			
 		}
+		this.repaint();
 	}
 
 
@@ -947,6 +999,19 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
           	{
 				showPopupMenuDiagramme(e.getX(), e.getY());
          	}
+		}
+		// modif aldo nit 15/01/06
+		else
+		{
+			if (this.getFirstCellForLocation(e.getX(), e.getY()) instanceof ComposantCell)
+			{
+				ComposantCell ic = (ComposantCell) this.getFirstCellForLocation(e.getX(), e.getY());
+				if (e.isPopupTrigger())
+	          	{
+					PopupFComposantProcessus p = new PopupFComposantProcessus(ic);
+			    	p.show(this, e.getX(), e.getY());	
+	         	}
+			}
 		}
 		// Julie ( A revoir) Met à jour la liste des figures sélectionnées
 		this.clearSelection();
@@ -1307,6 +1372,23 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 		}
 		return null;
 	}
+	
+	public ProduitCell contientProduit(IdObjetModele id) {
+		ProduitCell courant;
+
+		for (int i = 0; i < this.elements.size(); i++) {
+			courant = (ProduitCell) this.elements.elementAt(i);
+			if (courant.getMprod().getId() != null) {
+				if (courant.getMprod().getId().equals(id)) {
+					return courant;
+				}
+			}
+		}
+		return null;
+	}
+	
+	
+
 
 	/** 
 	 * @see JGraph#createVertexView(java.lang.Object, org.jgraph.graph.CellMapper)

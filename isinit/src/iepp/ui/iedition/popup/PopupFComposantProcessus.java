@@ -23,6 +23,7 @@ package iepp.ui.iedition.popup;
 import iepp.Application;
 import iepp.application.aedition.CSupprimerComposantGraphe;
 import iepp.application.aedition.CRenommerComposantGraphe;
+import iepp.ui.iedition.dessin.rendu.ComposantCell;
 import iepp.ui.iedition.dessin.rendu.FComposantProcessus;
 import iepp.application.aedition.*;
 import java.awt.event.ActionEvent;
@@ -47,29 +48,30 @@ public class PopupFComposantProcessus extends JPopupMenu implements ActionListen
 	/**
 	* composant sur lequel on a cliqué.
 	*/
-	private FComposantProcessus compo;
+	// modif aldo 15/01/06
+	private ComposantCell compo;
 
 	/**
 	 * Création du menu contextuel
 	 */
-	public PopupFComposantProcessus(FComposantProcessus cp )
+	public PopupFComposantProcessus(ComposantCell cp )
 	{
 		this.compo = cp;
 
 		// création des items
 		this.supprimer = new JMenuItem(Application.getApplication().getTraduction("Supprimer_Composant"));
-		this.renommer = new JMenuItem(Application.getApplication().getTraduction("Renommer_Composant"));//modif 2xmi youssef
+		//this.renommer = new JMenuItem(Application.getApplication().getTraduction("Renommer_Composant"));//modif 2xmi youssef
 
 		// ajouter les items au menu
 		this.add(this.supprimer);
-		if(this.compo.getModele().getId().estComposantVide())
+		/*if(this.compo.getMdcomp().getId().estComposantVide())
         {
 			this.add(this.renommer);//modif 2xmi youssef
-        }
+        }*/
 
 		// pouvoir réagr aux clicks des utilisateurs
 		this.supprimer.addActionListener(this);
-		this.renommer.addActionListener(this);//modif 2xmi youssef
+		//this.renommer.addActionListener(this);//modif 2xmi youssef
 	}
 
 	/**
@@ -79,16 +81,16 @@ public class PopupFComposantProcessus extends JPopupMenu implements ActionListen
 	{
 		 if (event.getSource() == this.supprimer)
 		 {
-			CSupprimerComposantGraphe c = new CSupprimerComposantGraphe(this.compo.getModele().getId());
+			CSupprimerComposantGraphe c = new CSupprimerComposantGraphe(this.compo);
 			if (c.executer())
 			{
 				Application.getApplication().getProjet().setModified(true);
 			}
 		 }
-         if (event.getSource() == this.renommer)
+         /*if (event.getSource() == this.renommer)
          {
            //Modif 2xmi appel du constructeur avec Fenetre Principal en paramètre pour centrage de la fenetre de renommage
            DialogRenommerComposant c = new DialogRenommerComposant(Application.getApplication().getFenetrePrincipale(),this.compo.getModele().getId());
-         }
+         }*/
 	 }
 }

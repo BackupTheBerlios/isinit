@@ -28,7 +28,16 @@ import iepp.domaine.ComposantProcessus;
 import iepp.domaine.IdObjetModele;
 import iepp.domaine.LienProduits;
 import iepp.ui.iedition.VueDPGraphe;
+import iepp.ui.iedition.dessin.rendu.ComposantCell;
+import iepp.ui.iedition.dessin.rendu.FElement;
 import iepp.ui.iedition.dessin.rendu.FProduit;
+import iepp.ui.iedition.dessin.rendu.IeppCell;
+import iepp.ui.iedition.dessin.rendu.LienEdge;
+import iepp.ui.iedition.dessin.rendu.ProduitCell;
+import iepp.ui.iedition.dessin.rendu.ProduitCellEntree;
+import iepp.ui.iedition.dessin.rendu.ProduitCellSortie;
+import iepp.ui.iedition.dessin.vues.MDElement;
+import iepp.ui.iedition.dessin.vues.MDProduit;
 
 
 /**
@@ -42,7 +51,7 @@ public class CSupprimerComposantGraphe extends CommandeAnnulable
 	/**
 	 * Id du composant à supprimer du graphe
 	 */
-	private IdObjetModele composant;
+	private ComposantCell composant;
 	
 	/**
 	 * Diagramme duquel on veut supprimer un composant
@@ -55,7 +64,7 @@ public class CSupprimerComposantGraphe extends CommandeAnnulable
 	 * et le diagramme courant de l'application
 	 * @param compo id du composant à supprimer
 	 */
-	public CSupprimerComposantGraphe (IdObjetModele compo)
+	public CSupprimerComposantGraphe (ComposantCell compo)
 	{
 		// initialiser le composant à supprimer
 		this.composant = compo ;
@@ -71,6 +80,80 @@ public class CSupprimerComposantGraphe extends CommandeAnnulable
 	 */
 	public boolean executer()
 	{
+		// modif Aldo Nit 15/01/06
+		//selection des cellules impliquées par le clic
+		Object[] cells=this.diagramme.getSelectionCells();
+		// suppression des liens 
+		Vector liens=this.composant.getListeLien();
+		LienEdge[] li=new LienEdge[liens.size()];
+		for (int j=0; j<liens.size();j++)
+		{
+			li[j]=(LienEdge)liens.elementAt(j);
+		}
+		this.diagramme.getModel().remove((Object[])li);
+
+		// suppression des produits avec leur ports
+		
+		Vector entree=this.composant.getMdcomp().getComposant().getProduitEntree();
+		Object[]prodEntree=new Object[entree.size()];
+		int n1=0;
+		int n2=0;
+		for (int i1=0;i1<entree.size();i1++)
+		{
+			FElement f=this.diagramme.contient((IdObjetModele)entree.elementAt(i1));
+			MDProduit pp=(MDProduit)f.getModele();
+			int x1 = pp.getX();
+			int y1 = pp.getY();
+			System.out.println(this.diagramme.getFirstCellForLocation(x1,y1).getClass().getName());
+			ProduitCell pc=(ProduitCell)this.diagramme.getFirstCellForLocation(x1,y1);
+			
+			System.out.println(pc.getNomCompCell());
+			System.out.println(pc.getImageComposant());
+			
+			if (pc.getImageComposant()=="produitLie.png")
+			{
+				pc.setImageComposant("produit.png");
+				pc.setNomCompCell("huhu1");
+			}
+			else
+			{
+				pc.remove(pc.getPortComp());
+				prodEntree[n1]=pc;
+				n1++;
+			}
+		}
+		this.diagramme.getModel().remove(prodEntree);
+		
+		Vector sortie=this.composant.getMdcomp().getComposant().getProduitSortie();
+		Object[]prodSortie=new Object[sortie.size()];
+		
+		for (int i2=0;i2<sortie.size();i2++)
+		{
+			FElement f=this.diagramme.contient((IdObjetModele)sortie.elementAt(i2));
+			MDProduit pp=(MDProduit)f.getModele();
+			int x2 = pp.getX();
+			int y2 = pp.getY();
+			ProduitCell pc=(ProduitCell)this.diagramme.getFirstCellForLocation(x2,y2);
+			if (pc.getImageComposant()=="produitLie.png")
+			{
+				pc.setImageComposant("produit.png");
+				pc.setNomCompCell("huhu2");
+			}
+			else
+			{
+				pc.remove(pc.getPortComp());
+				prodSortie[n2]=pc;
+				n2++;
+			}
+			
+		}
+		this.diagramme.getModel().remove(prodSortie);
+		
+		// suppression du composant
+		this.composant.remove(this.composant.getPortComp());
+		
+		this.diagramme.getModel().remove(cells);
+		/*
 		// récupère la liste des liens du composant à supprimer
 		Vector listeLiens = ((ComposantProcessus)this.composant.getRef()).getLien();
 		
@@ -96,6 +179,7 @@ public class CSupprimerComposantGraphe extends CommandeAnnulable
 
 		// suppression du composant
 		this.diagramme.supprimerFigure(this.diagramme.contient(this.composant));
+		*/
 		diagramme.repaint();
 		return true;
 	}

@@ -59,5 +59,6 @@ public class LienEdge extends DefaultEdge {
 	public void setEdgeAttribute(Map edgeAttribute) {
 		this.edgeAttribute = edgeAttribute;
 	}
+	
 
 }
