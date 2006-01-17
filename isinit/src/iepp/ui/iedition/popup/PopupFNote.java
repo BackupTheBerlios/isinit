@@ -40,7 +40,7 @@ public class PopupFNote extends JPopupMenu implements ActionListener
 	 * Items du menu à afficher
 	 */
 	private JMenuItem suppr;
-	private JMenuItem propriete;
+	//private JMenuItem propriete;
 	
 	private VueDPGraphe diagramme;
 	
@@ -58,15 +58,15 @@ public class PopupFNote extends JPopupMenu implements ActionListener
 		
 		// création des items
 		this.suppr = new JMenuItem(Application.getApplication().getTraduction("Supprimer"));
-		this.propriete = new JMenuItem(Application.getApplication().getTraduction("Proprietes"));
+		//this.propriete = new JMenuItem(Application.getApplication().getTraduction("Proprietes"));
 		
 		// ajouter les items au menu
 		this.add(this.suppr);
-		this.add(this.propriete);
+		//this.add(this.propriete);
 		
 		// pouvoir réagr aux clicks des utilisateurs
 		this.suppr.addActionListener(this);
-		this.propriete.addActionListener(this);
+		//this.propriete.addActionListener(this);
 	}
 	
 	/**
@@ -79,9 +79,11 @@ public class PopupFNote extends JPopupMenu implements ActionListener
 		 	this.diagramme.supprimerFigure(this.note);
 		 	this.diagramme.repaint();
 		 }
+		 /*
 		 else if (event.getSource() == this.propriete)
 		 {
 		 	(new FenetreProprieteNote(this.note)).show();
 		 }
+		 */
 	 }
 }

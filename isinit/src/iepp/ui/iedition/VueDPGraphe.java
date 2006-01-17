@@ -22,7 +22,7 @@ package iepp.ui.iedition;
 import iepp.Application;
 import iepp.application.CAjouterComposantDP;
 import iepp.application.aedition.CAjouterComposantGraphe;
-import iepp.application.aedition.CLier2Produits;
+import iepp.application.aedition.aoutil.OCreerElement;
 import iepp.application.aedition.aoutil.OLier2Elements;
 import iepp.application.aedition.aoutil.OSelection;
 import iepp.application.aedition.aoutil.Outil;
@@ -211,6 +211,10 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 		new DropTarget(this, DnDConstants.ACTION_COPY_OR_MOVE, this, true);
 
 		this.setFocusable(true);
+	}
+	
+	public TextCell getNote() {
+		return note;
 	}
 
 	/**
@@ -871,7 +875,7 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 	 * Fixe l'outil courant en tant que OCreerElement
 	 */
 	public void setOutilCreerElement(FElement e) {
-		//this.setOutil(new OCreerElement(this, new Color(153, 0, 51), e));
+		this.setOutil(new OCreerElement(this, new Color(153, 0, 51), e));
 		boutonNoteActif = true;
 		note = new TextCell((MDNote)e.getModele());
 		edgeTool.uninstall(this);
@@ -881,19 +885,23 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 	//    Gestion des actions sur le diagramme
 	//---------------------------------------------------------------------
 
-	public void mouseClicked(MouseEvent e) {
-		//this.diagramTool.mouseClicked(e);
+	public void mouseClicked(MouseEvent e)
+	{
+		this.diagramTool.mouseClicked(e);
 	}
-	
-	
-	public void mousePressed(MouseEvent e) {
+
+	public void mousePressed( MouseEvent e )
+	{
+		this.diagramTool.mousePressed(e);
+
 		// Enregistre l'évênement utilisée pour la mise en place de la scroll
 		// barre
+/*
 		mouseDelta = e;
 		
 
 		if (boutonNoteActif == true) {
-
+/*
 			Map NoteAttribute = GraphConstants.createMap();
 			note.setAbscisse(e.getX());
 			note.setOrdonnee(e.getY());
@@ -907,6 +915,7 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 			// reprendre l'outil de séléction
 			Application.getApplication().getProjet().getFenetreEdition()
 					.setOutilSelection();
+
 		} else {
 
 			if (this.getFirstCellForLocation(e.getX(), e.getY()) instanceof IeppCell) {
@@ -975,22 +984,24 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 					/*
 					 * if(e.getButton()==MouseEvent.BUTTON3) {
 					 * this.showPopupMenuDiagramme(e.getX(),e.getY()); }
-					 */
+					 *
 
 				}
 			
 		}
-		this.repaint();
-	}
-
-
-	
+*/
+	}	
 
 	public void mouseReleased(MouseEvent e) {
-		/* Modif NIT Guillaume */
+		this.diagramTool.mouseReleased(e);
+/*
+			return;
+		}
+
+		/* Modif NIT Guillaume *
 		// Indique que'une sauvarde sera necessaire
 		Application.getApplication().getProjet().setModified(true);
-		/* Fin modif NIT Guillaume */
+		/* Fin modif NIT Guillaume *
 
 		//Hubert : popup menu sur le graph (hors cellules et lien)
 		if (!((this.getFirstCellForLocation(e.getX(), e.getY()) instanceof IeppCell)||(this.getFirstCellForLocation(e.getX(), e.getY()) instanceof LienEdge)))
@@ -1031,7 +1042,7 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 				} 
 			}
 		}
-		*/
+		*
 	
 		// récupération du facteur de zoom
 		double zoom = this.getModele().getFacteurZoom();
@@ -1169,27 +1180,27 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 					this.getModel().remove(vecObj.toArray());
 					this.repaint();
 
-				*/
+				*
 				} else {
 					//System.out.println("SOURCE & DESTINATION identiques");
 				}
 			}
 		}
 		firstMouseEvent = null;
+	*/
 	}
 
 	public void mouseEntered(MouseEvent e) {
-		//this.diagramTool.mouseEntered(e);
+		this.diagramTool.mouseEntered(e);
 	}
 
 	public void mouseExited(MouseEvent e) {
-		//this.diagramTool.mouseExited(e);
+		this.diagramTool.mouseExited(e);
 	}
 
 	//private MouseEvent mouseDelta;
-	
-	public void mouseDragged(MouseEvent event) {
-		//this.diagramTool.mouseDragged(e);
+	public void mouseDragged(MouseEvent e) {
+		this.diagramTool.mouseDragged(e);
 		
 		/* 
 		if (mouseDelta == null)
@@ -1276,9 +1287,7 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 	protected PortView port;
 	
 	public void mouseMoved(MouseEvent event) {
-		//this.diagramTool.mouseMoved(e);
-		
-				
+		//this.diagramTool.mouseMoved(e);		
 	}
 
 	//---------------------------------------------------------------------

@@ -89,6 +89,7 @@ public class CLier2Produits extends CommandeAnnulable
 	*/
 	public CLier2Produits(VueDPGraphe d,  FElement source, FElement destination, Vector pointsAncrageIntermediaires)
 	{
+		System.out.println(destination.getClass());
 		// garder un lien vers le diagramme
                 this.diagramme = d;
 
@@ -112,8 +113,8 @@ public class CLier2Produits extends CommandeAnnulable
 			}
 			else
 				if (destination instanceof FProduitFusion)
-                                {
-                                    this.executable = (((new VGestVerification()).connexionPossible((FProduitFusion)destination, source)).nbErr() == 0 );
+				{
+					this.executable = (((new VGestVerification()).connexionPossible((FProduitFusion)destination, source)).nbErr() == 0 );
                     System.out.println("clier2prod  " + executable);
 				}
 				else
@@ -124,6 +125,7 @@ public class CLier2Produits extends CommandeAnnulable
 
 		if (this.executable)
 		{
+			System.out.println( "ok" );
 			// Création du produit de la fusion
 			// On prend le modele du produit en sortie
 			MDProduit mdfusion = null;
@@ -235,9 +237,6 @@ public class CLier2Produits extends CommandeAnnulable
 					source.supprimerLien((FLien)source.getLiens().elementAt(0));
 					destination.supprimerLien((FLien)destination.getLiens().elementAt(0));
 
-
-
-
 					// Suppression des deux produits fusionnés
 					this.diagramme.supprimerFigure(source);
 					this.diagramme.supprimerFigure(destination);
@@ -269,6 +268,7 @@ public class CLier2Produits extends CommandeAnnulable
 							else
 								this.fusion.setNomFusion(sortie.getModele().getId().toString()+"("+entree.getModele().getId().toString()+")");
 						}
+						System.out.println( this.fusion.getNomFusion() );
 					}
 			 	}
 			}
