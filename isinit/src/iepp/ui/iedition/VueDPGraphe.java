@@ -971,7 +971,7 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 							//this.getModel().remove((Object[])pr);
 							
 							this.getModel().remove(cells);
-						}*/
+						
 					}
 					
 				} else {
