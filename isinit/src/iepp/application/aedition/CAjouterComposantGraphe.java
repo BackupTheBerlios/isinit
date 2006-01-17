@@ -163,8 +163,8 @@ public class CAjouterComposantGraphe extends CommandeAnnulable
 												  fcomp,
 												  fprod,
 												  new Vector(),
-												  composantCell,
-												  produitCell);
+												  produitCell,
+												  composantCell);
 			c.executer();
 		}
 
