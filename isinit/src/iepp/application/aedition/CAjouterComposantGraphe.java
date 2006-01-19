@@ -64,17 +64,6 @@ public class CAjouterComposantGraphe extends CommandeAnnulable
 	private Map AllAttrubiteCell = GraphConstants.createMap();
 	
 	/**
-	 * Liste des composants et des liens
-	 */
-	private Vector vCellComposant = new Vector();
-	
-	/**
-	 * Liste des composants a séléctionner
-	 */
-	private Vector vSelection = new Vector();
-	
-	
-	/**
 	 * Création de la commande à partir du composant à ajouter
 	 * @param comp
 	 */
@@ -82,7 +71,6 @@ public class CAjouterComposantGraphe extends CommandeAnnulable
 	{
 		// sauvegarder le composant
 		this.composant = comp ;
-		this.vCellComposant.clear();
 		this.AllAttrubiteCell = GraphConstants.createMap();
 	}
 
@@ -95,7 +83,6 @@ public class CAjouterComposantGraphe extends CommandeAnnulable
 		// sauvegarder le composant
 		this.composant = comp ;
 		this.point = endroitClick ;
-		this.vCellComposant.clear();
 		this.AllAttrubiteCell = GraphConstants.createMap();
 	}
 
@@ -108,7 +95,9 @@ public class CAjouterComposantGraphe extends CommandeAnnulable
 	{
 
 		FenetreEdition fenetre = Application.getApplication().getProjet().getFenetreEdition() ;
+		
 		// déselectionner tous les éléments
+		fenetre.getVueDPGraphe().clearSelection();
 		fenetre.getVueDPGraphe().setSelectionCells(null);
 
 		// vérifier que le composant n'est pas déjà présent dans le diagramme
@@ -124,15 +113,13 @@ public class CAjouterComposantGraphe extends CommandeAnnulable
 		mdcomp.setX((int)this.point.getX());
 
 		FComposantProcessus fcomp = new FComposantProcessus(mdcomp);
+		ComposantCell composantCell = new ComposantCell(fcomp);
+		
 		fenetre.getVueDPGraphe().ajouterFigure(fcomp);
-		
-		///////////////////////////////////////////////////
 		fenetre.getVueDPGraphe().selectionneFigure(fcomp);
+		fenetre.getVueDPGraphe().ajouterCell(composantCell);
+		fenetre.getVueDPGraphe().selectionneCell(composantCell);
 
-		ComposantCell composantCell = new ComposantCell(mdcomp);
-		
-		vCellComposant.add(composantCell);
-		vSelection.add(composantCell);
 		AllAttrubiteCell.put(composantCell,composantCell.getAttributs());
 		
 		// Récupération des produits en entrée du composant
@@ -144,15 +131,15 @@ public class CAjouterComposantGraphe extends CommandeAnnulable
 			MDProduit mprod = new MDProduit((IdObjetModele)prod_entree.elementAt(i));
 			mprod.setX((int)this.point.getX() - 100 - mprod.getLargeur());
 		    mprod.setY((int)this.point.getY() + (i * (mprod.getHauteur() + 30)) );
-			FProduit fprod = new FProduit(mprod);
-			fenetre.getVueDPGraphe().ajouterFigure(fprod);
 			
-			///////////////////////////////////////////////////
-			fenetre.getVueDPGraphe().selectionneFigure(fprod);
-			
-			ProduitCellEntree produitCell = new ProduitCellEntree(mprod,composantCell);
+		    FProduit fprod = new FProduit(mprod);
+			ProduitCellEntree produitCell = new ProduitCellEntree(fprod,composantCell);
 
-			vSelection.add(produitCell);
+			fenetre.getVueDPGraphe().ajouterFigure(fprod);
+			fenetre.getVueDPGraphe().selectionneFigure(fprod);
+			fenetre.getVueDPGraphe().ajouterCell(produitCell);
+			fenetre.getVueDPGraphe().selectionneCell(produitCell);
+			
 			AllAttrubiteCell.put(produitCell,produitCell.getAttributs());
 			
 			///////////////////////////////////////////////////
@@ -160,8 +147,6 @@ public class CAjouterComposantGraphe extends CommandeAnnulable
 
 			CLierInterface c = new CLierInterface(fenetre.getVueDPGraphe(),
 												  new FLienInterface(new MDLienDotted()),
-												  fcomp,
-												  fprod,
 												  new Vector(),
 												  produitCell,
 												  composantCell);
@@ -178,15 +163,15 @@ public class CAjouterComposantGraphe extends CommandeAnnulable
 			 MDProduit mprod = new MDProduit((IdObjetModele)prod_sortie.elementAt(i));
 			 mprod.setX((int)this.point.getX() + mdcomp.getLargeur() + 100);
 		     mprod.setY((int)this.point.getY() + (i * (mprod.getHauteur() + 30)) );
-			 FProduit fprod = new FProduit(mprod);
-			 fenetre.getVueDPGraphe().ajouterFigure(fprod);
 			
-			 //////////////////////////////////////////////////
+		     FProduit fprod = new FProduit(mprod);
+			 ProduitCellSortie produitCell = new ProduitCellSortie(fprod,composantCell);
+
+			 fenetre.getVueDPGraphe().ajouterFigure(fprod);
 			 fenetre.getVueDPGraphe().selectionneFigure(fprod);
-
-			 ProduitCellSortie produitCell = new ProduitCellSortie(mprod,composantCell);
-
-			 vSelection.add(produitCell);
+			 fenetre.getVueDPGraphe().ajouterCell(produitCell);
+			 fenetre.getVueDPGraphe().selectionneCell(produitCell);
+			 
 			 AllAttrubiteCell.put(produitCell,produitCell.getAttributs());
 			
 			 ///////////////////////////////////////////////////
@@ -194,17 +179,14 @@ public class CAjouterComposantGraphe extends CommandeAnnulable
 
 			 CLierInterface c = new CLierInterface(fenetre.getVueDPGraphe(),
 					 							   new FLienInterface(new MDLienDotted()),
-					 							   fcomp,
-					 							   fprod,
 					 							   new Vector(),
 					 							   composantCell,
 					 							   produitCell);
 			 c.executer();
 		 }
 		 
-		 fenetre.getVueDPGraphe().getModel().insert(vCellComposant.toArray(), AllAttrubiteCell, null, null,null );
-		 fenetre.getVueDPGraphe().addElements(vSelection);
-		fenetre.getVueDPGraphe().setSelectionCells(vSelection.toArray());
+		 fenetre.getVueDPGraphe().getModel().insert(new Object[]{composantCell}, AllAttrubiteCell, null, null,null );
+		 fenetre.getVueDPGraphe().setSelectionCells(fenetre.getVueDPGraphe().getVectorSelectionCells().toArray());
 		 
 		 return (true);
 	}

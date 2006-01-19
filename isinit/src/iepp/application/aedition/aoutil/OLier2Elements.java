@@ -199,11 +199,11 @@ public class OLier2Elements extends Outil
             	{
                 	this.destination = (FElement) this.figureCliquee;
               		//  ajouterEditionDiagramme(new Lier2Elements(diagramme, lien, source, destination, pointsAncrageIntermediaires));
-              		CLier2Produits c = new CLier2Produits(diagramme, source, destination, pointsAncrageIntermediaires);
+              		/*CLier2Produits c = new CLier2Produits(diagramme, source, destination, pointsAncrageIntermediaires);
               		if (c.executer())
       			    {
       			   		Application.getApplication().getProjet().setModified(true);
-      			    }
+      			    }*/
                 	this.state = END_STATE;
               	}
             }
@@ -226,7 +226,7 @@ public class OLier2Elements extends Outil
     */
     public void mouseReleased( MouseEvent event )
     {
-        super.mouseReleased(event);
+        //super.mouseReleased(event);
 
         // Si la liaison est terminée (qu'elle ait échoué ou pas)
         if (this.state == END_STATE)

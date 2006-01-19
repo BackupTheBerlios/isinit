@@ -1,39 +1,58 @@
 package iepp.ui.iedition.dessin.rendu;
 
-import iepp.Application;
+/*
+ * IEPP: Isi Engineering Process Publisher
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * 
+ */
+
 import iepp.ui.iedition.dessin.vues.MDComposantProcessus;
-
 import java.awt.Rectangle;
-import java.util.Map;
-
 import javax.swing.ImageIcon;
-
 import org.jgraph.graph.GraphConstants;
 
 public class ComposantCell extends IeppCell {
-	
 	
 	protected double abscisse;
 	protected double ordonnee;
 	protected double largeur;
 	protected double hauteur;
+	protected FComposantProcessus fcomp;
 	protected MDComposantProcessus mdcomp;
 	
-	public ComposantCell( MDComposantProcessus mdcomp ) {
-		super(mdcomp.getNom());
+	public ComposantCell( FComposantProcessus fcomp ) {
 		
-		this.mdcomp = mdcomp;
+		super(((MDComposantProcessus)(fcomp.getModele())).getNom());
 		
-		this.imageComposant="composant.png";
+		this.fcomp = fcomp;
+		this.mdcomp = (MDComposantProcessus)fcomp.getModele();
+		
+		this.imageComposant = refImageComposant;
 		
 		// On garde dans l'objet un trace de la position du composant sur le graph
 		abscisse=mdcomp.getX();
-		ordonnee=mdcomp.getY();		
-		ImageIcon i = new ImageIcon(getCheminImageComposant()+ imageComposant);
+		ordonnee=mdcomp.getY();	
 		// On garde aussi une trace de la largeur et de la hauteur du composant
 		largeur=mdcomp.getLargeur();
 		hauteur=mdcomp.getHauteur();
 		
+		// Définition de l'image du composant
+		ImageIcon i = new ImageIcon(getCheminImageComposant()+ imageComposant);
+		
+		// Définition des attributs du composant
 		GraphConstants.setIcon(getAttributs(), i);
 		GraphConstants.setBounds(getAttributs(), new Rectangle((int)abscisse,(int)ordonnee,(int)largeur,(int)hauteur));
 		GraphConstants.setAutoSize(getAttributs(), true);
@@ -104,5 +123,19 @@ public class ComposantCell extends IeppCell {
 	 */
 	public void setMdcomp(MDComposantProcessus mdcomp) {
 		this.mdcomp = mdcomp;
+	}
+
+	/**
+	 * @return Returns the fcomp.
+	 */
+	public FComposantProcessus getFcomp() {
+		return fcomp;
+	}
+
+	/**
+	 * @param fcomp The fcomp to set.
+	 */
+	public void setFcomp(FComposantProcessus fcomp) {
+		this.fcomp = fcomp;
 	}
 }

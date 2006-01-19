@@ -30,7 +30,6 @@ import iepp.application.areferentiel.Referentiel;
 import iepp.domaine.ComposantProcessus;
 import iepp.domaine.DefinitionProcessus;
 import iepp.domaine.IdObjetModele;
-import iepp.domaine.Produit;
 import iepp.ui.iedition.dessin.rendu.ComposantCell;
 import iepp.ui.iedition.dessin.rendu.FComposantProcessus;
 import iepp.ui.iedition.dessin.rendu.FElement;
@@ -41,8 +40,7 @@ import iepp.ui.iedition.dessin.rendu.Figure;
 import iepp.ui.iedition.dessin.rendu.IeppCell;
 import iepp.ui.iedition.dessin.rendu.LienEdge;
 import iepp.ui.iedition.dessin.rendu.ProduitCell;
-import iepp.ui.iedition.dessin.rendu.ProduitCellEntree;
-import iepp.ui.iedition.dessin.rendu.ProduitCellSortie;
+import iepp.ui.iedition.dessin.rendu.ProduitCellFusion;
 import iepp.ui.iedition.dessin.rendu.TextCell;
 import iepp.ui.iedition.dessin.rendu.handle.Handle;
 import iepp.ui.iedition.dessin.rendu.liens.FLien;
@@ -57,8 +55,6 @@ import iepp.ui.iedition.dessin.vues.MDNote;
 import iepp.ui.iedition.dessin.vues.MDProduit;
 import iepp.ui.iedition.dessin.vues.ProduitView;
 import iepp.ui.iedition.dessin.vues.TextView;
-import iepp.ui.iedition.popup.PopupDiagramme;
-import iepp.ui.iedition.popup.PopupFComposantProcessus;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -89,7 +85,6 @@ import org.jgraph.graph.DefaultGraphModel;
 import org.jgraph.graph.DefaultPort;
 import org.jgraph.graph.GraphConstants;
 import org.jgraph.graph.GraphModel;
-import org.jgraph.graph.PortView;
 import org.jgraph.graph.VertexView;
 
 import util.Vecteur;
@@ -116,15 +111,15 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 	private GraphModel Gmodele = new DefaultGraphModel();
 
 	/**
-	 * Eléments présents sur le diagramme.
+	 * Eléments présents sur le diagramme (Figure).
 	 */
 	private Vector elements;
-
-	/**
-	 * Eléments présents sur le diagramme.
-	 */
-	private Vector listElements;
 	
+	/**
+	 * Eléments présents sur le diagramme (Cellule).
+	 */
+	private Vector elementCells;
+
 	/**
 	 * Liens présents sur le diagramme.
 	 */
@@ -134,6 +129,11 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 	 * Figures sélectionnés.
 	 */
 	private Vector selection;
+	
+	/**
+	 * Cellule sélectionnés.
+	 */
+	private Vector selectionCells;
 
 	/**
 	 * Dimension de la zone à afficher
@@ -141,29 +141,11 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 	*/
 	private Dimension zone_affichage;
 	
+	/**
+	 * Outil pour la création des liens entre produits
+	 */
+	private EdgeTool edgeTool = new EdgeTool(new LienEdge());
 	
-	/**
-	 * Memorise la premiere cellule cliquee
-	 */
-	private MouseEvent firstMouseEvent;
-
-	/**
-	 * Gestion des boutons pour les cliques de souris (Lier)
-	 */
-	private boolean boutonLierActif;
-
-	/**
-	 * Gestion des boutons pour les cliques de souris (Note)
-	 */
-	private boolean boutonNoteActif;
-	private TextCell note;
-	EdgeTool edgeTool = new EdgeTool(new LienEdge());
-	
-	
-	/**
-	 * Memorise le lieu de départ d'un élément qu'on déplace dans la fenêtre JGraph 
-	 */
-	private MouseEvent mouseDelta;
 	/**
 	 * Construire le diagramme à partir de la définition de processus et 
 	 * d'un controleur
@@ -184,7 +166,8 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 		this.elements = new Vector();
 		this.liens = new Vector();
 		this.selection = new Vector();
-		this.listElements = new Vector();
+		this.elementCells = new Vector();
+		this.selectionCells = new Vector();
 
 		// par défault, on utilise l'outil de sélection
 		this.diagramTool = new OSelection(this);
@@ -193,17 +176,12 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
 
-		
-		boutonLierActif = false;
-		boutonNoteActif = false;
-		
+		// Information pour la fenetre
 		this.zone_affichage = this.getSize();
-		//this.setPreferredSize(this.zone_affichage);
 		this.setAutoscrolls(true);
 
 		// on met la couleur par défaut au diagramme
-		modele
-				.setFillColor(new Color(Integer.parseInt(Application
+		modele.setFillColor(new Color(Integer.parseInt(Application
 						.getApplication().getConfigPropriete(
 								"couleur_fond_diagrmme"))));
 
@@ -213,10 +191,6 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 		this.setFocusable(true);
 	}
 	
-	public TextCell getNote() {
-		return note;
-	}
-
 	/**
 	 * Méthode appelée quand l'objet du domaine observé est modifié
 	 * et qu'il appelle la méthode notifyObservers()
@@ -225,12 +199,12 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 
 		this.repaint();
 	}
-	
 
 
 	//-------------------------------------------------------------------------
 	//  Affichage
 	//-------------------------------------------------------------------------
+
 	/**
 	 * Charge le diagramme
 	 */
@@ -259,7 +233,7 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 				 mdp.setY( y );
 				 
 				 // On cree la cellule
-				 ComposantCell newProdCell = new ComposantCell( mdp );
+				 ComposantCell newProdCell = new ComposantCell( (FComposantProcessus) (this.elements.elementAt(i)) );
 					
 				 vecObj.add(newProdCell);
 				 
@@ -292,7 +266,7 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 				 mdp.setY( y );
 				 
 				 // On cree la cellule
-				 ProduitCell newProdCell = new ProduitCell( mdp );
+				 ProduitCell newProdCell = new ProduitCell( (FProduit) (this.elements.elementAt(i)) );
 					
 				 vecObj.add(newProdCell);
 				 
@@ -325,13 +299,11 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 				 mdp.setY( y );
 				 
 				 // On cree la cellule
-				 ProduitCell newProdCell = new ProduitCell( mdp );
+				 //ProduitCellFusion newProdCellF = new ProduitCellFusion( (FProduitFusion) (this.elements.elementAt(i)) );
 
-				 newProdCell.setImageComposant("produitLie.png");
-
-				 vecObj.add(newProdCell);
+				// vecObj.add(newProdCellF);
 				 
-				 AllAttribute.put(newProdCell, newProdCell.getAttributs());
+				 //AllAttribute.put(newProdCellF, newProdCellF.getAttributs());
 
 				 getModel().insert( vecObj.toArray(), AllAttribute, null, null,null );
 				 
@@ -341,9 +313,7 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 			 }
 			 else if ( this.elements.elementAt(i) instanceof FNote )
 			 {
-				 MDNote mdn = new MDNote();
-				 
-				 TextCell note = new TextCell(mdn);
+				 TextCell note = new TextCell((FNote)this.elements.elementAt(i));
 				 
 				 Map NoteAttribute = GraphConstants.createMap();
 				 //note.set = ((MDElement) ((FElement) (this.elements.elementAt(i))).getModele()).getId();
@@ -414,45 +384,6 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 	 */
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		this.calculerDimension();
-		
-		/*
-		 * modif NIT Guillaume 
-		 * 
-		 * Ancien affichage des composants
-		 * 
-		 * 		
-		 * super.paintComponent(g);
-		 * this.calculerDimension();
-		 * 
-		 * // Couleur de remplissage
-		 * g.setColor(getModele().getFillColor());
-		 * g.fillRect(0,0,getWidth(),getHeight());
-		 * 
-		 * // Dessine les liens
-		 * for (int i = 0; i < this.liens.size(); i++)
-		 * {
-		 * 	((FLien) (this.liens.elementAt(i))).paintComponent(g);
-		 * } 
-		 * 
-		 * // Dessine les éléments
-		 * for (int i = 0; i < this.elements.size(); i++)
-		 * {
-		 * 	((FElement) (this.elements.elementAt(i))).paintComponent(g);
-		 * }
-		 * 
-		 * // Dessine les poignées (handles)
-		 * for (int i = 0; i < this.selection.size(); i++)
-		 * {
-		 * 	((Figure) (this.selection.elementAt(i))).displayHandles(g);
-		 * } 
-		 * 
-		 * // Permet de dessiner la représentation de l'outil (ex : cadre de sélection)
-		 * if (this.diagramTool != null)
-		 * {
-		 *  this.diagramTool.draw(g);
-		 * } 
-		 */
 	}
 
 	//-------------------------------------------------------------------------
@@ -564,15 +495,43 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 		this.elements = l;
 	}
 
-	public void addElements(Vector l) {
-		this.listElements.add(l);
+	/**
+	 * Définition des acceseurs elementCells 
+	 */
+	public void setElementsCell(Vector l) {
+		this.elementCells.add(l);
 	}
+	
+	public Vector getElementsCell() {
+		return this.elementCells;
+	}
+	
+	public Enumeration elementsCell() {
+		return this.elementCells.elements();
+	}
+	
+	/**
+	 * Définition des acceseurs selectionCells 
+	 */
+	public void setVectorSelectionCells(Vector l) {
+		this.selectionCells.add(l);
+	}
+	
+	public Vector getVectorSelectionCells() {
+		return this.selectionCells;
+	}
+	
+	public Enumeration selectionCellsVector() {
+		return this.selectionCells.elements();
+	}
+	
 	
 	/**
 	 * Ajoute une figure au diagramme (élément ou lien).
 	 * @param f, figure à ajouter au diagramme
 	 */
 	public void ajouterFigure(Figure f) {
+		
 		// selon le type de la figure
 		if (f instanceof FElement) {
 			this.elements.addElement(f);
@@ -584,22 +543,17 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 			((FLien) f).getDestination().ajouterLien((FLien) f);
 		}
 		this.getModele().ajouterModeleFigure(f.getModele());
-		// ajouter la figure au modèle de dessin
-		/*if (f instanceof ComposantCell)
-		{
-			ComposantCell cc=(ComposantCell)f;
-			this.getModele().ajouterModeleFigure(cc.getMdcomp());
-		}
-		else
-		{
-			if (f instanceof ProduitCell)
-			{
-				ProduitCell pc=(ProduitCell)f;
-				this.getModele().ajouterModeleFigure(pc.getMprod());
-			}
-		}*/
+		
 		// mettre à jour l'affichage
 		this.repaint();
+	}
+		
+	/**
+	 * Ajoute une cellule au diagramme (élément ou lien).
+	 * @param f, figure à ajouter au diagramme
+	 */
+	public void ajouterCell(IeppCell c) {
+		this.elementCells.addElement(c);
 	}
 
 	/**
@@ -607,6 +561,7 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 	 * @param f, l'élément à supprimer du diagramme
 	 */
 	public void supprimerFigure(Figure f) {
+		
 		// enlever l'élément de toutes les listes disponibles
 		this.selection.removeElement(f);
 		this.elements.removeElement(f);
@@ -614,6 +569,29 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 
 		// enlever la figure du modèle de dessin
 		this.getModele().supprimerModeleFigure(f.getModele());
+	}
+	
+	/**
+	 * Supprime un élément du diagramme.
+	 * @param f, l'élément à supprimer du diagramme
+	 */
+	public void supprimerCellule(IeppCell cell) {
+		
+		// enlever l'élément de toutes les listes disponibles
+		this.selectionCells.removeElement(cell);
+		this.elementCells.removeElement(cell);
+		
+		Vector vecObj = new Vector();
+		
+		for (int i = 0; i < ((IeppCell) cell).getListeLien().size(); i++)
+			vecObj.add(((ProduitCell) cell).getListeLien()
+					.get(i));
+
+		vecObj.add(((ProduitCell) cell).getPortComp());
+		vecObj.add(cell);
+		
+		this.getModel().remove(vecObj.toArray());
+		
 	}
 
 	//---------------------------------------------------------------------
@@ -644,6 +622,15 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 		}
 	}
 
+	/**
+	 * Sélectionne une cell.
+	 */
+	public void selectionneCell(IeppCell cell) {
+		if (!this.selectionCells.contains(cell)) {
+			this.selectionCells.addElement(cell);
+		}
+	}
+	
 	/**
 	 * Dé-sélectionne une figure.
 	 */
@@ -694,23 +681,27 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 			figure = (Figure) this.selection.elementAt(0);
 			this.deSelectionneFigure(figure);
 		}
+		selectionCells.removeAllElements();
 	}
 
 	/**
 	 * Efface complètement le diagramme
 	 */
 	public void effacerDiagramme() {
-		//this.selection.removeAllElements();
-		//this.liens.removeAllElements();
-		//this.elements.removeAllElements();
+		this.selection.removeAllElements();
+		this.liens.removeAllElements();
+		this.elements.removeAllElements();
+		this.elementCells.removeAllElements();
+		this.selectionCells.removeAllElements();
+		this.removeAll();
 		this.repaint();
-
 	}
 
 	/**
 	 * Sélectionne tous les éléments du diagramme.
 	 */
 	public void selectionnerTout() {
+		
 		Enumeration e = this.elements.elements();
 		while (e.hasMoreElements()) {
 			Figure figure = (Figure) e.nextElement();
@@ -722,64 +713,23 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 			Figure figure = (Figure) e.nextElement();
 			this.selectionneFigure(figure);
 		}
-		// mettre à jour l'affichage
-		this.repaint();
-	}
-
-	/**
-	 * Calculer la zone à afficher pour permettre le scrolling et l'encodage des images
-	 * rectangle de la zone à afficher
-	 */
-	public void calculerDimension() {
-
-		/*
-		// récupérer les coordonnées de la figure la plus en bas à droit possible
-		int x = 0;
-		int y = 0;
-
-		// récupérer les coordonnées de la figure la plus en haut à gauche
-		int x2 = this.getWidth();
-		int y2 = this.getHeight();
-
-		Enumeration e = this.elements.elements();
-
+		
+		e = this.elementCells.elements();
 		while (e.hasMoreElements()) {
-
-			FElement figure = (FElement) e.nextElement();
-			MDElement vue = (MDElement) figure.getModele();
-			
-			//System.out.println("(" + vue.getX() + " " + vue.getY());
-			if (vue.getX() + vue.getLargeur() > x) {
-				x = vue.getX() + vue.getLargeur();
-				
-				if (figure.getFinChaine() > x) {
-					x = figure.getFinChaine();
-				}
-				
+			IeppCell cell = (IeppCell) e.nextElement();
+			if (!this.selectionCells.contains(cell)) {
+				this.selectionCells.addElement(cell);
 			}
-			if (vue.getY() + vue.getHauteur() > y) {
-				y = vue.getY() + vue.getHauteur();
-			}
-			
-			if (vue.getX() < x2) {
-				x2 = vue.getX();
-				if (figure.getDebutChaine() > 0 && figure.getDebutChaine() < x2) {
-					x2 = figure.getDebutChaine();
-				}
-			}
-			if (vue.getY() < y2) {
-				y2 = vue.getY();
-			}
-			
 		}
 
-		// récupère le facteur de zoom
-		double zoom = this.getModele().getFacteurZoom();
-		// on ajoute 45 à x et à y pour que l'image ait une taille correcte
-		this.zone_affichage.setSize(zoom * (x + 45), zoom*(y +45));
-		this.setPreferredSize(this.zone_affichage);
-		this.revalidate();	
-		*/
+		/*e = this.liens.elements();
+		while (e.hasMoreElements()) {
+			Figure figure = (Figure) e.nextElement();
+			this.selectionneFigure(figure);
+		}*/
+		
+		// mettre à jour l'affichage
+		this.repaint();
 	}
 
 	
@@ -812,30 +762,9 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 	 * Fixe l'outil courant en tant que OSelection.
 	 */
 	public void setOutilSelection() {
-		boutonLierActif = false;
-		boutonNoteActif = false;
-
-		edgeTool.uninstall(this);
 		
 		this.setOutil(new OSelection(this));
-
-		
-
-		/*			
-		 this.setSelectionCells(new Object[]{});
-
-		 for(int i=0;i<this.getModel().getRootCount();i++){
-		 if(this.getModel().getRootAt(i) instanceof IeppCell){
-		 IeppCell cell = (IeppCell)this.getModel().getRootAt(i);
-		 System.out.println((IeppCell)this.getModel().getRootAt(i));
-		 
-		 GraphConstants.setMoveable(cell.getAttributes(),true);
-		 }
-		 }
-		 
-		 // pour la prise en compte dans le graph
-		 * 
-		 */
+		edgeTool.uninstall(this);
 		this.update(this.getGraphics());
 	}
 
@@ -843,31 +772,11 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 	 * Fixe l'outil courant en tant que OLier2Element.
 	 */
 	public void setOutilLier() {
-		boutonLierActif = true;
-		boutonNoteActif = false;
-
-		this.setOutil(new OLier2Elements(this, Color.BLACK, new FLienClassic(
-				new MDLienClassic())));
+		
+		//this.setOutil(new OLier2Elements(this, Color.BLACK, new FLienClassic(new MDLienClassic())));
 
 		edgeTool.install(this);
-		/*
-
-		 System.out.println(this.getModel().getRootCount());
-		 
-		 
-		 this.setSelectionCells(new Object[]{});
-		 
-		 for(int i=0;i<this.getModel().getRootCount();i++){
-		 if(this.getModel().getRootAt(i) instanceof IeppCell){
-		 IeppCell cell = (IeppCell)this.getModel().getRootAt(i);
-		 System.out.println("Lier:"+(IeppCell)this.getModel().getRootAt(i));
-		 
-		 GraphConstants.setMoveable(cell.getAttributes(),false);
-		 }
-		 }
-		 
-		 // pour la prise en compte dans le graph
-		 */
+		
 		this.update(this.getGraphics());
 	}
 
@@ -875,9 +784,8 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 	 * Fixe l'outil courant en tant que OCreerElement
 	 */
 	public void setOutilCreerElement(FElement e) {
+		
 		this.setOutil(new OCreerElement(this, new Color(153, 0, 51), e));
-		boutonNoteActif = true;
-		note = new TextCell((MDNote)e.getModele());
 		edgeTool.uninstall(this);
 	}
 
@@ -893,401 +801,31 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 	public void mousePressed( MouseEvent e )
 	{
 		this.diagramTool.mousePressed(e);
-
-		// Enregistre l'évênement utilisée pour la mise en place de la scroll
-		// barre
-/*
-		mouseDelta = e;
-		
-
-		if (boutonNoteActif == true) {
-/*
-			Map NoteAttribute = GraphConstants.createMap();
-			note.setAbscisse(e.getX());
-			note.setOrdonnee(e.getY());
-			NoteAttribute.put(note, note.getAttributs());
-
-			this.getModel().insert(new Object[] { note }, NoteAttribute, null,
-					null, null);
-
-			boutonNoteActif = false;
-
-			// reprendre l'outil de séléction
-			Application.getApplication().getProjet().getFenetreEdition()
-					.setOutilSelection();
-
-		} else {
-
-			if (this.getFirstCellForLocation(e.getX(), e.getY()) instanceof IeppCell) {
-					IeppCell ic = (IeppCell) this.getFirstCellForLocation(e
-							.getX(), e.getY());
-					
-					if (boutonLierActif == true) {
-						this.repaint();
-
-						if (this.getFirstCellForLocation(e.getX(), e.getY()) != null) {
-							firstMouseEvent = e;
-
-						} else {
-
-							firstMouseEvent = null;
-						}
-					} else {
-						this.repaint();
-						firstMouseEvent = null;
-					}
-					if(e.getButton()==MouseEvent.BUTTON3) {
-						/*if (ic instanceof ComposantCell)
-						{
-							// selection des cellules impliquées par le clic
-							Object[] cells=this.getSelectionCells();
-							// on supprime les liens
-							Vector liens=ic.getListeLien();
-							LienEdge[] li=new LienEdge[liens.size()];
-							for (int j=0; j<liens.size();j++)
-							{
-								li[j]=(LienEdge)liens.elementAt(j);
-							}
-							this.getModel().remove((Object[])li);
-	
-							// on supprime les ports
-							for (int i = 0; i<cells.length;i++)
-							{
-								IeppCell cell=(IeppCell) cells[i];
-								cell.remove(cell.getPortComp());
-							}
-							// on supprime les images
-							ComposantCell ce=(ComposantCell) ic;
-							Vector entree=ce.getMdcomp().getComposant().getProduits();
-							
-							//FElement f=contient((IdObjetModele)entree.elementAt(0));
-							//Object[]pr=new Object[1];
-							//pr[0]=f;
-							/*FElement[] pr=new FElement[entree.size()];
-							for (int k=0; k<entree.size();k++)
-							{
-								pr[k]=(IdObjetModele)entree.elementAt(k);
-							}
-							//this.getModel().remove((Object[])pr);
-							
-							this.getModel().remove(cells);
-						
-					}
-					
-				} else {
-					firstMouseEvent = null;
-
-					// Hubert : menu contextuel
-					// le test du bouton droit de la souris n'est pas le mm que
-					// dans la version 2xmi
-					// pas de isTriggerPopup() ...
-					/*
-					 * if(e.getButton()==MouseEvent.BUTTON3) {
-					 * this.showPopupMenuDiagramme(e.getX(),e.getY()); }
-					 *
-
-				}
-			
-		}
-*/
-	}	
+	}
 
 	public void mouseReleased(MouseEvent e) {
+		
 		this.diagramTool.mouseReleased(e);
-/*
-			return;
-		}
-
-		/* Modif NIT Guillaume *
-		// Indique que'une sauvarde sera necessaire
-		Application.getApplication().getProjet().setModified(true);
-		/* Fin modif NIT Guillaume *
-
-		//Hubert : popup menu sur le graph (hors cellules et lien)
-		if (!((this.getFirstCellForLocation(e.getX(), e.getY()) instanceof IeppCell)||(this.getFirstCellForLocation(e.getX(), e.getY()) instanceof LienEdge)))
-		{
-			if (e.isPopupTrigger())
-          	{
-				showPopupMenuDiagramme(e.getX(), e.getY());
-         	}
-		}
-		// modif aldo nit 15/01/06
-		else
-		{
-			if (this.getFirstCellForLocation(e.getX(), e.getY()) instanceof ComposantCell)
-			{
-				ComposantCell ic = (ComposantCell) this.getFirstCellForLocation(e.getX(), e.getY());
-				if (e.isPopupTrigger())
-	          	{
-					PopupFComposantProcessus p = new PopupFComposantProcessus(ic);
-			    	p.show(this, e.getX(), e.getY());	
-	         	}
-			}
-		}
-		// Julie ( A revoir) Met à jour la liste des figures sélectionnées
-		this.clearSelection();
-		
-		/*
-		Object tab[] = this.getSelectionCells();
-		for (int k=0; k< this.getSelectionCount(); k++) {
-			if (tab[k] instanceof IeppCell) {
-				IeppCell cell = (IeppCell)tab[k];
-				if (cell instanceof ComposantCell) {
-					MDElement vue = ((ComposantCell)cell).getMdcomp();
-					this.selectionneFigure((chercherFigure(vue.getX(), vue.getY())));
-				} else if ((cell instanceof ProduitCellEntree) || (cell instanceof ProduitCellSortie)){
-					MDElement vue = ((ProduitCell)cell).getMprod();
-					this.selectionneFigure((chercherFigure(vue.getX(), vue.getY())));
-	
-				} 
-			}
-		}
-		*
-	
-		// récupération du facteur de zoom
-		double zoom = this.getModele().getFacteurZoom();
-		//Mise a jour des élements déplacés pour la scrollbar
-		Object tab[] = this.getSelectionCells();
-		//Pour chaque cellule, on met a jour la taille de la fenetre JGraph
-		for (int k=0; k< this.getSelectionCount(); k++) {
-			if (tab[k] instanceof IeppCell) {
-				IeppCell cell = (IeppCell)tab[k];
-				if (cell instanceof ComposantCell) {
-					MDElement vue = ((ComposantCell)cell).getMdcomp();
-					vue.setX(vue.getX() + (int)((e.getX() - mouseDelta.getX())/zoom));
-					vue.setY(vue.getY() + (int)((e.getY() - mouseDelta.getY())/zoom));
-	
-				} else if ((cell instanceof ProduitCellEntree) || (cell instanceof ProduitCellSortie)){
-					MDElement vue = ((ProduitCell)cell).getMprod();
-					vue.setX(vue.getX() + (int)((e.getX() - mouseDelta.getX())/zoom));
-					vue.setY(vue.getY() + (int)((e.getY() - mouseDelta.getY())/zoom));
-	
-				} else {
-					//System.out.println("erreur " + cell.getClass().getName());
-				}
-			}
-		}
-
-		
-		// Gestion des liens
-		if (boutonLierActif == true) {
-
-			// verifier ke la ou l'on a relacher la souris , il y a un produit
-
-			if (firstMouseEvent != null) {
-				Object cellSrc = this.getFirstCellForLocation(firstMouseEvent
-						.getX(), firstMouseEvent.getY());
-				Object cellDes = this.getFirstCellForLocation(e.getX(), e
-						.getY());
-
-				Object cellEnt = null;
-				Object cellSor = null;
-
-				if (((cellSrc instanceof ProduitCellEntree) && (cellDes instanceof ProduitCellSortie))
-						|| (cellSrc instanceof ProduitCellSortie)
-						&& (cellDes instanceof ProduitCellEntree)) {
-					// verif ke les 2 soit un produit de type differents
-
-					if (cellDes instanceof ProduitCellEntree) {
-						cellEnt = cellDes;
-						cellSor = cellSrc;
-					} else {
-						cellEnt = cellSrc;
-						cellSor = cellDes;
-					}
-					
-					// On essaie de relier un produit en entree et en sortie d'un meme composant
-					if(((ProduitCellEntree)cellEnt).getCompParent().equals(((ProduitCellSortie)cellSor).getCompParent())){
-						return;
-					}
-
-					LienEdge edge1 = new LienEdge();
-					LienEdge edge2 = new LienEdge();
-
-					MDProduit mdp1 = ((ProduitCell) cellSrc).getMprod();
-					MDProduit mdp2 = ((ProduitCell) cellDes).getMprod();
-					
-					mdp1.setX((mdp1.getX()+mdp2.getX())/2);
-					mdp1.setY((mdp1.getY()+mdp2.getY())/2);
-					ProduitCell newProdCell = new ProduitCell(mdp1);
-					
-					if(!((ProduitCell)cellSrc).getNomCompCell().equalsIgnoreCase(((ProduitCell) cellDes).getNomCompCell())){
-					newProdCell.setNomCompCell(((ProduitCell) cellSrc)
-							.getNomCompCell()
-							+ "("
-							+ ((ProduitCell) cellDes).getNomCompCell()
-							+ ")");
-					}
-					
-					
-					newProdCell.setImageComposant("produitLie.png");
-
-					Map AllAttribute = GraphConstants.createMap();
-
-					AllAttribute.put(edge1, edge1.getEdgeAttribute());
-					AllAttribute.put(edge2, edge2.getEdgeAttribute());
-					AllAttribute.put(newProdCell, newProdCell.getAttributs());
-
-					DefaultPort portS = ((ProduitCellSortie) cellSor)
-							.getCompParent().getPortComp();
-					DefaultPort portDInt = ((ProduitCell) newProdCell)
-							.getPortComp();
-					DefaultPort portD = ((ProduitCellEntree) cellEnt)
-							.getCompParent().getPortComp();
-
-					ConnectionSet cs1 = new ConnectionSet(edge1, portS,
-							portDInt);
-					ConnectionSet cs2 = new ConnectionSet(edge2, portDInt,
-							portD);
-
-					Vector vecObj = new Vector();
-					vecObj.add(newProdCell);
-					vecObj.add(edge1);
-					vecObj.add(edge2);
-
-					this.getModel().insert(vecObj.toArray(), AllAttribute,
-							null, null, null);
-					this.getModel().insert(null, null, cs1, null, null);
-					this.getModel().insert(null, null, cs2, null, null);
-
-					vecObj.clear();
-					
-					/*if(listElements.contains(cellSrc)){
-						IeppCell temp = (IeppCell)elements.elementAt(elements.indexOf(cellSrc));
-						System.out.println(temp);
-						System.out.println(temp.getListeLien());
-						vecObj.add(temp.getListeLien());
-					}
-					if(listElements.contains(cellDes)){
-						IeppCell temp = (IeppCell)elements.elementAt(elements.indexOf(cellSrc));
-						System.out.println(temp);
-						System.out.println(temp.getListeLien());
-						vecObj.add(temp.getListeLien());
-					}*/
-					
-					/*
-					for(int i = 0;i<((ProduitCell) cellSrc).getListeLien().size();i++)
-						vecObj.add(((ProduitCell) cellSrc).getListeLien().get(i));
-					
-					for(int i = 0;i<((ProduitCell) cellDes).getListeLien().size();i++)
-						vecObj.add(((ProduitCell) cellDes).getListeLien().get(i));
-						
-					vecObj.add(((ProduitCell) cellSrc).getPortComp());
-					vecObj.add(((ProduitCell) cellDes).getPortComp());
-					vecObj.add(cellSrc);
-					vecObj.add(cellDes);
-
-					this.getModel().remove(vecObj.toArray());
-					this.repaint();
-
-				*
-				} else {
-					//System.out.println("SOURCE & DESTINATION identiques");
-				}
-			}
-		}
-		firstMouseEvent = null;
-	*/
 	}
 
 	public void mouseEntered(MouseEvent e) {
+		
 		this.diagramTool.mouseEntered(e);
 	}
 
 	public void mouseExited(MouseEvent e) {
+		
 		this.diagramTool.mouseExited(e);
 	}
 
-	//private MouseEvent mouseDelta;
 	public void mouseDragged(MouseEvent e) {
+		
 		this.diagramTool.mouseDragged(e);
-		
-		/* 
-		if (mouseDelta == null)
-			mouseDelta = e;
-		*/
-		/*
-		for (int i = 0; i < this.selection.size(); i++){
-
-			FElement figure = ((FElement) (this.selection.elementAt(i)));
-			MDElement vue = (MDElement) figure.getModele();
-						
-			vue.setX(vue.getX() + e.getX() - mouseDelta.getX());
-			vue.setY(vue.getY() + e.getY() - mouseDelta.getY());
-
-		} 
-		mouseDelta = e;
-		*/
-		
-		/*
-		Object tab[] = this.getSelectionCells();
-		for (int k=0; k< this.getSelectionCount(); k++) {
-			IeppCell cell = (IeppCell)tab[k];
-			if (cell instanceof ComposantCell) {
-				MDElement vue = ((ComposantCell)cell).getMdcomp();
-				vue.setX(vue.getX() + e.getX() - mouseDelta.getX());
-				vue.setY(vue.getY() + e.getY() - mouseDelta.getY());
-
-			} else if ((cell instanceof ProduitCellEntree) || (cell instanceof ProduitCellSortie)){
-				MDElement vue = ((ProduitCell)cell).getMprod();
-				vue.setX(vue.getX() + e.getX() - mouseDelta.getX());
-				vue.setY(vue.getY() + e.getY() - mouseDelta.getY());
-
-			} else {
-				//System.out.println("erreur " + cell.getClass().getName());
-			}
-			
-
-		}
-		mouseDelta = e;
-		*/
-		
-		/*
-		if (this.getFirstCellForLocation(e.getX(), e.getY()) instanceof IeppCell) {
-			IeppCell ic = (IeppCell) this.getFirstCellForLocation(e.getX(), e
-					.getY());
-		
-				GraphConstants.setHorizontalAlignment(ic.getAttributes(), 10);
-				this.repaint();
-		}
-		*/
-		/*
-		if (cell != null) {
-		if (cell instanceof ComposantCell) {
-			((ComposantCell)cell).setAbscisse(e.getX());
-			((ComposantCell)cell).setOrdonnee(e.getY());
-		} else if ((cell instanceof ProduitCellEntree) || (cell instanceof ProduitCellSortie)){
-			((ProduitCell)cell).setAbscisse(e.getX());
-			((ProduitCell)cell).setOrdonnee(e.getY());
-
-		} else {
-			System.out.println("erreur " + cell.getClass().getName());
-		}
-		}
-		*/
-		//FElement figure = (FElement)elements.elementAt(elements.indexOf(cellpp));
-		//MDElement vue = (MDElement) figure.getModele();
-		//vue.setX(e.getX());
-		//vue.setY(e.getY());
-		
-		
 	}
-	
-	public void overlay(JGraph gpgraph, Graphics g, boolean clear) {
-		//super.overlay(gpgraph, g, clear);
-		if (gpgraph != null) {
-			// Sometimes when loading a graph something gets
-			// out of sequence and the GPGraph object hasn't
-			// been created at this point. Missing the
-			// PaintPort() call is minor compared to the NPE
-			//paintPort(this.getGraphics());
-		}
-	}
-
-	protected PortView port;
 	
 	public void mouseMoved(MouseEvent event) {
-		//this.diagramTool.mouseMoved(e);		
+		
+		this.diagramTool.mouseMoved(event);		
 	}
 
 	//---------------------------------------------------------------------
@@ -1383,10 +921,11 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 	}
 	
 	public ProduitCell contientProduit(IdObjetModele id) {
+		
 		ProduitCell courant;
 
-		for (int i = 0; i < this.elements.size(); i++) {
-			courant = (ProduitCell) this.elements.elementAt(i);
+		for (int i = 0; i < this.elementCells.size(); i++) {
+			courant = (ProduitCell) this.elementCells.elementAt(i);
 			if (courant.getMprod().getId() != null) {
 				if (courant.getMprod().getId().equals(id)) {
 					return courant;
@@ -1396,11 +935,15 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 		return null;
 	}
 	
+	protected void overlay(JGraph gpgraph, Graphics g, boolean clear) {
 	
+	
+	}
 
 
 	/** 
 	 * @see JGraph#createVertexView(java.lang.Object, org.jgraph.graph.CellMapper)
+	 * Gestion des vues des composants
 	 */
 	protected VertexView createVertexView(Object v, CellMapper cm) {
 
@@ -1408,6 +951,8 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 		if (v instanceof ComposantCell) {
 			return new ComposantView(v, this, cm);
 		} else if (v instanceof ProduitCell) {
+			return new ProduitView(v, this, cm);
+		} else if (v instanceof ProduitCellFusion) {
 			return new ProduitView(v, this, cm);
 		} else if (v instanceof TextCell) {
 			return new TextView(v, this, cm);
@@ -1417,16 +962,4 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 
 	}
 	
-	
-
-	/**
-	 * Affiche le menu popup (contextuel) pour un diagramme.
-	 */
-	// Hubert : ajout fonction pour afficher le menu contextuel
-	// la position de la fenetre par rapport au graph
-	protected void showPopupMenuDiagramme(int x,int y)
-	{
-	    PopupDiagramme p = new PopupDiagramme(this, x, y);
-	    p.show(this,x,y);
-	}
 }

@@ -5,6 +5,7 @@ package iepp.application.aedition.aoutil;
 import iepp.Application;
 import iepp.ui.iedition.VueDPGraphe;
 import iepp.ui.iedition.dessin.rendu.FElement;
+import iepp.ui.iedition.dessin.rendu.FNote;
 import iepp.ui.iedition.dessin.rendu.TextCell;
 import iepp.ui.iedition.dessin.vues.MDElement;
 import iepp.ui.iedition.dessin.vues.MDNote;
@@ -61,7 +62,7 @@ public class OCreerElement extends Outil {
             translation.x = diagramme.getWidth() - modele.getLargeur();
 
 		Map NoteAttribute = GraphConstants.createMap();
-		TextCell note = diagramme.getNote();
+		TextCell note = new TextCell((FNote)element);
 		note.setAbscisse(event.getX());
 		note.setOrdonnee(event.getY());
 		NoteAttribute.put(note, note.getAttributs());

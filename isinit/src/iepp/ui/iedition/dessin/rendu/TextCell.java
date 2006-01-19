@@ -1,5 +1,23 @@
 package iepp.ui.iedition.dessin.rendu;
 
+/* IEPP: Isi Engineering Process Publisher
+*
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License
+* as published by the Free Software Foundation; either version 2
+* of the License, or any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software
+* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+* 
+*/
+
 import iepp.ui.iedition.dessin.vues.MDNote;
 
 import java.awt.Rectangle;
@@ -12,26 +30,29 @@ public class TextCell extends IeppCell {
 	protected double ordonnee;
 	protected double largeur;
 	protected double hauteur;
-	protected MDNote mdcomp;
+	protected MDNote mdnote;
+	protected FNote fnote;
 	
-	public TextCell( MDNote mdcomp ) {
+	public TextCell( FNote fnote ) {
+		
 		super();
 	
-		this.mdcomp = mdcomp;
+		this.fnote = fnote;
+		this.mdnote = (MDNote)fnote.getModele();
 		
 		// On garde dans l'objet un trace de la position du composant sur le graph
-		abscisse=mdcomp.getX();
-		ordonnee=mdcomp.getY();		
+		abscisse=mdnote.getX();
+		ordonnee=mdnote.getY();		
 		// On garde aussi une trace de la largeur et de la hauteur du composant
-		largeur=mdcomp.getLargeur();
-		hauteur=mdcomp.getHauteur();
+		largeur=mdnote.getLargeur();
+		hauteur=mdnote.getHauteur();
 		
 		// Mise en place des Attributs de la cellule text pas défaut
 		GraphConstants.setBounds(getAttributs(), new Rectangle((int)abscisse,(int)ordonnee,(int)largeur,(int)hauteur));
 		GraphConstants.setEditable(getAttributs(), true);
 		GraphConstants.setOpaque(getAttributs(), true);
-		GraphConstants.setFont(getAttributs(),mdcomp.getPolice());
-		GraphConstants.setBackground(getAttributs(),mdcomp.getFillColor());
+		GraphConstants.setFont(getAttributs(),mdnote.getPolice());
+		GraphConstants.setBackground(getAttributs(),mdnote.getFillColor());
 	}
 	
 	public double getAbscisse() {
@@ -78,18 +99,32 @@ public class TextCell extends IeppCell {
 	}
 
 	/**
-	 * @return Returns the mdcomp.
+	 * @return Returns the fnote.
 	 */
-	public MDNote getMdcomp() {
-		return mdcomp;
+	public FNote getFnote() {
+		return fnote;
 	}
 
 	/**
-	 * @param mdcomp The mdcomp to set.
+	 * @param fnote The fnote to set.
 	 */
-	public void setMdcomp(MDNote mdcomp) {
-		this.mdcomp = mdcomp;
-		GraphConstants.setFont(getAttributs(),this.mdcomp.getPolice());
-		GraphConstants.setBackground(getAttributs(),this.mdcomp.getFillColor());
+	public void setFnote(FNote fnote) {
+		this.fnote = fnote;
 	}
+
+	/**
+	 * @return Returns the mdnote.
+	 */
+	public MDNote getMdnote() {
+		return mdnote;
+	}
+
+	/**
+	 * @param mdnote The mdnote to set.
+	 */
+	public void setMdnote(MDNote mdnote) {
+		this.mdnote = mdnote;
+	}
+
+	
 }

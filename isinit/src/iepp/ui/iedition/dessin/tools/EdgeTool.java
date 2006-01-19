@@ -20,11 +20,19 @@ package iepp.ui.iedition.dessin.tools;
  */
 
 import iepp.Application;
+import iepp.application.aedition.CLier2Produits;
+import iepp.ui.iedition.VueDPGraphe;
+import iepp.ui.iedition.dessin.rendu.FElement;
+import iepp.ui.iedition.dessin.rendu.FProduitFusion;
+import iepp.ui.iedition.dessin.rendu.Figure;
 import iepp.ui.iedition.dessin.rendu.IeppCell;
 import iepp.ui.iedition.dessin.rendu.LienEdge;
 import iepp.ui.iedition.dessin.rendu.ProduitCell;
 import iepp.ui.iedition.dessin.rendu.ProduitCellEntree;
+import iepp.ui.iedition.dessin.rendu.ProduitCellFusion;
 import iepp.ui.iedition.dessin.rendu.ProduitCellSortie;
+import iepp.ui.iedition.dessin.rendu.liens.FLienFusion;
+import iepp.ui.iedition.dessin.vues.MDLienClassic;
 import iepp.ui.iedition.dessin.vues.MDProduit;
 import iepp.ui.iedition.popup.PopupDiagramme;
 
@@ -49,10 +57,10 @@ import org.jgraph.graph.PortView;
  * This tool allows to create edges in the graph It use the prototype design
  * pattern to clone edges
  * 
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class EdgeTool extends Tool {
-	protected JGraph mGraph;
+	protected VueDPGraphe mGraph;
 
 	protected DefaultEdge mPrototype;
 
@@ -73,7 +81,7 @@ public class EdgeTool extends Tool {
 	}
 
 	public void install(JGraph graph) {
-		mGraph = graph;
+		mGraph = (VueDPGraphe)graph;
 		lastHandler = graph.getMarqueeHandler();
 		graph.setMarqueeHandler(mHandler);
 		graph.setMoveable(false);
@@ -121,8 +129,9 @@ public class EdgeTool extends Tool {
 
 		public void mouseReleased(MouseEvent e) {
 			
-			
-			if (!((mGraph.getFirstCellForLocation(e.getX(), e.getY()) instanceof IeppCell)||(mGraph.getFirstCellForLocation(e.getX(), e.getY()) instanceof LienEdge)))
+	        super.mouseReleased(e);
+	        
+	        if (!((mGraph.getFirstCellForLocation(e.getX(), e.getY()) instanceof IeppCell)||(mGraph.getFirstCellForLocation(e.getX(), e.getY()) instanceof LienEdge)))
 			{
 				if (e.isPopupTrigger())
 	          	{
@@ -130,131 +139,42 @@ public class EdgeTool extends Tool {
 				    p.show(mGraph,e.getX(),e.getY());
 			 	}
 			}
-			
+			 
 			if (e != null && !e.isConsumed() && mPort != null
 					&& mFirstPort != null && mFirstPort != mPort) {
-
-				mGraph.clearSelection();
-
-				Object cellSrc = mFirstPort.getParentView().getCell();
-				Object cellDes = mPort.getParentView().getCell();
-
-				Object cellEnt = null;
-				Object cellSor = null;
-
-				if (((cellSrc instanceof ProduitCellEntree) && (cellDes instanceof ProduitCellSortie))
-						|| (cellSrc instanceof ProduitCellSortie)
-						&& (cellDes instanceof ProduitCellEntree)) {
-					// verif ke les 2 soit un produit de type differents
-
-					if (cellDes instanceof ProduitCellEntree) {
-						cellEnt = cellDes;
-						cellSor = cellSrc;
-					} else {
-						cellEnt = cellSrc;
-						cellSor = cellDes;
-					}
-
-					// On essaie de relier un produit en entree et en sortie d'un meme composant
-					if (((ProduitCellEntree) cellEnt).getCompParent().equals(
-							((ProduitCellSortie) cellSor).getCompParent())) {
-						mGraph.repaint();
-						return;
-					}
-
-					LienEdge edge1 = new LienEdge();
-					LienEdge edge2 = new LienEdge();
-
-					MDProduit mdp1 = ((ProduitCell) cellSrc).getMprod();
-					MDProduit mdp2 = ((ProduitCell) cellDes).getMprod();
-
-					mdp1.setX((mdp1.getX() + mdp2.getX()) / 2);
-					mdp1.setY((mdp1.getY() + mdp2.getY()) / 2);
-					ProduitCell newProdCell = new ProduitCell(mdp1);
-
-					if (!((ProduitCell) cellSrc).getNomCompCell()
-							.equalsIgnoreCase(
-									((ProduitCell) cellDes).getNomCompCell())) {
-						newProdCell.setNomCompCell(((ProduitCell) cellSrc)
-								.getNomCompCell()
-								+ "("
-								+ ((ProduitCell) cellDes).getNomCompCell()
-								+ ")");
-					}
-
-					newProdCell.setImageComposant("produitLie.png");
-
-					Map AllAttribute = GraphConstants.createMap();
-
-					AllAttribute.put(edge1, edge1.getEdgeAttribute());
-					AllAttribute.put(edge2, edge2.getEdgeAttribute());
-					AllAttribute.put(newProdCell, newProdCell.getAttributs());
-
-					DefaultPort portS = ((ProduitCellSortie) cellSor)
-							.getCompParent().getPortComp();
-					DefaultPort portDInt = ((ProduitCell) newProdCell)
-							.getPortComp();
-					DefaultPort portD = ((ProduitCellEntree) cellEnt)
-							.getCompParent().getPortComp();
-
-					ConnectionSet cs1 = new ConnectionSet(edge1, portS,
-							portDInt);
-					ConnectionSet cs2 = new ConnectionSet(edge2, portDInt,
-							portD);
-
-					Vector vecObj = new Vector();
-					vecObj.add(newProdCell);
-					vecObj.add(edge1);
-					vecObj.add(edge2);
-
-					mGraph.getModel().insert(vecObj.toArray(), AllAttribute,
-							null, null, null);
-					mGraph.getModel().insert(null, null, cs1, null, null);
-					mGraph.getModel().insert(null, null, cs2, null, null);
-
-					vecObj.clear();
-
-					for (int i = 0; i < ((ProduitCell) cellSrc).getListeLien()
-							.size(); i++)
-						vecObj.add(((ProduitCell) cellSrc).getListeLien()
-								.get(i));
-
-					for (int i = 0; i < ((ProduitCell) cellDes).getListeLien()
-							.size(); i++)
-						vecObj.add(((ProduitCell) cellDes).getListeLien()
-								.get(i));
-
-					vecObj.add(((ProduitCell) cellSrc).getPortComp());
-					vecObj.add(((ProduitCell) cellDes).getPortComp());
-					vecObj.add(cellSrc);
-					vecObj.add(cellDes);
-
-					mGraph.getModel().remove(vecObj.toArray());
-
-					e.consume();
-					
-					mGraph.repaint();
-					
-					// reprendre l'outil de séléction
-					Application.getApplication().getProjet().getFenetreEdition().setOutilSelection();
-
-				} else {
-					mGraph.repaint();
-					// System.out.println("SOURCE & DESTINATION identiques");
-				}
-
-				e.consume();
+			
+				Figure figureCliquee ;
+				FElement source;
 				
-
-			} else {
-				mStable = false;
-				mGraph.repaint();
+		        Object cellSrc = mFirstPort.getParentView().getCell();
+		        Object cellDes = mPort.getParentView().getCell();
+		        
+		        if ( (cellSrc instanceof ProduitCell) && (cellDes instanceof ProduitCell) ){
+		        	
+		        	figureCliquee = ((ProduitCell)cellSrc).getFprod();
+		        	source = ((ProduitCell)cellDes).getFprod();
+		        
+			        // Click sur autre chose qu'un élément
+			        if (figureCliquee != null && (figureCliquee instanceof FElement))
+			        {
+		            	//if (figureCliquee != source || pointsAncrageIntermediaires.size() > 0)
+			        	if (figureCliquee != source )
+			        	{
+			        		// passer les objets !
+							CLier2Produits c = new CLier2Produits(mGraph, (ProduitCell)cellDes, (ProduitCell)cellSrc, new Vector());
+		              		if (c.executer())
+		      			    {
+		      			   		Application.getApplication().getProjet().setModified(true);
+		      			    }
+		              	}
+		            }
+		        }
+		        
 			}
-
-			mFirstPort = mPort = null;
-			mStart = mCurrent = null;
-
-			fireToolFinished();
+			
+			// reprendre l'outil de séléction
+			Application.getApplication().getProjet().getFenetreEdition().setOutilSelection();
+			
 		}
 
 		protected void createEdge(DefaultEdge edge, ConnectionSet cs,

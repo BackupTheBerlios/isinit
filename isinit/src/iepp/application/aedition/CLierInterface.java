@@ -76,6 +76,7 @@ public class CLierInterface extends CommandeNonAnnulable
 	private IeppCell cellD;
 	
 	private Map AllAttribute;
+	
 	/**
 	* Constructeur de la commande, créé un lien entre un composant et un produit simple
 	* Créer une nouvelle figure pour le lien
@@ -85,10 +86,19 @@ public class CLierInterface extends CommandeNonAnnulable
 	* @param destination figure où arrive le lien
 	* @param pointsAncrageIntermediaires liste des points d'ancrages du lien à créer
 	*/
-	//public CLierInterface(VueDPGraphe d, IeppCell source, IeppCell destination)
-	public CLierInterface(VueDPGraphe d, FLien l, FElement source, FElement destination, Vector pointsAncrageIntermediaires, IeppCell ieppsource, IeppCell ieppdestination)
+	public CLierInterface(VueDPGraphe d, FLien l, Vector pointsAncrageIntermediaires, IeppCell ieppsource, IeppCell ieppdestination)
 	{
 		this.diagramme = d;
+		FElement source;
+		FElement destination;
+		
+		if (ieppsource instanceof ComposantCell){
+			source = ((ComposantCell)ieppsource).getFcomp();
+			destination = ((ProduitCell)ieppdestination).getFprod();
+		}else{
+			source = ((ComposantCell)ieppdestination).getFcomp();
+			destination = ((ProduitCell)ieppsource).getFprod();
+		}
 		
 		this.lien = l;
 		((MDLien) lien.getModele()).setSource((MDElement) source.getModele());
@@ -167,7 +177,6 @@ public class CLierInterface extends CommandeNonAnnulable
 		
         vecObj.add(lienComp);
         
-        //diagramme.setLiens(vecObj);
         diagramme.ajouterFigure( this.lien );
         
         ConnectionSet cs = new ConnectionSet(lienComp, portS, portD);

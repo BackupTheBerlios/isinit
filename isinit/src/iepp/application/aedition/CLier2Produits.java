@@ -19,8 +19,14 @@
 
 package iepp.application.aedition;
 
+import java.util.Map;
 import java.util.Vector;
 
+import org.jgraph.graph.ConnectionSet;
+import org.jgraph.graph.DefaultPort;
+import org.jgraph.graph.GraphConstants;
+
+import iepp.Application;
 import iepp.application.CommandeAnnulable;
 import iepp.application.averification.VGestVerification;
 import iepp.domaine.ComposantProcessus;
@@ -31,6 +37,12 @@ import iepp.ui.iedition.dessin.rendu.FElement;
 import iepp.ui.iedition.dessin.rendu.FNote;
 import iepp.ui.iedition.dessin.rendu.FProduit;
 import iepp.ui.iedition.dessin.rendu.FProduitFusion;
+import iepp.ui.iedition.dessin.rendu.IeppCell;
+import iepp.ui.iedition.dessin.rendu.LienEdge;
+import iepp.ui.iedition.dessin.rendu.ProduitCell;
+import iepp.ui.iedition.dessin.rendu.ProduitCellEntree;
+import iepp.ui.iedition.dessin.rendu.ProduitCellFusion;
+import iepp.ui.iedition.dessin.rendu.ProduitCellSortie;
 import iepp.ui.iedition.dessin.rendu.liens.FLien;
 import iepp.ui.iedition.dessin.rendu.liens.FLienFusion;
 import iepp.ui.iedition.dessin.vues.MDElement;
@@ -87,11 +99,13 @@ public class CLier2Produits extends CommandeAnnulable
 	* @param destination figure sur laquelle on a cliqué en second
 	* @param pointsAncrageIntermediaires liste des points d'ancrage créée lors de la liaison entre les deux figures
 	*/
-	public CLier2Produits(VueDPGraphe d,  FElement source, FElement destination, Vector pointsAncrageIntermediaires)
+	public CLier2Produits(VueDPGraphe d,  ProduitCell Cellsource, ProduitCell Celldestination, Vector pointsAncrageIntermediaires)
 	{
-		System.out.println(destination.getClass());
+		FElement source = Cellsource.getFprod();
+		FElement destination = Celldestination.getFprod();
+		
 		// garder un lien vers le diagramme
-                this.diagramme = d;
+        this.diagramme = d;
 
 		// si l'objet source est un produit en entrée on permute le sens du lien entrée
 		this.src = source.getModele().getId();
@@ -115,8 +129,7 @@ public class CLier2Produits extends CommandeAnnulable
 				if (destination instanceof FProduitFusion)
 				{
 					this.executable = (((new VGestVerification()).connexionPossible((FProduitFusion)destination, source)).nbErr() == 0 );
-                    System.out.println("clier2prod  " + executable);
-				}
+ 				}
 				else
 				{
 					// vérifier que le nombre d'erreurs = zero
@@ -125,7 +138,6 @@ public class CLier2Produits extends CommandeAnnulable
 
 		if (this.executable)
 		{
-			System.out.println( "ok" );
 			// Création du produit de la fusion
 			// On prend le modele du produit en sortie
 			MDProduit mdfusion = null;
@@ -137,10 +149,7 @@ public class CLier2Produits extends CommandeAnnulable
 			{
 				mdfusion = (MDProduit)destination.getModele();
 			}
-			/*
-			mdfusion.setLargeur(30);
-			mdfusion.setHauteur(40);
-			*/
+			
 			// Creation des liens fusion
 			this.lien1 = new FLienFusion(new MDLienClassic());
 			this.lien2 = new FLienFusion(new MDLienClassic());
@@ -268,9 +277,106 @@ public class CLier2Produits extends CommandeAnnulable
 							else
 								this.fusion.setNomFusion(sortie.getModele().getId().toString()+"("+entree.getModele().getId().toString()+")");
 						}
-						System.out.println( this.fusion.getNomFusion() );
+						//System.out.println( this.fusion.getNomFusion() );
 					}
-			 	}
+					
+					/////////////////////////////////////////////
+					// Ajout pour la prise en compte de JGraph //
+					/////////////////////////////////////////////
+					
+					this.diagramme.clearSelection();
+					this.diagramme.setSelectionCells(null);
+					
+					Object cellSrc = Cellsource;
+					Object cellDes = Celldestination;
+
+					Object cellEnt = null;
+					Object cellSor = null;
+
+					if (((cellSrc instanceof ProduitCellEntree) && (cellDes instanceof ProduitCellSortie))
+							|| (cellSrc instanceof ProduitCellSortie)
+							&& (cellDes instanceof ProduitCellEntree)) {
+						// verif ke les 2 soit un produit de type differents
+
+						if (cellDes instanceof ProduitCellEntree) {
+							cellEnt = cellDes;
+							cellSor = cellSrc;
+						} else {
+							cellEnt = cellSrc;
+							cellSor = cellDes;
+						}
+
+						// On essaie de relier un produit en entree et en sortie d'un meme composant
+						if (((ProduitCellEntree) cellEnt).getCompParent().equals(
+								((ProduitCellSortie) cellSor).getCompParent())) {
+							this.diagramme.repaint();
+							return;
+						}
+
+						LienEdge edge1 = new LienEdge();
+						LienEdge edge2 = new LienEdge();
+
+						MDProduit mdp1 = ((ProduitCell) cellSrc).getMprod();
+						MDProduit mdp2 = ((ProduitCell) cellDes).getMprod();
+
+						mdfusion.setX((mdp1.getX() + mdp2.getX()) / 2);
+						mdfusion.setY((mdp1.getY() + mdp2.getY()) / 2);
+						
+						ProduitCellFusion newProdCell = new ProduitCellFusion(this.fusion,(ProduitCellEntree)cellEnt,(ProduitCellSortie)cellSor);
+
+						this.diagramme.supprimerCellule((IeppCell)cellEnt);
+						this.diagramme.supprimerCellule((IeppCell)cellSor);
+						
+						if (!((ProduitCell) cellSrc).getNomCompCell()
+								.equalsIgnoreCase(
+										((ProduitCell) cellDes).getNomCompCell())) {
+							newProdCell.setNomCompCell(((ProduitCell) cellSrc)
+									.getNomCompCell()
+									+ "("
+									+ ((ProduitCell) cellDes).getNomCompCell()
+									+ ")");
+						}
+
+						Map AllAttribute = GraphConstants.createMap();
+
+						AllAttribute.put(edge1, edge1.getEdgeAttribute());
+						AllAttribute.put(edge2, edge2.getEdgeAttribute());
+						AllAttribute.put(newProdCell, newProdCell.getAttributs());
+
+						DefaultPort portS = ((ProduitCellSortie) cellSor)
+								.getCompParent().getPortComp();
+						DefaultPort portDInt = ((ProduitCellFusion) newProdCell)
+								.getPortComp();
+						DefaultPort portD = ((ProduitCellEntree) cellEnt)
+								.getCompParent().getPortComp();
+
+						ConnectionSet cs1 = new ConnectionSet(edge1, portS,
+								portDInt);
+						ConnectionSet cs2 = new ConnectionSet(edge2, portDInt,
+								portD);
+
+						Vector vecObj = new Vector();
+						vecObj.add(newProdCell);
+						vecObj.add(edge1);
+						vecObj.add(edge2);
+
+						this.diagramme.getModel().insert(vecObj.toArray(), AllAttribute,
+								null, null, null);
+						this.diagramme.getModel().insert(null, null, cs1, null, null);
+						this.diagramme.getModel().insert(null, null, cs2, null, null);
+
+						this.diagramme.setSelectionCell(newProdCell);
+						
+						this.diagramme.repaint();
+						
+						// reprendre l'outil de séléction
+						Application.getApplication().getProjet().getFenetreEdition().setOutilSelection();
+
+					} else {
+						this.diagramme.repaint();
+						// System.out.println("SOURCE & DESTINATION identiques");
+					}
+			 	} 
 			}
 		}
 	}
