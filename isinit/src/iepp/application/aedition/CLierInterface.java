@@ -95,9 +95,9 @@ public class CLierInterface extends CommandeNonAnnulable
 		if (ieppsource instanceof ComposantCell){
 			source = ((ComposantCell)ieppsource).getFcomp();
 			destination = ((ProduitCell)ieppdestination).getFprod();
-		}else{
-			source = ((ComposantCell)ieppdestination).getFcomp();
-			destination = ((ProduitCell)ieppsource).getFprod();
+		} else {
+			source = ((ProduitCell)ieppsource).getFprod();
+			destination = ((ComposantCell)ieppdestination).getFcomp();
 		}
 		
 		this.lien = l;

@@ -332,6 +332,7 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 			 }
 		}
 		 // Dessine les liens
+		 System.out.println( "Chargement des liens" );
 		 for (int i = 0; i < this.liens.size(); i++)
 		 {
 			 // On recupere la cellule source
@@ -358,8 +359,11 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 			 // On recupere les ports
 			 DefaultPort portS = ((IeppCell) cell1).getPortComp();
 			 DefaultPort portD = ((IeppCell) cell2).getPortComp();
-
-			 ConnectionSet cs = new ConnectionSet(edge, portS, portD);
+			 
+			 ConnectionSet cs;
+			 cs = new ConnectionSet(edge, portS, portD);
+			 
+			 System.out.println(cell1.getClass()+"-"+cell2.getClass());
 
 			 // On l'ajoute au modele
 			 Vector vecObj = new Vector();
