@@ -131,16 +131,16 @@ public class OSelection extends Outil {
 	public void mouseDragged(MouseEvent event) {
 		// super.mouseDragged(event);
 
-		if (event.isControlDown()) {
+		if (event.isControlDown() && state == CTRL_HANDLE ) {
 
 			if (diagramme.getFirstCellForLocation(event.getX(), event.getY()) instanceof IeppCell) {
 				// ne rien faire pour eviter la copie de cellule
-				diagramme.setDropEnabled(true);
+				diagramme.setDropEnabled(false);
 				
 			}
 
 		} else {
-			diagramme.setDropEnabled(false);
+			diagramme.setDropEnabled(true);
 		}
 
 		//this.update();
@@ -164,31 +164,29 @@ public class OSelection extends Outil {
 			}
 			// modif aldo nit 15/01/06
 			else {
-				if (diagramme.getFirstCellForLocation(event.getX(), event
-						.getY()) instanceof ComposantCell) {
-					ComposantCell ic = (ComposantCell) diagramme
-							.getFirstCellForLocation(event.getX(), event.getY());
-					if (event.isPopupTrigger()) {
-						PopupFComposantProcessus p = new PopupFComposantProcessus(
-								ic);
-						p.show(diagramme, event.getX(), event.getY());
-					}
-				}else if (diagramme.getFirstCellForLocation(event.getX(), event
-							.getY()) instanceof TextCell) {
-						if (event.isPopupTrigger()) {
-							showPopupMenuNote();
-						}
-				}else {
-					// On bouge un objet
-						Vecteur translation = new Vecteur();
-						translation.setSubstraction(this.current, this.start);
-						CDeplacerElement c = new CDeplacerElement(this.diagramme,
-								translation);
-						if (c.executer()) {
-							Application.getApplication().getProjet().setModified(
-									true);
+				if (event.isPopupTrigger()) {
+						if (diagramme.getFirstCellForLocation(event.getX(), event.getY()) instanceof ComposantCell) {
+							
+							ComposantCell ic = (ComposantCell) diagramme.getFirstCellForLocation(event.getX(), event.getY());
+							
+							PopupFComposantProcessus p = new PopupFComposantProcessus(ic);
+							
+							p.show(diagramme, event.getX(), event.getY());
+						}else if (diagramme.getFirstCellForLocation(event.getX(), event.getY()) instanceof TextCell) {
+								showPopupMenuNote((TextCell)diagramme.getFirstCellForLocation(event.getX(), event.getY()));
+							
 						}
 				}
+
+				// On bouge un objet
+				Vecteur translation = new Vecteur();
+				translation.setSubstraction(this.current, this.start);
+				System.out.println("Bouger "+translation);
+				CDeplacerElement c = new CDeplacerElement(this.diagramme,translation);
+				if (c.executer()) {
+					Application.getApplication().getProjet().setModified(true);
+				}
+				
 			}
 			
 			
@@ -233,8 +231,8 @@ public class OSelection extends Outil {
 	/**
 	 * Affiche le menu popup (contextuel) pour un diagramme.
 	 */
-	protected void showPopupMenuNote() {
-		PopupFNote p = new PopupFNote(diagramme, null);
+	protected void showPopupMenuNote(TextCell note) {
+		PopupFNote p = new PopupFNote(diagramme, note);
 		System.out.println("Modification note");
 		p.show(diagramme, getStart().x, getStart().y);
 	}

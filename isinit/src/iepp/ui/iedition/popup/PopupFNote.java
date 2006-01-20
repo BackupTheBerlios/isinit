@@ -19,13 +19,13 @@
 
 package iepp.ui.iedition.popup;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import iepp.Application;
-import iepp.ui.iedition.FenetreProprieteNote;
 import iepp.ui.iedition.VueDPGraphe;
 import iepp.ui.iedition.dessin.rendu.FNote;
+import iepp.ui.iedition.dessin.rendu.TextCell;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -46,15 +46,19 @@ public class PopupFNote extends JPopupMenu implements ActionListener
 	
 	private FNote note ;
 	
+	private TextCell noteCell ;
+	
 	
 	/**
 	 * @param note
 	 */
-	public PopupFNote(VueDPGraphe d,FNote note)
+	public PopupFNote(VueDPGraphe d,TextCell note)
 	{
 		this.diagramme = d;
 		
-		this.note = note;
+		this.noteCell = note;
+		
+		this.note = note.getFnote();
 		
 		// création des items
 		this.suppr = new JMenuItem(Application.getApplication().getTraduction("Supprimer"));
@@ -77,6 +81,7 @@ public class PopupFNote extends JPopupMenu implements ActionListener
 		 if (event.getSource() == this.suppr)
 		 {
 		 	this.diagramme.supprimerFigure(this.note);
+		 	this.diagramme.supprimerCellule(this.noteCell);
 		 	this.diagramme.repaint();
 		 }
 		 /*

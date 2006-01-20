@@ -239,6 +239,7 @@ public class CLier2Produits extends CommandeAnnulable
 						entree = source;
 					}
 
+					//erreur peut etre
 					// Suppression du lien (FLienInterface) entre les produits effacés et leur composants
 					this.diagramme.supprimerFigure((FLien)destination.getLiens().elementAt(0));
 					this.diagramme.supprimerFigure((FLien)source.getLiens().elementAt(0));

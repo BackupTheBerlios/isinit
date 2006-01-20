@@ -197,7 +197,7 @@ public class CSupprimerComposantGraphe extends CommandeAnnulable
 					 this.diagramme.getModel().insert(vecObj.toArray(), AllAttribute, null, null, null);
 					 this.diagramme.getModel().insert(null, null, cs, null, null);
 
-					 
+					 this.diagramme.ajouterFigure(prodS.getFprod());
 					 this.diagramme.ajouterCell(prodS);
 					 this.diagramme.supprimerCellule(prodF);
 					
@@ -236,8 +236,9 @@ public class CSupprimerComposantGraphe extends CommandeAnnulable
 					 this.diagramme.getModel().insert(vecObj.toArray(), AllAttribute, null, null, null);
 					 this.diagramme.getModel().insert(null, null, cs, null, null);
 					 
-					this.diagramme.ajouterCell(prodE);
-					this.diagramme.supprimerCellule(prodF);
+					 this.diagramme.ajouterFigure(prodE.getFprod());
+					 this.diagramme.ajouterCell(prodE);
+					 this.diagramme.supprimerCellule(prodF);
 				}
 			}
 		}

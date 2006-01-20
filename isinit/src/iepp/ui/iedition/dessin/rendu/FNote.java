@@ -63,8 +63,7 @@ public class FNote extends FElement {
     
     public void doOnRightClick(VueDPGraphe parent, int x, int y)
     {
-    	PopupFNote p = new PopupFNote(parent, this);
-    	p.show(parent, x, y);	
+    	
     }
     
     /**

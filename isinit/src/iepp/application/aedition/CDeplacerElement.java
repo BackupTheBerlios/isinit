@@ -19,13 +19,17 @@
  
 package iepp.application.aedition;
 
+import iepp.application.CommandeAnnulable;
+import iepp.ui.iedition.VueDPGraphe;
+import iepp.ui.iedition.dessin.rendu.ComposantCell;
+import iepp.ui.iedition.dessin.rendu.Figure;
+import iepp.ui.iedition.dessin.rendu.ProduitCell;
+import iepp.ui.iedition.dessin.rendu.ProduitCellFusion;
+
 import java.util.Enumeration;
 import java.util.Vector;
 
 import util.Vecteur;
-import iepp.application.CommandeAnnulable;
-import iepp.ui.iedition.VueDPGraphe;
-import iepp.ui.iedition.dessin.rendu.Figure;
 
 /**
  * Commande annulable permettant de déplacer un élément (produit, lien...) sur un diagramme
@@ -58,15 +62,33 @@ public class CDeplacerElement extends CommandeAnnulable
 	{
 		// garder un lien vers le diagramme
 		this.diagramme = d ;
+		
+		this.diagramme.clearSelection();
+		
 		// initialiser les éléments à déplacer
 		this.selection = new Vector();
-		Enumeration e = diagramme.selectedElements();
+		
+		for(int i= 0;i<diagramme.getSelectionCells().length;i++){
+			Object obj = diagramme.getSelectionCells()[i];
+			selection.addElement(obj);
+			
+			if(obj instanceof ComposantCell){
+				this.diagramme.selectionneFigure((Figure)((ComposantCell)obj).getFcomp());
+			}else if(obj instanceof ProduitCell){
+				this.diagramme.selectionneFigure((Figure)((ProduitCell)obj).getFprod());
+			}else if(obj instanceof ProduitCellFusion){
+				this.diagramme.selectionneFigure((Figure)((ProduitCellFusion)obj).getFprod());
+			}
+		}
+		
+		/*Enumeration e = diagramme.selectedElements();
 		// parcourir la liste des éléments sélectionnés
 		while( e.hasMoreElements() )
 		{
 			// ajouter chacun de ces éléments dans la liste des éléments à déplacer
 			selection.addElement(e.nextElement());
 		} 
+		*/
 		// récupérer les propriétés du déplacement
 		this.translation = v;
 	}
@@ -84,7 +106,17 @@ public class CDeplacerElement extends CommandeAnnulable
 	*/
 	private void annule(Object p)
 	{
-		Figure figure = (Figure) p;
+		Figure figure;
+		if(p instanceof ComposantCell){
+			figure = (Figure) ((ComposantCell)p).getFcomp();
+		}else if(p instanceof ProduitCell){
+			figure = (Figure) ((ProduitCell)p).getFprod();
+		}else if(p instanceof ProduitCellFusion){
+			figure = (Figure) ((ProduitCellFusion)p).getFprod();
+		}else{
+			return;
+		}
+		
 		Vecteur v = new Vecteur(this.translation);
 		v.negate();
 		figure.translate(v);
@@ -98,7 +130,17 @@ public class CDeplacerElement extends CommandeAnnulable
 	private boolean execute(Object p)
 	{
 		// récupérer la figure à déplacer
-		Figure figure = (Figure) p;
+		Figure figure;
+		if(p instanceof ComposantCell){
+			figure = (Figure) ((ComposantCell)p).getFcomp();
+		}else if(p instanceof ProduitCell){
+			figure = (Figure) ((ProduitCell)p).getFprod();
+		}else if(p instanceof ProduitCellFusion){
+			figure = (Figure) ((ProduitCellFusion)p).getFprod();
+		}else{
+			return false;
+		}
+		
 		// déplacer la figure
 		figure.translate(this.translation);
 		return true;
@@ -113,6 +155,10 @@ public class CDeplacerElement extends CommandeAnnulable
 		// récupérer la liste des éléments sélectionnés
 		Enumeration e = this.selection.elements();
 		// parcourir cette liste
+		if (translation.x == 0 && translation.y == 0){
+			return false;
+		}
+		
 		while( e.hasMoreElements() )
 		{
 			// déplacer chaque élément
