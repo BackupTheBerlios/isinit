@@ -88,6 +88,7 @@ public class IeppCell extends DefaultGraphCell {
 	
 	public void setPortComp(DefaultPort dp) {
 		portComposant=dp;
+		this.add(portComposant);
 	}
 	
 	public DefaultPort getPortComp() {

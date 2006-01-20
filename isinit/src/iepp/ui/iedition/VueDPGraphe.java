@@ -585,10 +585,10 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 		Vector vecObj = new Vector();
 		
 		for (int i = 0; i < ((IeppCell) cell).getListeLien().size(); i++)
-			vecObj.add(((ProduitCell) cell).getListeLien()
+			vecObj.add(((IeppCell) cell).getListeLien()
 					.get(i));
 
-		vecObj.add(((ProduitCell) cell).getPortComp());
+		vecObj.add(((IeppCell) cell).getPortComp());
 		vecObj.add(cell);
 		
 		this.getModel().remove(vecObj.toArray());

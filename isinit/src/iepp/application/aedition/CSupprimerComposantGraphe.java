@@ -20,7 +20,12 @@
 package iepp.application.aedition;
 
 
+import java.util.Map;
 import java.util.Vector;
+
+import org.jgraph.graph.ConnectionSet;
+import org.jgraph.graph.DefaultPort;
+import org.jgraph.graph.GraphConstants;
 
 import iepp.Application;
 import iepp.application.CommandeAnnulable;
@@ -29,12 +34,14 @@ import iepp.domaine.IdObjetModele;
 import iepp.domaine.LienProduits;
 import iepp.ui.iedition.VueDPGraphe;
 import iepp.ui.iedition.dessin.rendu.ComposantCell;
+import iepp.ui.iedition.dessin.rendu.FComposantProcessus;
 import iepp.ui.iedition.dessin.rendu.FElement;
 import iepp.ui.iedition.dessin.rendu.FProduit;
 import iepp.ui.iedition.dessin.rendu.IeppCell;
 import iepp.ui.iedition.dessin.rendu.LienEdge;
 import iepp.ui.iedition.dessin.rendu.ProduitCell;
 import iepp.ui.iedition.dessin.rendu.ProduitCellEntree;
+import iepp.ui.iedition.dessin.rendu.ProduitCellFusion;
 import iepp.ui.iedition.dessin.rendu.ProduitCellSortie;
 import iepp.ui.iedition.dessin.vues.MDElement;
 import iepp.ui.iedition.dessin.vues.MDProduit;
@@ -51,7 +58,13 @@ public class CSupprimerComposantGraphe extends CommandeAnnulable
 	/**
 	 * Id du composant à supprimer du graphe
 	 */
-	private ComposantCell composant;
+	private IdObjetModele composant;
+	
+	/**
+	 * Cellule du composant à supprimer du graphe
+	 */
+	private ComposantCell composantCell;
+	
 	
 	/**
 	 * Diagramme duquel on veut supprimer un composant
@@ -67,7 +80,8 @@ public class CSupprimerComposantGraphe extends CommandeAnnulable
 	public CSupprimerComposantGraphe (ComposantCell compo)
 	{
 		// initialiser le composant à supprimer
-		this.composant = compo ;
+		this.composantCell = compo;
+		this.composant = compo.getMdcomp().getId() ;
 		this.diagramme = Application.getApplication().getProjet().getFenetreEdition().getVueDPGraphe();
 		
 	}
@@ -80,80 +94,7 @@ public class CSupprimerComposantGraphe extends CommandeAnnulable
 	 */
 	public boolean executer()
 	{
-		// modif Aldo Nit 15/01/06
-		//selection des cellules impliquées par le clic
-		Object[] cells=this.diagramme.getSelectionCells();
-		// suppression des liens 
-		Vector liens=this.composant.getListeLien();
-		LienEdge[] li=new LienEdge[liens.size()];
-		for (int j=0; j<liens.size();j++)
-		{
-			li[j]=(LienEdge)liens.elementAt(j);
-		}
-		this.diagramme.getModel().remove((Object[])li);
-
-		// suppression des produits avec leur ports
 		
-		Vector entree=this.composant.getMdcomp().getComposant().getProduitEntree();
-		Object[]prodEntree=new Object[entree.size()];
-		int n1=0;
-		int n2=0;
-		for (int i1=0;i1<entree.size();i1++)
-		{
-			FElement f=this.diagramme.contient((IdObjetModele)entree.elementAt(i1));
-			MDProduit pp=(MDProduit)f.getModele();
-			int x1 = pp.getX();
-			int y1 = pp.getY();
-			System.out.println(this.diagramme.getFirstCellForLocation(x1,y1).getClass().getName());
-			ProduitCell pc=(ProduitCell)this.diagramme.getFirstCellForLocation(x1,y1);
-			
-			System.out.println(pc.getNomCompCell());
-			System.out.println(pc.getImageComposant());
-			
-			if (pc.getImageComposant()=="produitLie.png")
-			{
-				pc.setImageComposant("produit.png");
-				pc.setNomCompCell("huhu1");
-			}
-			else
-			{
-				pc.remove(pc.getPortComp());
-				prodEntree[n1]=pc;
-				n1++;
-			}
-		}
-		this.diagramme.getModel().remove(prodEntree);
-		
-		Vector sortie=this.composant.getMdcomp().getComposant().getProduitSortie();
-		Object[]prodSortie=new Object[sortie.size()];
-		
-		for (int i2=0;i2<sortie.size();i2++)
-		{
-			FElement f=this.diagramme.contient((IdObjetModele)sortie.elementAt(i2));
-			MDProduit pp=(MDProduit)f.getModele();
-			int x2 = pp.getX();
-			int y2 = pp.getY();
-			ProduitCell pc=(ProduitCell)this.diagramme.getFirstCellForLocation(x2,y2);
-			if (pc.getImageComposant()=="produitLie.png")
-			{
-				pc.setImageComposant("produit.png");
-				pc.setNomCompCell("huhu2");
-			}
-			else
-			{
-				pc.remove(pc.getPortComp());
-				prodSortie[n2]=pc;
-				n2++;
-			}
-			
-		}
-		this.diagramme.getModel().remove(prodSortie);
-		
-		// suppression du composant
-		this.composant.remove(this.composant.getPortComp());
-		
-		this.diagramme.getModel().remove(cells);
-		/*
 		// récupère la liste des liens du composant à supprimer
 		Vector listeLiens = ((ComposantProcessus)this.composant.getRef()).getLien();
 		
@@ -164,7 +105,7 @@ public class CSupprimerComposantGraphe extends CommandeAnnulable
 			// récupérer le produit courant
 			IdObjetModele produitCourant = (IdObjetModele)listeEntree.elementAt(i);
 			// supprimer les éventuels produits fusion et supprimer le produit
-			this.supprimerFusion(produitCourant, listeLiens);		
+		//	this.supprimerFusion(produitCourant, listeLiens);		
 		}
 		
 		// récupérer la liste des produits en sortie du composant
@@ -174,12 +115,134 @@ public class CSupprimerComposantGraphe extends CommandeAnnulable
 			// récupérer le produit courant
 			IdObjetModele produitCourant = (IdObjetModele)listeSortie.elementAt(i);
 			// supprimer les éventuels produits fusion et supprimer le produit
-			this.supprimerFusion(produitCourant, listeLiens);		
+		//	this.supprimerFusion(produitCourant, listeLiens);		
 		}
 
 		// suppression du composant
 		this.diagramme.supprimerFigure(this.diagramme.contient(this.composant));
+		 
+		
+		// modif Aldo Nit 15/01/06
+
+		// suppression des liens 
+		
+		
+		/*Vector liens=this.composantCell.getListeLien();
+		LienEdge[] li=new LienEdge[liens.size()];
+		for (int j=0; j<liens.size();j++)
+		{
+			li[j]=(LienEdge)liens.elementAt(j);
+		}
+		this.diagramme.getModel().remove((Object[])li);
+		
 		*/
+		
+		for (int k=0;k<this.diagramme.getElementsCell().size();k++)
+		{
+			//System.out.println(this.diagramme.getElementsCell().elementAt(k).toString());
+			if (this.diagramme.getElementsCell().elementAt(k) instanceof ProduitCellEntree)
+			{
+				//System.out.println("produitEntre "+this.diagramme.getElementsCell().elementAt(k).toString());
+				ProduitCellEntree prodE=(ProduitCellEntree)this.diagramme.getElementsCell().elementAt(k);
+				if (prodE.getCompParent()==this.composantCell)
+				{
+					this.diagramme.supprimerCellule(prodE);
+					k--;
+				}
+			}
+			else if (this.diagramme.getElementsCell().elementAt(k) instanceof ProduitCellSortie)
+			{
+				//System.out.println("produitSortie "+this.diagramme.getElementsCell().elementAt(k).toString());
+				ProduitCellSortie prodS=(ProduitCellSortie)this.diagramme.getElementsCell().elementAt(k);
+				if (prodS.getCompParent()==this.composantCell)
+				{
+					this.diagramme.supprimerCellule(prodS);
+					k--;
+				}
+			}
+			else if (this.diagramme.getElementsCell().elementAt(k) instanceof ProduitCellFusion)
+			{
+				ProduitCellFusion prodF=(ProduitCellFusion)this.diagramme.getElementsCell().elementAt(k);
+				
+				if (prodF.getProduitCellEntree().getCompParent()==this.composantCell)
+				{
+					 ProduitCellSortie prodS=prodF.getProduitCellSortie();
+					 prodS.setPortComp(new DefaultPort());
+					 ((IeppCell) prodS.getCompParent()).setPortComp(new DefaultPort());
+					 
+					 // On cree un edge pour la connection
+					 LienEdge edge = new LienEdge();
+					 
+					 // on cree la map
+					 Map AllAttribute = GraphConstants.createMap();
+
+					 // On ajoute l'edge
+					 AllAttribute.put(edge, edge.getEdgeAttribute());
+					 AllAttribute.put(prodS, prodS.getAttributs());
+
+					 // On recupere les ports
+				     DefaultPort portS = ((IeppCell) prodS.getCompParent()).getPortComp();
+					 DefaultPort portD = prodS.getPortComp();
+					 
+					 prodS.ajoutLien(edge);
+					 (prodS.getCompParent()).ajoutLien(edge);
+					 
+					 ConnectionSet cs = new ConnectionSet(edge, portS, portD);
+					 
+					 // On l'ajoute au modele
+					 Vector vecObj = new Vector();
+					 vecObj.add(prodS);
+					 vecObj.add(edge);
+
+					 this.diagramme.getModel().insert(vecObj.toArray(), AllAttribute, null, null, null);
+					 this.diagramme.getModel().insert(null, null, cs, null, null);
+
+					 
+					 this.diagramme.ajouterCell(prodS);
+					 this.diagramme.supprimerCellule(prodF);
+					
+				}
+				else if (prodF.getProduitCellSortie().getCompParent()==this.composantCell)
+				{
+					 ProduitCellEntree prodE=prodF.getProduitCellEntree();
+					 prodE.setPortComp(new DefaultPort());
+					 (prodE.getCompParent()).setPortComp(new DefaultPort());
+					 
+					 //On cree un edge pour la connection
+					 LienEdge edge = new LienEdge();
+					 
+					 // on cree la map
+					 Map AllAttribute = GraphConstants.createMap();
+
+					 // On ajoute l'edge
+					 AllAttribute.put(edge, edge.getEdgeAttribute());
+					 AllAttribute.put(prodE, prodE.getAttributs());
+					
+					 prodE.ajoutLien(edge);
+					 (prodE.getCompParent()).ajoutLien(edge);
+					 
+					 // On recupere les ports
+					 DefaultPort portS = (prodE.getCompParent()).getPortComp();
+					 DefaultPort portD = prodE.getPortComp();
+					 
+					 ConnectionSet cs;
+					 cs = new ConnectionSet(edge, portD, portS);
+					 
+					 // On l'ajoute au modele
+					 Vector vecObj = new Vector();
+					 vecObj.add(prodE);
+					 vecObj.add(edge);
+
+					 this.diagramme.getModel().insert(vecObj.toArray(), AllAttribute, null, null, null);
+					 this.diagramme.getModel().insert(null, null, cs, null, null);
+					 
+					this.diagramme.ajouterCell(prodE);
+					this.diagramme.supprimerCellule(prodF);
+				}
+			}
+		}
+		this.diagramme.supprimerCellule(this.composantCell);
+		
 		diagramme.repaint();
 		return true;
 	}

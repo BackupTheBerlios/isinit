@@ -24,6 +24,7 @@ import iepp.Application;
 import iepp.application.CommandeAnnulable;
 import iepp.domaine.IdObjetModele;
 import iepp.ui.iedition.VueDPGraphe;
+import iepp.ui.iedition.dessin.rendu.ComposantCell;
 
 
 /**
@@ -36,6 +37,11 @@ public class CSupprimerComposant extends CommandeAnnulable
 	 * Id du composant à supprimer du graphe
 	 */
 	private IdObjetModele composant;
+	
+	/**
+	 * Cellule du composant à supprimer du graphe
+	 */
+	private ComposantCell composantCell;
 
 	/**
 	 * Diagramme duquel on veut supprimer un composant
@@ -48,10 +54,24 @@ public class CSupprimerComposant extends CommandeAnnulable
 	 * et le diagramme courant de l'application
 	 * @param compo id du composant à supprimer
 	 */
+	public CSupprimerComposant (ComposantCell compo)
+	{
+		// initialiser le composant à supprimer
+		this.composantCell = compo;
+		this.composant = compo.getMdcomp().getId() ;
+		this.diagramme = Application.getApplication().getProjet().getFenetreEdition().getVueDPGraphe();
+
+	}
+	
+	/**
+	 * Constructeur de la commande, récupère le composant à supprimer
+	 * et le diagramme courant de l'application
+	 * @param compo id du composant à supprimer
+	 */
 	public CSupprimerComposant (IdObjetModele compo)
 	{
 		// initialiser le composant à supprimer
-		this.composant = compo ;
+		this.composant = compo;
 		this.diagramme = Application.getApplication().getProjet().getFenetreEdition().getVueDPGraphe();
 
 	}
@@ -70,7 +90,7 @@ public class CSupprimerComposant extends CommandeAnnulable
 		// Verifier si le composant est dans le diagramme, et si oui, le supprimer
 		if (diagramme.contient(this.composant) != null)
 		{
-			new CSupprimerComposantGraphe(this.composant).executer();
+			new CSupprimerComposantGraphe(composantCell).executer();
 		}
 
 		// Enlever le composant de la definition processus

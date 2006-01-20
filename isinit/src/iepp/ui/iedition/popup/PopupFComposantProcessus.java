@@ -81,7 +81,7 @@ public class PopupFComposantProcessus extends JPopupMenu implements ActionListen
 	{
 		 if (event.getSource() == this.supprimer)
 		 {
-			CSupprimerComposantGraphe c = new CSupprimerComposantGraphe(this.compo);
+			CSupprimerComposant c = new CSupprimerComposant(this.compo);
 			if (c.executer())
 			{
 				Application.getApplication().getProjet().setModified(true);

@@ -324,8 +324,13 @@ public class CLier2Produits extends CommandeAnnulable
 						
 						ProduitCellFusion newProdCell = new ProduitCellFusion(this.fusion,(ProduitCellEntree)cellEnt,(ProduitCellSortie)cellSor);
 
+						newProdCell.ajoutLien(edge1);
+						newProdCell.ajoutLien(edge2);
+						
 						this.diagramme.supprimerCellule((IeppCell)cellEnt);
 						this.diagramme.supprimerCellule((IeppCell)cellSor);
+						
+						this.diagramme.getElementsCell().add(newProdCell);
 						
 						if (!((ProduitCell) cellSrc).getNomCompCell()
 								.equalsIgnoreCase(

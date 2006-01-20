@@ -33,7 +33,7 @@ public class ComposantCell extends IeppCell {
 	protected FComposantProcessus fcomp;
 	protected MDComposantProcessus mdcomp;
 	
-	public ComposantCell( FComposantProcessus fcomp ) {
+	public ComposantCell( FComposantProcessus fcomp ) { 
 		
 		super(((MDComposantProcessus)(fcomp.getModele())).getNom());
 		
