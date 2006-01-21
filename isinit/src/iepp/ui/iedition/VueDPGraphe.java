@@ -417,6 +417,7 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 				 
 				 ieppcellD = pcs;
 			 }
+			 
 			 AllAttribute = GraphConstants.createMap();
 			 portS = ieppcellS.getPortComp();
 			 portD = ieppcellD.getPortComp();
@@ -434,73 +435,10 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 			 ((MDLien) lien.getModele()).setSource((MDElement) ((FElement) fe1).getModele());
 			 ((MDLien) lien.getModele()).setDestination((MDElement) ((FElement) fe2).getModele());
 				
-		     //this.ajouterFigure( lien );
-		     
 		     ConnectionSet cs = new ConnectionSet(lienComp, portS, portD);
 		     
 		     this.getModel().insert(vecObj.toArray(), AllAttribute, null, null, null);
 		     this.getModel().insert(null, null, cs, null, null);
-		     
-		     /*
-			 CLierInterface c = new CLierInterface(this,
-					  new FLienInterface(new MDLienDotted()),
-					  new Vector(),
-					  ieppcellS,
-					  ieppcellD);
-			 c.executer();
-			 
-			 /*
-
-			 // On cree un edge pour la connection
-			 LienEdge edge = new LienEdge();
-			 
-			 // On ajoute l'edge
-			 AllAttribute.put(edge, edge.getEdgeAttribute());
-			 
-			 portS = ieppcellS.getPortComp();
-			 portD = ieppcellD.getPortComp();
-			 ConnectionSet cs = new ConnectionSet(edge, portS, portD);
-			 
-			 // On ajoute les liens aux cellules
-			 ieppcellS.ajoutLien(edge);
-			 ieppcellD.ajoutLien(edge);
-			 
-			 //System.out.println( cell1.getClass()+" - "+cell2.getClass() );
-			 
-			 /*
-			 Vector vecObj = new Vector();
-			 
-			 if( cell1 instanceof ComposantCell ) {
-				 //ComposantProcessus cp1 = new ComposantProcessus( cell1 );
-				 if( cell2 instanceof ProduitCell ) {
-					 //ProduitCellSortie npc = new ProduitCellSortie( ((ProduitCell)cell2).getFprod(), (ComposantCell) cell1 );
-					 
-					 //vecObj.add( (ProduitCell)cell2 );
-					 
-					 //AllAttribute.put( (ProduitCell)cell2, ( ((ProduitCell)cell2).getAttributs()) );
-					 
-					 //getModel().insert( vecObj.toArray(), AllAttribute, null, null,null );
-
-					 //this.ajouterCell( npc );
-					 
-				 }
-				 //( (ComposantProcessus) cell1).ajouterProduit( ((ProduitCellSortie)cell2).getNomCompCell(), 1);
-				 //this.ajouterCell( (ProduitCellSortie) cell2 );
-			 }
-			 if( cell2 instanceof ComposantCell ) {
-				 System.out.println( "ProduitCellEntree" );
-				 //( (ComposantProcessus) cell2).ajouterProduit( ((ProduitCellEntree)cell1).getNomCompCell(), 0);
-				 //this.ajouterCell( (ProduitCellEntree) cell1 );
-			 }
-			 
-			 // On l'ajoute au modele
-			 vecObj.add(edge);
-
-			 this.getModel().insert(vecObj.toArray(), AllAttribute, null, null, null);
-			 this.getModel().insert(null, null, cs, null, null);
-
-			 vecObj.clear();
-			 */
 		 }
 		 /*
 		  * // Dessine les poignées (handles)
@@ -510,50 +448,6 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 		  * } 
 		  */
 	}
-			 /*On recupere la cellule source
-			 FElement fe1 = ((FLien) (this.liens.elementAt(i))).getSource();
-			 int x1 = ((MDElement) fe1.getModele()).getX()+1;
-			 int y1 = ((MDElement) fe1.getModele()).getY()+1;
-			 Object cell1 = this.getFirstCellForLocation(x1, y1);
-			 
-			 // On recupere la cellule destination
-			 FElement fe2 = ((FLien) (this.liens.elementAt(i))).getDestination();
-			 int x2 = ((MDElement) fe2.getModele()).getX()+1;
-			 int y2 = ((MDElement) fe2.getModele()).getY()+1;
-			 Object cell2 = this.getFirstCellForLocation(x2, y2);
-			 
-			 // On cree un edge pour la connection
-			 LienEdge edge = new LienEdge();
-			 
-			 // on cree la map
-			 Map AllAttribute = GraphConstants.createMap();
-
-			 // On ajoute l'edge
-			 AllAttribute.put(edge, edge.getEdgeAttribute());
-
-			 // On recupere les ports
-			 DefaultPort portS = ((IeppCell) cell1).getPortComp();
-			 DefaultPort portD = ((IeppCell) cell2).getPortComp();
-			 
-			 ConnectionSet cs;
-			 cs = new ConnectionSet(edge, portS, portD);
-			 
-			 // On l'ajoute au modele
-			 Vector vecObj = new Vector();
-			 vecObj.add(edge);
-
-			 this.getModel().insert(vecObj.toArray(), AllAttribute, null, null, null);
-			 this.getModel().insert(null, null, cs, null, null);
-
-			 vecObj.clear();
-		 }
-		 /*
-		  * // Dessine les poignées (handles)
-		  * for (int i = 0; i < this.selection.size(); i++)
-		  * {
-		  * 	((Figure) (this.selection.elementAt(i))).displayHandles(g);
-		  * } 
-		  */
 	
 	/**
 	 * Repeind le diagramme.
