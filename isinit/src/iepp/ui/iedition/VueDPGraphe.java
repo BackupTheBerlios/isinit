@@ -213,9 +213,9 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 		 // Dessine les éléments
 		 for (int i = 0; i < this.elements.size(); i++)
 		 {
+			 /*
 			 if ( this.elements.elementAt(i) instanceof FComposantProcessus )
 			 {
-				 /*
 				 // On recupere l'identifiant de l'objet
 				 IdObjetModele idcp = ((Figure)(this.elements.elementAt(i))).getModele().getId();
 				 
@@ -247,11 +247,9 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 				 vecObj.clear();
 				 
 				 this.repaint();
-				 */
 			 }
 			 else if ( this.elements.elementAt(i) instanceof FProduit )
 			 {
-				 /*
 				 // On recupere l'identifiant de l'objet
 				 IdObjetModele idcp = ((Figure)(this.elements.elementAt(i))).getModele().getId();
 				 
@@ -282,7 +280,6 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 				 vecObj.clear();
 				 
 				 this.repaint();
-				 */
 			 }
 			 else if ( this.elements.elementAt(i) instanceof FProduitFusion )
 			 {
@@ -310,7 +307,6 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 				 ProduitCellFusion newProdCellF =  new ProduitCellFusion( pcf, 
 						 new ProduitCellEntree((FProduit) pcf.getLienFusion(0).getSource(), new ComposantCell( pcf ) ),
 						 new ProduitCellSortie(pcf.getLienFusion(0).getDestination(),new ProduitCell( (FProduit) (this.elements.elementAt(i))) ) );
-				*/
 
 				// vecObj.add(newProdCellF);
 				 
@@ -322,7 +318,7 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 				 
 				 this.repaint();
 			 }
-			 else if ( this.elements.elementAt(i) instanceof FNote )
+			 else*/ if ( this.elements.elementAt(i) instanceof FNote )
 			 {
 				 TextCell note = new TextCell((FNote)this.elements.elementAt(i));
 				 
@@ -337,14 +333,18 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 
 				 this.getModel().insert(new Object[] { note }, NoteAttribute, null, null, null);
 			 }
+			 /*
 			 else
 			 {
 				 System.out.println( ((FElement) (this.elements.elementAt(i))).toString() );
 			 }
+			 */
 		}
 		 // Dessine les liens
 		 for (int i = 0; i < this.liens.size(); i++)
 		 {
+			 FLien lien = ((FLien) (this.liens.elementAt(i)));
+			 
 			 Map AllAttribute = GraphConstants.createMap();
 			 Vector vecObj = new Vector();
 			 DefaultPort portS, portD;
@@ -352,28 +352,42 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 			 IeppCell ieppcellD = null;
 			 // On recupere la cellule source
 			 FElement fe1 = ((FLien) (this.liens.elementAt(i))).getSource();
-			 if ( fe1 instanceof FComposantProcessus ) {
-				 ieppcellS = new ComposantCell( (FComposantProcessus) fe1 );
-				 
+			 FElement fe2 = ((FLien) (this.liens.elementAt(i))).getDestination();
+			 
+			 if ( (!this.elements.contains(fe1) ) || (!this.elements.contains(fe2) ) ) {
+				 this.liens.remove( i );
+				 if (!this.elements.contains(fe1) ) {
+					 this.elements.remove( fe1 );
+				 }
+				 if (!this.elements.contains(fe2) ) {
+					 this.elements.remove( fe2 );
+				 }
+			 }
+			 else {
+			 if ( fe1 instanceof FComposantProcessus ) {				 
 				 int x1 = ((MDElement) fe1.getModele()).getX()+1;
 				 int y1 = ((MDElement) fe1.getModele()).getY()+1;
 				 Object cell1 = this.getFirstCellForLocation(x1, y1);
+				 // Si on rencontre ce processus pour la première fois
 				 if ( cell1 == null ) {
+					 ieppcellS = new ComposantCell( (FComposantProcessus) fe1 );
+					 
 					 this.ajouterCell(ieppcellS);
 					 vecObj.add(ieppcellS);
 					 AllAttribute.put(ieppcellS, ieppcellS.getAttributs());
 					 getModel().insert( vecObj.toArray(), AllAttribute, null, null,null );
 					 vecObj.clear();
 				 }
+				 // Sinon on récupère l'existant
 				 else {
 					 ieppcellS = (ComposantCell) cell1;
 				 }
 			 }
-			 FElement fe2 = ((FLien) (this.liens.elementAt(i))).getDestination();
 			 if ( fe2 instanceof FComposantProcessus ) {
 				 int x2 = ((MDElement) fe2.getModele()).getX()+1;
 				 int y2 = ((MDElement) fe2.getModele()).getY()+1;
 				 Object cell2 = this.getFirstCellForLocation(x2, y2);
+				 // Si on rencontre ce processus pour la première fois
 				 if ( cell2 == null ) {
 					 ieppcellD = new ComposantCell( (FComposantProcessus) fe2 );
 					 
@@ -383,6 +397,7 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 					 getModel().insert( vecObj.toArray(), AllAttribute, null, null,null );
 					 vecObj.clear();
 				 }
+				 // Sinon on récupere l'existant
 				 else {
 					 ieppcellD = (ComposantCell) cell2;
 				 }
@@ -400,11 +415,31 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 				 
 				 ieppcellS = pce;
 			 }
-			 /*
 			 if ( fe1 instanceof FProduitFusion ) {
 				 // Produit fusion
+				 int x1 = ((MDElement) fe1.getModele()).getX()+1;
+				 int y1 = ((MDElement) fe1.getModele()).getY()+1;
+				 Object cell1 = this.getFirstCellForLocation(x1, y1);
+				 // Si on rencontre ce processus pour la première fois
+				 if ( cell1 == null ) {
+					 FProduitFusion pf = (FProduitFusion) fe1;
+					 FProduit fp0 = pf.getProduits(0);
+					 ProduitCellEntree pce = new ProduitCellEntree(fp0, (ComposantCell) ieppcellD);
+					 FProduit fp1 = pf.getProduits(1);
+					 ProduitCellSortie pcs = new ProduitCellSortie(fp1, (ComposantCell) ieppcellD);
+					 ieppcellS = new ProduitCellFusion( (FProduitFusion) fe1, pce, pcs );
+					 
+					 this.ajouterCell(ieppcellS);
+					 vecObj.add(ieppcellS);
+					 AllAttribute.put(ieppcellS, ieppcellS.getAttributs());
+					 getModel().insert( vecObj.toArray(), AllAttribute, null, null,null );
+					 vecObj.clear();
+				 }
+				 // Sinon on récupère l'existant
+				 else {
+					 ieppcellS = (ProduitCellFusion) cell1;
+				 }
 			 }
-			 */
 			 if ( fe2 instanceof FProduit ) {
 				 ProduitCellSortie pcs = new ProduitCellSortie( (FProduit) fe2, (ComposantCell) ieppcellS );
 				 
@@ -416,6 +451,31 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 				 vecObj.clear();
 				 
 				 ieppcellD = pcs;
+			 }
+			 if ( fe2 instanceof FProduitFusion ) {
+				 // Produit fusion
+				 int x2 = ((MDElement) fe2.getModele()).getX()+1;
+				 int y2 = ((MDElement) fe2.getModele()).getY()+1;
+				 Object cell2 = this.getFirstCellForLocation(x2, y2);
+				 // Si on rencontre ce processus pour la première fois
+				 if ( cell2 == null ) {
+					 FProduitFusion pf = (FProduitFusion) fe2;
+					 FProduit fp0 = pf.getProduits(0);
+					 ProduitCellEntree pce = new ProduitCellEntree(fp0, (ComposantCell) ieppcellD);
+					 FProduit fp1 = pf.getProduits(1);
+					 ProduitCellSortie pcs = new ProduitCellSortie(fp1, (ComposantCell) ieppcellD);
+					 ieppcellD = new ProduitCellFusion( (FProduitFusion) fe2, pce, pcs );
+					 
+					 this.ajouterCell(ieppcellD);
+					 vecObj.add(ieppcellD);
+					 AllAttribute.put(ieppcellD, ieppcellD.getAttributs());
+					 getModel().insert( vecObj.toArray(), AllAttribute, null, null,null );
+					 vecObj.clear();
+				 }
+				 // Sinon on récupère l'existant
+				 else {
+					 ieppcellD = (ProduitCellFusion) cell2;
+				 }
 			 }
 			 
 			 AllAttribute = GraphConstants.createMap();
@@ -431,7 +491,6 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 				
 			 vecObj.add(lienComp);
 		     
-			 FLien lien = new FLienInterface(new MDLienDotted());
 			 ((MDLien) lien.getModele()).setSource((MDElement) ((FElement) fe1).getModele());
 			 ((MDLien) lien.getModele()).setDestination((MDElement) ((FElement) fe2).getModele());
 				
@@ -439,6 +498,7 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 		     
 		     this.getModel().insert(vecObj.toArray(), AllAttribute, null, null, null);
 		     this.getModel().insert(null, null, cs, null, null);
+			 }
 		 }
 		 /*
 		  * // Dessine les poignées (handles)
