@@ -181,7 +181,6 @@ public class OSelection extends Outil {
 				// On bouge un objet
 				Vecteur translation = new Vecteur();
 				translation.setSubstraction(this.current, this.start);
-				System.out.println("Bouger "+translation);
 				CDeplacerElement c = new CDeplacerElement(this.diagramme,translation);
 				if (c.executer()) {
 					Application.getApplication().getProjet().setModified(true);
