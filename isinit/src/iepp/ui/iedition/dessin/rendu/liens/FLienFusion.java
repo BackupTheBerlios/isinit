@@ -36,8 +36,8 @@ public class FLienFusion extends FLienClassic
 
   public void doOnRightClick(VueDPGraphe parent, int x, int y)
   {
-	PopupFLienFusion p = new PopupFLienFusion(parent,this, x, y);
-	p.show(parent, x, y);	
+	//PopupFLienFusion p = new PopupFLienFusion(parent,this, x, y);
+	//p.show(parent, x, y);	
   }
 
 }

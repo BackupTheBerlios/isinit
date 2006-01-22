@@ -131,7 +131,35 @@ public class CLierInterface extends CommandeNonAnnulable
 		portS = ieppsource.getPortComp();
 		portD = ieppdestination.getPortComp();
 	}
+	
+	public CLierInterface(VueDPGraphe d, FLien l, FElement source, FElement destination, Vector pointsAncrageIntermediaires)
+	{
+		this.diagramme = d;
+		this.lien = l;
+		((MDLien) lien.getModele()).setSource((MDElement) source.getModele());
+		((MDLien) lien.getModele()).setDestination((MDElement) destination.getModele());
+		this.lien.setSource(source);
+		this.lien.setDestination(destination);
+		this.lien.initHandles();
 
+		// ajouter ce lien interface à la figure produit pour pouvoir la supprimer par la suite
+		if ( source instanceof FProduit )
+		{
+			((FProduit)source).setLienIterface((FLienInterface)this.lien);
+			((FProduit)source).setComposantInterface((FComposantProcessus)destination);
+		}
+		else
+		{
+			((FProduit)destination).setLienIterface((FLienInterface)this.lien);
+			((FProduit)destination).setComposantInterface((FComposantProcessus)source);
+		}
+		
+		for (int i = pointsAncrageIntermediaires.size()-1; i >= 0; i--)
+		{
+		  Vecteur p = (Vecteur) pointsAncrageIntermediaires.elementAt(i);
+		  this.lien.creerPointAncrage(p, 1);
+		}
+	}
 	/**
 	* Retourne le nom de l'édition.
 	*/

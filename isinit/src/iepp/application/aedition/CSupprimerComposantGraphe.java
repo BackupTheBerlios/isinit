@@ -105,7 +105,7 @@ public class CSupprimerComposantGraphe extends CommandeAnnulable
 			// récupérer le produit courant
 			IdObjetModele produitCourant = (IdObjetModele)listeEntree.elementAt(i);
 			// supprimer les éventuels produits fusion et supprimer le produit
-		//	this.supprimerFusion(produitCourant, listeLiens);		
+			this.supprimerFusion(produitCourant, listeLiens);		
 		}
 		
 		// récupérer la liste des produits en sortie du composant
@@ -115,7 +115,7 @@ public class CSupprimerComposantGraphe extends CommandeAnnulable
 			// récupérer le produit courant
 			IdObjetModele produitCourant = (IdObjetModele)listeSortie.elementAt(i);
 			// supprimer les éventuels produits fusion et supprimer le produit
-		//	this.supprimerFusion(produitCourant, listeLiens);		
+			this.supprimerFusion(produitCourant, listeLiens);		
 		}
 
 		// suppression du composant
@@ -243,7 +243,7 @@ public class CSupprimerComposantGraphe extends CommandeAnnulable
 			}
 		}
 		this.diagramme.supprimerCellule(this.composantCell);
-		
+		// fin modif aldo nit 
 		diagramme.repaint();
 		return true;
 	}

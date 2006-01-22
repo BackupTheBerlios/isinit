@@ -31,6 +31,7 @@ import iepp.ui.iedition.dessin.rendu.FElement;
 import iepp.ui.iedition.dessin.rendu.Figure;
 import iepp.ui.iedition.dessin.rendu.IeppCell;
 import iepp.ui.iedition.dessin.rendu.LienEdge;
+import iepp.ui.iedition.dessin.rendu.ProduitCellFusion;
 import iepp.ui.iedition.dessin.rendu.TextCell;
 import iepp.ui.iedition.dessin.rendu.handle.Handle;
 import iepp.ui.iedition.dessin.rendu.handle.elements.HandleElement;
@@ -38,6 +39,7 @@ import iepp.ui.iedition.dessin.rendu.handle.liens.HandleLien;
 import iepp.ui.iedition.dessin.rendu.liens.FLien;
 import iepp.ui.iedition.popup.PopupDiagramme;
 import iepp.ui.iedition.popup.PopupFComposantProcessus;
+import iepp.ui.iedition.popup.PopupFLienFusion;
 import iepp.ui.iedition.popup.PopupFNote;
 
 import java.awt.Color;
@@ -106,7 +108,7 @@ public class OSelection extends Outil {
 	public void mousePressed(MouseEvent event) {
 		// mettre à jour les coordonnées du dernier click
 		super.mousePressed(event);
-
+		//System.out.println(diagramme.getFirstCellForLocation(event.getX(), event.getY()).getClass().getName());
 		// on vérifie si on a cliqué sur une figure
 		if (diagramme.getFirstCellForLocation(event.getX(), event.getY()) instanceof IeppCell) {
 
@@ -151,7 +153,8 @@ public class OSelection extends Outil {
 	 * le rectangle sont sélectionnés. - après une translation : ajout de la
 	 * translation dans la pile undo. - ...
 	 */
-	public void mouseReleased(MouseEvent event) {
+	public void mouseReleased(MouseEvent event) 
+	{
 		super.mouseReleased(event);
 
 			// Hubert : popup menu sur le graph (hors cellules et lien)
@@ -163,21 +166,23 @@ public class OSelection extends Outil {
 				}
 			}
 			// modif aldo nit 15/01/06
-			else {
-				if (event.isPopupTrigger()) {
-						if (diagramme.getFirstCellForLocation(event.getX(), event.getY()) instanceof ComposantCell) {
-							
+			else if (event.isPopupTrigger()) {
+						if (diagramme.getFirstCellForLocation(event.getX(), event.getY()) instanceof ComposantCell){
 							ComposantCell ic = (ComposantCell) diagramme.getFirstCellForLocation(event.getX(), event.getY());
 							
 							PopupFComposantProcessus p = new PopupFComposantProcessus(ic);
 							
 							p.show(diagramme, event.getX(), event.getY());
-						}else if (diagramme.getFirstCellForLocation(event.getX(), event.getY()) instanceof TextCell) {
+						}
+						else if (diagramme.getFirstCellForLocation(event.getX(), event.getY()) instanceof TextCell) {
 								showPopupMenuNote((TextCell)diagramme.getFirstCellForLocation(event.getX(), event.getY()));
 							
 						}
-				}
-
+						else if (diagramme.getFirstCellForLocation(event.getX(), event.getY()) instanceof ProduitCellFusion){
+							ProduitCellFusion pf=(ProduitCellFusion) diagramme.getFirstCellForLocation(event.getX(), event.getY());
+							PopupFLienFusion f=new PopupFLienFusion(diagramme,pf,event.getX(),event.getY());
+							f.show(diagramme,event.getX(),event.getY());
+						}
 				// On bouge un objet
 				Vecteur translation = new Vecteur();
 				translation.setSubstraction(this.current, this.start);
@@ -185,14 +190,14 @@ public class OSelection extends Outil {
 				if (c.executer()) {
 					Application.getApplication().getProjet().setModified(true);
 				}
-				
 			}
-			
-			
-		
 
+				
+				
+			
 		this.update();
 	}
+
 
 	/**
 	 * La touche SUPPR détruit les éléments sélectionnés du diagramme.

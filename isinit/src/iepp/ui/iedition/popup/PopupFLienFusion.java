@@ -21,8 +21,11 @@ package iepp.ui.iedition.popup;
 
 
 import iepp.Application;
+import iepp.application.aedition.CSupprimerComposant;
 import iepp.application.aedition.CSupprimerLienFusion;
+import iepp.application.aedition.CSupprimerProduitFusion;
 import iepp.ui.iedition.VueDPGraphe;
+import iepp.ui.iedition.dessin.rendu.ProduitCellFusion;
 import iepp.ui.iedition.dessin.rendu.liens.FLienFusion;
 
 import java.awt.event.ActionEvent;
@@ -47,7 +50,7 @@ public class PopupFLienFusion extends JPopupMenu implements ActionListener
 	/**
 	* Lien sur lequel on a cliqué.
 	*/
-	private FLienFusion lien;
+	private ProduitCellFusion produitF;
 
    /**
 	* coordonnées du click droit
@@ -58,10 +61,10 @@ public class PopupFLienFusion extends JPopupMenu implements ActionListener
 	/**
 	 * Création du menu contextuel
 	 */
-	public PopupFLienFusion(VueDPGraphe d,FLienFusion l,int clickX, int clickY )
+	public PopupFLienFusion(VueDPGraphe d,ProduitCellFusion f,int clickX, int clickY )
 	{
 		diagramme = d;
-		this.lien = l;
+		this.produitF = f;
 		this.clickX = clickX;
 		this.clickY = clickY;
 		
@@ -81,9 +84,13 @@ public class PopupFLienFusion extends JPopupMenu implements ActionListener
 	 */
 	public void actionPerformed(ActionEvent event)
 	{
-		 if (event.getSource() == this.suppr)
-		 {
-		 	new CSupprimerLienFusion(diagramme,lien).executer();
-		 }
+		if (event.getSource() == this.suppr)
+		{
+			CSupprimerProduitFusion c = new CSupprimerProduitFusion(this.diagramme,this.produitF);
+			if (c.executer())
+			{
+				Application.getApplication().getProjet().setModified(true);
+			}  	
+		}
 	 }
 }
