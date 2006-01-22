@@ -25,6 +25,7 @@ import iepp.ui.iedition.dessin.rendu.ComposantCell;
 import iepp.ui.iedition.dessin.rendu.Figure;
 import iepp.ui.iedition.dessin.rendu.ProduitCell;
 import iepp.ui.iedition.dessin.rendu.ProduitCellFusion;
+import iepp.ui.iedition.dessin.rendu.TextCell;
 
 import java.util.Enumeration;
 import java.util.Vector;
@@ -78,6 +79,8 @@ public class CDeplacerElement extends CommandeAnnulable
 				this.diagramme.selectionneFigure((Figure)((ProduitCell)obj).getFprod());
 			}else if(obj instanceof ProduitCellFusion){
 				this.diagramme.selectionneFigure((Figure)((ProduitCellFusion)obj).getFprod());
+			}else if(obj instanceof TextCell){
+				this.diagramme.selectionneFigure((Figure)((TextCell)obj).getFnote());
 			}
 		}
 		
@@ -113,6 +116,8 @@ public class CDeplacerElement extends CommandeAnnulable
 			figure = (Figure) ((ProduitCell)p).getFprod();
 		}else if(p instanceof ProduitCellFusion){
 			figure = (Figure) ((ProduitCellFusion)p).getFprod();
+		}else if(p instanceof TextCell){
+			figure = (Figure) ((TextCell)p).getFnote();
 		}else{
 			return;
 		}
@@ -137,6 +142,8 @@ public class CDeplacerElement extends CommandeAnnulable
 			figure = (Figure) ((ProduitCell)p).getFprod();
 		}else if(p instanceof ProduitCellFusion){
 			figure = (Figure) ((ProduitCellFusion)p).getFprod();
+		}else if(p instanceof TextCell){
+			figure = (Figure) ((TextCell)p).getFnote();
 		}else{
 			return false;
 		}

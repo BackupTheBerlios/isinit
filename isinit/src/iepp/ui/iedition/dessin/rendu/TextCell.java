@@ -50,6 +50,7 @@ public class TextCell extends IeppCell {
 		// Mise en place des Attributs de la cellule text pas défaut
 		GraphConstants.setBounds(getAttributs(), new Rectangle((int)abscisse,(int)ordonnee,(int)largeur,(int)hauteur));
 		GraphConstants.setEditable(getAttributs(), true);
+		GraphConstants.setAutoSize(getAttributs(), true);
 		GraphConstants.setOpaque(getAttributs(), true);
 		GraphConstants.setFont(getAttributs(),mdnote.getPolice());
 		GraphConstants.setBackground(getAttributs(),mdnote.getFillColor());
@@ -125,6 +126,8 @@ public class TextCell extends IeppCell {
 	public void setMdnote(MDNote mdnote) {
 		this.mdnote = mdnote;
 	}
+	
+	
 
 	
 }

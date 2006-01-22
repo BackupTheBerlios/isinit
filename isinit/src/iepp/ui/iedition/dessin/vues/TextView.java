@@ -1,5 +1,8 @@
 package iepp.ui.iedition.dessin.vues;
 
+import iepp.Application;
+import iepp.ui.iedition.dessin.rendu.TextCell;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -113,6 +116,9 @@ public class TextView extends VertexView {
                 Rectangle editingBounds = editorComponent.getBounds();
                 GraphConstants.setBounds(map, new Rectangle((int) cellBounds.getX(), (int) cellBounds.getY(), editingBounds.width, editingBounds.height));
 
+                ((TextCell)graph.getEditingCell()).getMdnote().setMessage(editorComponent.getText());
+                Application.getApplication().getProjet().setModified(true);
+                
                 return super.stopCellEditing();
             }
 
