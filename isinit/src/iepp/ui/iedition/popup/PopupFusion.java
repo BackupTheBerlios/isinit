@@ -21,15 +21,13 @@ package iepp.ui.iedition.popup;
 
 
 import iepp.Application;
-import iepp.application.aedition.CSupprimerComposant;
-import iepp.application.aedition.CSupprimerLienFusion;
 import iepp.application.aedition.CSupprimerProduitFusion;
 import iepp.ui.iedition.VueDPGraphe;
 import iepp.ui.iedition.dessin.rendu.ProduitCellFusion;
-import iepp.ui.iedition.dessin.rendu.liens.FLienFusion;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
@@ -38,7 +36,7 @@ import javax.swing.JPopupMenu;
  * Classe permettant d'afficher un popupmenu contextuel lorsque l'utilisateur
  * clique droit sur un lien de fusion entre deux produits
  */
-public class PopupFLienFusion extends JPopupMenu implements ActionListener
+public class PopupFusion extends JPopupMenu implements ActionListener
 {
 	/**
 	 * Items du menu à afficher
@@ -61,7 +59,7 @@ public class PopupFLienFusion extends JPopupMenu implements ActionListener
 	/**
 	 * Création du menu contextuel
 	 */
-	public PopupFLienFusion(VueDPGraphe d,ProduitCellFusion f,int clickX, int clickY )
+	public PopupFusion(VueDPGraphe d,ProduitCellFusion f,int clickX, int clickY )
 	{
 		diagramme = d;
 		this.produitF = f;

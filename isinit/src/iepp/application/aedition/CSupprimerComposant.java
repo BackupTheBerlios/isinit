@@ -58,7 +58,7 @@ public class CSupprimerComposant extends CommandeAnnulable
 	{
 		// initialiser le composant à supprimer
 		this.composantCell = compo;
-		this.composant = compo.getMdcomp().getId() ;
+		this.composant = compo.getId() ;
 		this.diagramme = Application.getApplication().getProjet().getFenetreEdition().getVueDPGraphe();
 
 	}

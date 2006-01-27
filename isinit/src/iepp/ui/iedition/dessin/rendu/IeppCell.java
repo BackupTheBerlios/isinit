@@ -20,7 +20,10 @@ package iepp.ui.iedition.dessin.rendu;
  */
 
 import iepp.Application;
+import iepp.domaine.IdObjetModele;
+import iepp.ui.iedition.dessin.rendu.liens.LienEdge;
 
+import java.awt.Font;
 import java.util.Map;
 import java.util.Vector;
 
@@ -40,6 +43,7 @@ public class IeppCell extends DefaultGraphCell {
 	protected DefaultPort portComposant;
 	protected String imageComposant;
 	protected Vector listeLien;
+	protected Font police;
 	
 	public IeppCell() {
 		super();
@@ -79,6 +83,7 @@ public class IeppCell extends DefaultGraphCell {
 	
 	public void setNomCompCell(String s) {
 		nomComposantCellule=s;
+
 		this.setUserObject(nomComposantCellule);
 	}
 	
@@ -101,6 +106,10 @@ public class IeppCell extends DefaultGraphCell {
 	
 	public Vector getListeLien(){
 		return listeLien;
+	}
+	
+	public IdObjetModele getId(){
+		return null;
 	}
 	
 	/**

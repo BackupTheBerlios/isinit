@@ -19,30 +19,28 @@
 
 package iepp.domaine;
 
+import iepp.Application;
+import iepp.application.aedition.annulation.Memento;
+import iepp.application.aedition.annulation.ObjetAnnulable;
+
 import java.util.HashMap;
 import java.util.Vector;
 
-import org.ipsquad.apes.adapters.*;
-import org.ipsquad.apes.model.spem.core.Element;
-import org.ipsquad.apes.model.spem.process.components.ProcessComponent;
+import org.ipsquad.apes.adapters.SpemGraphAdapter;
 import org.ipsquad.apes.model.extension.ApesWorkDefinition;
 import org.ipsquad.apes.model.extension.ContextDiagram;
 import org.ipsquad.apes.model.extension.ResponsabilityDiagram;
 import org.ipsquad.apes.model.extension.SpemDiagram;
 import org.ipsquad.apes.model.extension.WorkDefinitionDiagram;
+import org.ipsquad.apes.model.spem.core.Element;
 import org.ipsquad.apes.model.spem.modelmanagement.IPackage;
+import org.ipsquad.apes.model.spem.process.components.ProcessComponent;
 import org.ipsquad.apes.model.spem.process.structure.Activity;
 import org.ipsquad.apes.model.spem.process.structure.ProcessPerformer;
 import org.ipsquad.apes.model.spem.process.structure.ProcessRole;
 import org.ipsquad.apes.model.spem.process.structure.WorkDefinition;
 import org.ipsquad.apes.model.spem.process.structure.WorkProduct;
 import org.ipsquad.apes.model.spem.statemachine.StateMachine;
-
-
-import iepp.Application;
-import iepp.application.aedition.annulation.Memento;
-import iepp.application.aedition.annulation.ObjetAnnulable;
-import iepp.ui.iedition.dessin.rendu.liens.FLien;
 
 /**
  * Classe métier contenant les données concernant le Composant de processus

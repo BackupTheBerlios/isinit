@@ -16,49 +16,56 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  * 
  */
- 
+
 package iepp.ui.iedition.popup;
 
-
-import iepp.ui.iedition.dessin.rendu.liens.FLienInterface;
+import iepp.Application;
+import iepp.ui.iedition.VueDPGraphe;
+import iepp.ui.iedition.dessin.rendu.TextCell;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
-
-
 /**
- * Classe permettant d'afficher un popupmenu contextuel lorsque l'utilisateur
- * clique droit sur un lien entre un composant et son interface (fournie ou requise)
+ * 
  */
-public class PopupFLienInterface extends JPopupMenu implements ActionListener
+
+public class PopupNote extends JPopupMenu implements ActionListener
 {
 	/**
 	 * Items du menu à afficher
-	 */	
-	private JMenuItem afaire;
-
-	/**
-	* Lien sur lequel on a cliqué.
-	*/
-	private FLienInterface lien;
-
-   /**
-	* coordonnées du click droit
-	*/
-	private int clickX, clickY;
-		 
+	 */
+	private JMenuItem suppr;
+	//private JMenuItem propriete;
+	
+	private VueDPGraphe diagramme;
+	
+	private TextCell noteCell ;
+	
 	
 	/**
-	 * Création du menu contextuel
+	 * @param note
 	 */
-	public PopupFLienInterface(FLienInterface l,int clickX, int clickY )
+	public PopupNote(VueDPGraphe d,TextCell note)
 	{
-		this.lien = l;
-		this.clickX = clickX;
-		this.clickY = clickY;
+		this.diagramme = d;
+		
+		this.noteCell = note;
+		
+		// création des items
+		this.suppr = new JMenuItem(Application.getApplication().getTraduction("Supprimer"));
+		//this.propriete = new JMenuItem(Application.getApplication().getTraduction("Proprietes"));
+		
+		// ajouter les items au menu
+		this.add(this.suppr);
+		//this.add(this.propriete);
+		
+		// pouvoir réagr aux clicks des utilisateurs
+		this.suppr.addActionListener(this);
+		//this.propriete.addActionListener(this);
 	}
 	
 	/**
@@ -66,5 +73,11 @@ public class PopupFLienInterface extends JPopupMenu implements ActionListener
 	 */
 	public void actionPerformed(ActionEvent event)
 	{
+		 if (event.getSource() == this.suppr)
+		 {
+		 	this.diagramme.supprimerCellule(this.noteCell);
+		 	this.diagramme.repaint();
+		 }
+		
 	 }
 }

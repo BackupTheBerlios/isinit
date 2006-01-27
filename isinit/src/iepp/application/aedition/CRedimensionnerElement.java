@@ -20,8 +20,6 @@
 package iepp.application.aedition;
 
 import iepp.application.CommandeAnnulable;
-import iepp.ui.iedition.dessin.rendu.FElement;
-import iepp.ui.iedition.dessin.vues.MDElement;
 
 /**
  * Commande annulable permettant de redimensionner un élément du diagramme
@@ -36,7 +34,7 @@ public class CRedimensionnerElement extends CommandeAnnulable {
 	/**
 	 * Figure à redimensionner
 	 */
-	private FElement element;
+	/*private FElement element;*/
 
 
 	/**
@@ -48,14 +46,14 @@ public class CRedimensionnerElement extends CommandeAnnulable {
 	 * @param largeur, nouvelle largeur de la figure
 	 * @param hauteur, nouvelle hauteur de la figure
 	 */
-	public CRedimensionnerElement(FElement fe, int x, int y, int largeur, int hauteur)
+	public CRedimensionnerElement(/*FElement fe,*/ int x, int y, int largeur, int hauteur)
 	{
-		// récupérer toutes les informations sur la figure à modifier
-		this.element = fe;
-		this.x = x;
-		this.y = y;
-		this.largeur = largeur;
-		this.hauteur = hauteur;
+//		// récupérer toutes les informations sur la figure à modifier
+//		this.element = fe;
+//		this.x = x;
+//		this.y = y;
+//		this.largeur = largeur;
+//		this.hauteur = hauteur;
 	}
 
 	/**
@@ -72,21 +70,21 @@ public class CRedimensionnerElement extends CommandeAnnulable {
 	*/
 	public void annuler()
 	{
-		MDElement m = (MDElement) element.getModele();
-
-		// Swap des coordonnées/dimensions
-		int ax = m.getX();
-		int ay = m.getY();
-		int al = m.getLargeur();
-		int ah = m.getHauteur();
-		m.setX(x);
-		m.setY(y);
-		m.setLargeur(largeur);
-		m.setHauteur(hauteur);
-		x = ax;
-		y = ay;
-		largeur = al;
-		hauteur = ah;
+//		MDElement m = (MDElement) element.getModele();
+//
+//		// Swap des coordonnées/dimensions
+//		int ax = m.getX();
+//		int ay = m.getY();
+//		int al = m.getLargeur();
+//		int ah = m.getHauteur();
+//		m.setX(x);
+//		m.setY(y);
+//		m.setLargeur(largeur);
+//		m.setHauteur(hauteur);
+//		x = ax;
+//		y = ay;
+//		largeur = al;
+//		hauteur = ah;
 	}
 	
 	/**
@@ -95,21 +93,21 @@ public class CRedimensionnerElement extends CommandeAnnulable {
 	 */
 	public boolean executer()
 	{
-		MDElement m = (MDElement) element.getModele();
-
-		// Swap des coordonnées/dimensions
-		int ax = m.getX();
-		int ay = m.getY();
-		int al = m.getLargeur();
-		int ah = m.getHauteur();
-		m.setX(x);
-		m.setY(y);
-		m.setLargeur(largeur);
-		m.setHauteur(hauteur);
-		x = ax;
-		y = ay;
-		largeur = al;
-		hauteur = ah;
+//		MDElement m = (MDElement) element.getModele();
+//
+//		// Swap des coordonnées/dimensions
+//		int ax = m.getX();
+//		int ay = m.getY();
+//		int al = m.getLargeur();
+//		int ah = m.getHauteur();
+//		m.setX(x);
+//		m.setY(y);
+//		m.setLargeur(largeur);
+//		m.setHauteur(hauteur);
+//		x = ax;
+//		y = ay;
+//		largeur = al;
+//		hauteur = ah;
 		return true;
 	}
 }

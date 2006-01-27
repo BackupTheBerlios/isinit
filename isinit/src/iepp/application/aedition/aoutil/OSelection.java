@@ -20,29 +20,17 @@
 package iepp.application.aedition.aoutil;
 
 import iepp.Application;
-import iepp.application.aedition.CCreerPointAncrage;
-import iepp.application.aedition.CDeplacerElement;
-import iepp.application.aedition.CDeplacerPointAncrage;
-import iepp.application.aedition.CRedimensionnerElement;
-import iepp.application.aedition.CSupprimerPointAncrage;
 import iepp.ui.iedition.VueDPGraphe;
 import iepp.ui.iedition.dessin.rendu.ComposantCell;
-import iepp.ui.iedition.dessin.rendu.FElement;
-import iepp.ui.iedition.dessin.rendu.Figure;
 import iepp.ui.iedition.dessin.rendu.IeppCell;
-import iepp.ui.iedition.dessin.rendu.LienEdge;
 import iepp.ui.iedition.dessin.rendu.ProduitCellFusion;
 import iepp.ui.iedition.dessin.rendu.TextCell;
-import iepp.ui.iedition.dessin.rendu.handle.Handle;
-import iepp.ui.iedition.dessin.rendu.handle.elements.HandleElement;
-import iepp.ui.iedition.dessin.rendu.handle.liens.HandleLien;
-import iepp.ui.iedition.dessin.rendu.liens.FLien;
+import iepp.ui.iedition.dessin.rendu.liens.LienEdge;
+import iepp.ui.iedition.popup.PopupComposantProcessus;
 import iepp.ui.iedition.popup.PopupDiagramme;
-import iepp.ui.iedition.popup.PopupFComposantProcessus;
-import iepp.ui.iedition.popup.PopupFLienFusion;
-import iepp.ui.iedition.popup.PopupFNote;
+import iepp.ui.iedition.popup.PopupFusion;
+import iepp.ui.iedition.popup.PopupNote;
 
-import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
@@ -58,12 +46,7 @@ public class OSelection extends Outil {
 	/**
 	 * Dernière figure cliquée. NULL si on a cliqué sur le diagramme.
 	 */
-	private Figure figureCliquee;
-
-	/**
-	 * Dernière poignée cliquée. NULL si on a cliqué sur le diagramme.
-	 */
-	private Handle handleClique;
+	private IeppCell figureCliquee;
 
 	/**
 	 * L'outil déplace les figures sélectionnées.
@@ -170,7 +153,7 @@ public class OSelection extends Outil {
 						if (diagramme.getFirstCellForLocation(event.getX(), event.getY()) instanceof ComposantCell){
 							ComposantCell ic = (ComposantCell) diagramme.getFirstCellForLocation(event.getX(), event.getY());
 							
-							PopupFComposantProcessus p = new PopupFComposantProcessus(ic);
+							PopupComposantProcessus p = new PopupComposantProcessus(ic);
 							
 							p.show(diagramme, event.getX(), event.getY());
 						}
@@ -180,14 +163,13 @@ public class OSelection extends Outil {
 						}
 						else if (diagramme.getFirstCellForLocation(event.getX(), event.getY()) instanceof ProduitCellFusion){
 							ProduitCellFusion pf=(ProduitCellFusion) diagramme.getFirstCellForLocation(event.getX(), event.getY());
-							PopupFLienFusion f=new PopupFLienFusion(diagramme,pf,event.getX(),event.getY());
+							PopupFusion f=new PopupFusion(diagramme,pf,event.getX(),event.getY());
 							f.show(diagramme,event.getX(),event.getY());
 						}
 				// On bouge un objet
 				Vecteur translation = new Vecteur();
 				translation.setSubstraction(this.current, this.start);
-				CDeplacerElement c = new CDeplacerElement(this.diagramme,translation);
-				if (c.executer()) {
+				if (translation.x != 0 || translation.y != 0) {
 					Application.getApplication().getProjet().setModified(true);
 				}
 			}
@@ -204,7 +186,7 @@ public class OSelection extends Outil {
 	 */
 	public void keyReleased(KeyEvent event) {
 		if (event.getKeyCode() == KeyEvent.VK_DELETE) {
-			if (this.diagramme.nbSelectedElements() > 0) {
+			if (this.diagramme.getSelectionCount() > 0) {
 				// ajouterEditionDiagramme(new SupprimerSelection(diagramme));
 			}
 		}
@@ -219,7 +201,7 @@ public class OSelection extends Outil {
 	 * Affiche le menu popup (contextuel) pour un élément.
 	 */
 	protected void showPopupMenuFigure(ComposantCell ic) {
-		PopupFComposantProcessus p = new PopupFComposantProcessus(ic);
+		PopupComposantProcessus p = new PopupComposantProcessus(ic);
 		p.show(diagramme, getStart().x, getStart().y);
 	}
 
@@ -236,7 +218,7 @@ public class OSelection extends Outil {
 	 * Affiche le menu popup (contextuel) pour un diagramme.
 	 */
 	protected void showPopupMenuNote(TextCell note) {
-		PopupFNote p = new PopupFNote(diagramme, note);
+		PopupNote p = new PopupNote(diagramme, note);
 		System.out.println("Modification note");
 		p.show(diagramme, getStart().x, getStart().y);
 	}

@@ -1,14 +1,12 @@
 package iepp.application.aedition;
 
-import java.util.Vector;
-
 import iepp.Application;
 import iepp.application.CommandeAnnulable;
 import iepp.domaine.ComposantProcessus;
 import iepp.domaine.IdObjetModele;
-import iepp.domaine.LienProduits;
 import iepp.ui.iedition.VueDPGraphe;
-import iepp.ui.iedition.dessin.rendu.FProduit;
+
+import java.util.Vector;
 
 //fait par Youssef
 
@@ -33,16 +31,16 @@ public class CRenommerComposantGraphe extends CommandeAnnulable
          * Constructeur de la commande, récupère le composant à supprimer
          * et le diagramme courant de l'application
          * @param compo id du composant à supprimer
-      * */
+         * */
 
-  public CRenommerComposantGraphe(IdObjetModele compo,String n)
-  {
-             // initialiser le composant à renommer
-                this.composant = compo ;
-                this.diagramme = Application.getApplication().getProjet().getFenetreEdition().getVueDPGraphe();
-                this.nom=n;
-  }
-  /**
+		  public CRenommerComposantGraphe(IdObjetModele compo,String n)
+		  {
+		             // initialiser le composant à renommer
+		                this.composant = compo ;
+		                this.diagramme = Application.getApplication().getProjet().getFenetreEdition().getVueDPGraphe();
+		                this.nom=n;
+		  }
+        /**
          * La commande renvoie si elle s'est bien passée ou non
          * Parcours la liste des produits du composant, vérifie s'il n'y a pas
          * de produits fusion "à défusionner", supprime les figures des produits et du composant

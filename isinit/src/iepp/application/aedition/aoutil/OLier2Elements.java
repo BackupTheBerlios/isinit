@@ -21,19 +21,16 @@
 package iepp.application.aedition.aoutil;
 
 
-import iepp.Application;
-import iepp.application.aedition.CLier2Produits;
 import iepp.ui.iedition.VueDPGraphe;
-import iepp.ui.iedition.dessin.rendu.FElement;
-import iepp.ui.iedition.dessin.rendu.Figure;
-import iepp.ui.iedition.dessin.rendu.liens.FLien;
-import iepp.ui.iedition.dessin.vues.MDElement;
-import iepp.ui.iedition.dessin.vues.MDLien;
 
-import java.awt.*;
-import java.awt.geom.*;
-import java.awt.event.*;
-import java.util.*;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Stroke;
+import java.awt.event.MouseEvent;
+import java.awt.geom.Line2D;
+import java.util.Vector;
 
 import util.Vecteur;
 
@@ -54,17 +51,17 @@ public class OLier2Elements extends Outil
     /**
     * Lien qui va être créé
     */
-    private FLien lien;
+    //private FLien lien;
 
     /**
     * Figures source et destination du lien.
     */
-	private FElement source, destination;
+	//private FElement source, destination;
 
     /**
     * Dernière figure cliquée. NULL si on a cliqué sur le diagramme.
     */
-	private Figure figureCliquee;
+	//private Figure figureCliquee;
     
     /**
      * Couleur du lien
@@ -94,10 +91,10 @@ public class OLier2Elements extends Outil
 	 * @param lineColorn couleur du lien à dessiner
 	 * @param lien, nouveau lien à initialiser
 	 */
-    public OLier2Elements(VueDPGraphe vue, Color lineColor, FLien lien)
+    public OLier2Elements(VueDPGraphe vue, Color lineColor)//, FLien lien)
     {
         super(vue);
-        this.lien = lien;
+        //this.lien = lien;
         this.lineColor = lineColor;
         this.pointsAncrageIntermediaires = new Vector();
     }
@@ -130,7 +127,7 @@ public class OLier2Elements extends Outil
             Stroke stroke = g2d.getStroke();
 
             // Dessine le corps du lien (lignes entre les points d'ancrage)
-            if (((MDLien) this.lien.getModele()).getStyle() == MDLien.STYLE_CLASSIC)
+            /*if (((MDLien) this.lien.getModele()).getStyle() == MDLien.STYLE_CLASSIC)
             {
             	g2d.setStroke(classic);
             }
@@ -158,7 +155,7 @@ public class OLier2Elements extends Outil
             }
 
             g2d.draw(new Line2D.Double(v1.x, v1.y, getCurrent().x, getCurrent().y));
-            g2d.setStroke(stroke);
+            g2d.setStroke(stroke);*/
         }
     }
 
@@ -180,7 +177,7 @@ public class OLier2Elements extends Outil
     {
         super.mousePressed(event);
 
-        this.figureCliquee = this.diagramme.chercherFigure(start.x, start.y);
+       /* this.figureCliquee = this.diagramme.chercherFigure(start.x, start.y);
 
         // Click sur autre chose qu'un élément
         if (this.figureCliquee != null && (this.figureCliquee instanceof FElement))
@@ -199,11 +196,11 @@ public class OLier2Elements extends Outil
             	{
                 	this.destination = (FElement) this.figureCliquee;
               		//  ajouterEditionDiagramme(new Lier2Elements(diagramme, lien, source, destination, pointsAncrageIntermediaires));
-              		/*CLier2Produits c = new CLier2Produits(diagramme, source, destination, pointsAncrageIntermediaires);
+              		CLier2Produits c = new CLier2Produits(diagramme, source, destination, pointsAncrageIntermediaires);
               		if (c.executer())
       			    {
       			   		Application.getApplication().getProjet().setModified(true);
-      			    }*/
+      			    }
                 	this.state = END_STATE;
               	}
             }
@@ -218,7 +215,7 @@ public class OLier2Elements extends Outil
             {
             	this.state = END_STATE;
             } 
-        }
+        }*/
     }
 
     /**

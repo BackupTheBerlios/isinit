@@ -22,7 +22,6 @@ package iepp.infrastructure.jsx;
 import iepp.Application;
 import iepp.Projet;
 import iepp.domaine.DefinitionProcessus;
-import iepp.ui.iedition.dessin.vues.MDDiagramme;
 
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
@@ -36,7 +35,6 @@ import java.util.zip.ZipInputStream;
 import util.ErrorManager;
 import util.MonitoredTaskBase;
 import util.TaskMonitorDialog;
-
 import JSX.ObjIn;
 
 
@@ -106,14 +104,14 @@ public class ChargeurDP extends MonitoredTaskBase
 				{
 					DefinitionProcessus dp = (DefinitionProcessus)v.get(0);
 					this.print(Application.getApplication().getTraduction("liste_composants"));
-					MDDiagramme diag = (MDDiagramme)v.get(1);
+					//MDDiagramme diag = (MDDiagramme)v.get(1);
 					this.print(Application.getApplication().getTraduction("liste_figures"));
 					Vector elements = (Vector)v.get(2);
 					this.print(Application.getApplication().getTraduction("liste_elements"));
 					Vector liens = (Vector)v.get(3);
 					this.print(Application.getApplication().getTraduction("liste_liens"));
 					int dernierId = ((Integer)v.get(4)).intValue();
-					this.projetCharge = new Projet(dp, diag, elements, liens, dernierId);
+					this.projetCharge = new Projet(dp, elements, liens, dernierId);
 					this.print(Application.getApplication().getTraduction("dp_succes"));
 					
 					// modif NIT Guillaume

@@ -22,18 +22,9 @@ package iepp.ui.iedition.dessin.tools;
 import iepp.Application;
 import iepp.application.aedition.CLier2Produits;
 import iepp.ui.iedition.VueDPGraphe;
-import iepp.ui.iedition.dessin.rendu.FElement;
-import iepp.ui.iedition.dessin.rendu.FProduitFusion;
-import iepp.ui.iedition.dessin.rendu.Figure;
 import iepp.ui.iedition.dessin.rendu.IeppCell;
-import iepp.ui.iedition.dessin.rendu.LienEdge;
 import iepp.ui.iedition.dessin.rendu.ProduitCell;
-import iepp.ui.iedition.dessin.rendu.ProduitCellEntree;
-import iepp.ui.iedition.dessin.rendu.ProduitCellFusion;
-import iepp.ui.iedition.dessin.rendu.ProduitCellSortie;
-import iepp.ui.iedition.dessin.rendu.liens.FLienFusion;
-import iepp.ui.iedition.dessin.vues.MDLienClassic;
-import iepp.ui.iedition.dessin.vues.MDProduit;
+import iepp.ui.iedition.dessin.rendu.liens.LienEdge;
 import iepp.ui.iedition.popup.PopupDiagramme;
 
 import java.awt.Color;
@@ -49,7 +40,6 @@ import org.jgraph.JGraph;
 import org.jgraph.graph.BasicMarqueeHandler;
 import org.jgraph.graph.ConnectionSet;
 import org.jgraph.graph.DefaultEdge;
-import org.jgraph.graph.DefaultPort;
 import org.jgraph.graph.GraphConstants;
 import org.jgraph.graph.PortView;
 
@@ -57,7 +47,7 @@ import org.jgraph.graph.PortView;
  * This tool allows to create edges in the graph It use the prototype design
  * pattern to clone edges
  * 
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public class EdgeTool extends Tool {
 	protected VueDPGraphe mGraph;
@@ -143,38 +133,27 @@ public class EdgeTool extends Tool {
 			if (e != null && !e.isConsumed() && mPort != null
 					&& mFirstPort != null && mFirstPort != mPort) {
 			
-				Figure figureCliquee ;
-				FElement source;
 				
 		        Object cellSrc = mFirstPort.getParentView().getCell();
 		        Object cellDes = mPort.getParentView().getCell();
 		        
+		        // Modification pour les lien avec les notes
 		        if ( (cellSrc instanceof ProduitCell) && (cellDes instanceof ProduitCell) ){
 		        	
-		        	figureCliquee = ((ProduitCell)cellSrc).getFprod();
-		        	source = ((ProduitCell)cellDes).getFprod();
-		        
-			        // Click sur autre chose qu'un élément
-			        if (figureCliquee != null && (figureCliquee instanceof FElement))
-			        {
-		            	//if (figureCliquee != source || pointsAncrageIntermediaires.size() > 0)
-			        	if (figureCliquee != source )
-			        	{
-			        		// passer les objets !
-							CLier2Produits c = new CLier2Produits(mGraph, (ProduitCell)cellDes, (ProduitCell)cellSrc, new Vector());
-		              		if (c.executer())
-		      			    {
-		      			   		Application.getApplication().getProjet().setModified(true);
-		      			    }
-		              	}
-		            }
+		         
+					CLier2Produits c = new CLier2Produits(mGraph, (ProduitCell)cellDes, (ProduitCell)cellSrc, new Vector());
+		             if (c.executer())
+		             {
+		      			Application.getApplication().getProjet().setModified(true);
+		      		 }
+		           
 		        }
 		        
 			}
 			
 			// reprendre l'outil de séléction
 			Application.getApplication().getProjet().getFenetreEdition().setOutilSelection();
-			
+			fireToolFinished();
 		}
 
 		protected void createEdge(DefaultEdge edge, ConnectionSet cs,

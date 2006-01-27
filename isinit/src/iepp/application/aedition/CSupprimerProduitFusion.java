@@ -1,18 +1,14 @@
 package iepp.application.aedition;
 
-import iepp.Application;
 import iepp.application.CommandeAnnulable;
-import iepp.domaine.ComposantProcessus;
 import iepp.domaine.IdObjetModele;
 import iepp.domaine.LienProduits;
 import iepp.ui.iedition.VueDPGraphe;
-import iepp.ui.iedition.dessin.rendu.ComposantCell;
-import iepp.ui.iedition.dessin.rendu.FProduit;
 import iepp.ui.iedition.dessin.rendu.IeppCell;
-import iepp.ui.iedition.dessin.rendu.LienEdge;
 import iepp.ui.iedition.dessin.rendu.ProduitCellEntree;
 import iepp.ui.iedition.dessin.rendu.ProduitCellFusion;
 import iepp.ui.iedition.dessin.rendu.ProduitCellSortie;
+import iepp.ui.iedition.dessin.rendu.liens.LienEdge;
 
 import java.util.Map;
 import java.util.Vector;
@@ -49,7 +45,7 @@ public class CSupprimerProduitFusion extends CommandeAnnulable
 	{
 		// initialiser le composant à supprimer
 		this.produitF = prodF;
-		this.composant = prodF.getMprod().getId() ;
+		this.composant = prodF.getId() ;
 		this.diagramme = diag;
 		
 	}
@@ -124,9 +120,9 @@ public class CSupprimerProduitFusion extends CommandeAnnulable
 		 this.diagramme.getModel().insert(vecObj.toArray(), AllAttribute, null, null, null);
 		 this.diagramme.getModel().insert(null, null, cs, null, null);
 
-		 this.diagramme.ajouterFigure(pe.getFprod());
 		 this.diagramme.ajouterCell(pe);
-		
+		 this.diagramme.ajouterProduitEntreeCell(pe);
+		 this.diagramme.ajouterLien(edge);
 		
 		// on remet le produit en sortie
 		 ProduitCellSortie ps=this.produitF.getProduitCellSortie();
@@ -160,9 +156,9 @@ public class CSupprimerProduitFusion extends CommandeAnnulable
 		 this.diagramme.getModel().insert(vecObj2.toArray(), AllAttribute2, null, null, null);
 		 this.diagramme.getModel().insert(null, null, cs2, null, null);
 
-		 this.diagramme.ajouterFigure(ps.getFprod());
 		 this.diagramme.ajouterCell(ps);
-		
+		 this.diagramme.ajouterProduitSortieCell(ps);
+		 this.diagramme.ajouterLien(edge2);
 		
 		
 		this.diagramme.supprimerCellule(produitF);
@@ -184,7 +180,7 @@ public class CSupprimerProduitFusion extends CommandeAnnulable
 	public void supprimerFusion(IdObjetModele produitCourant, Vector listeLiens)
 	{
 		// vérifier que les produits ne soient pas dans des produits fusions
-		for (int j = 0; j < listeLiens.size(); j++)
+		/*for (int j = 0; j < listeLiens.size(); j++)
 		{
 			// récupérer le lien courant
 			LienProduits lp = (LienProduits)listeLiens.elementAt(j);
@@ -200,7 +196,7 @@ public class CSupprimerProduitFusion extends CommandeAnnulable
 		FProduit fp = (FProduit)this.diagramme.contient(produitCourant);
 		this.diagramme.supprimerFigure(fp.getLienInterface());
 		// supprimer le produit
-		this.diagramme.supprimerFigure(this.diagramme.contient(produitCourant));
+		this.diagramme.supprimerFigure(this.diagramme.contient(produitCourant));*/
 	}
 }
 

@@ -63,10 +63,8 @@ public class EnregistreurDP
 
 		//ajouter la définition de processus à l'indice 0
 		v.add(project.getDefProc());
-		// les MD diagramme à l'indice 1
-		v.add(project.getFenetreEdition().getVueDPGraphe().getModele());
 		// liste des éléments du diagramme 2
-		v.add(project.getFenetreEdition().getVueDPGraphe().getElements());
+		v.add(project.getFenetreEdition().getVueDPGraphe().getElementsCell());
 		// liste des liens du diagramme 3
 		v.add(project.getFenetreEdition().getVueDPGraphe().getLiens());
 		// dernier indice utilisé dans la DP

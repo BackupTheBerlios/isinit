@@ -20,31 +20,24 @@
 package iepp.application.aedition;
 
 
+import iepp.Application;
+import iepp.application.CommandeAnnulable;
+import iepp.domaine.ComposantProcessus;
+import iepp.domaine.IdObjetModele;
+import iepp.ui.iedition.VueDPGraphe;
+import iepp.ui.iedition.dessin.rendu.ComposantCell;
+import iepp.ui.iedition.dessin.rendu.IeppCell;
+import iepp.ui.iedition.dessin.rendu.ProduitCellEntree;
+import iepp.ui.iedition.dessin.rendu.ProduitCellFusion;
+import iepp.ui.iedition.dessin.rendu.ProduitCellSortie;
+import iepp.ui.iedition.dessin.rendu.liens.LienEdge;
+
 import java.util.Map;
 import java.util.Vector;
 
 import org.jgraph.graph.ConnectionSet;
 import org.jgraph.graph.DefaultPort;
 import org.jgraph.graph.GraphConstants;
-
-import iepp.Application;
-import iepp.application.CommandeAnnulable;
-import iepp.domaine.ComposantProcessus;
-import iepp.domaine.IdObjetModele;
-import iepp.domaine.LienProduits;
-import iepp.ui.iedition.VueDPGraphe;
-import iepp.ui.iedition.dessin.rendu.ComposantCell;
-import iepp.ui.iedition.dessin.rendu.FComposantProcessus;
-import iepp.ui.iedition.dessin.rendu.FElement;
-import iepp.ui.iedition.dessin.rendu.FProduit;
-import iepp.ui.iedition.dessin.rendu.IeppCell;
-import iepp.ui.iedition.dessin.rendu.LienEdge;
-import iepp.ui.iedition.dessin.rendu.ProduitCell;
-import iepp.ui.iedition.dessin.rendu.ProduitCellEntree;
-import iepp.ui.iedition.dessin.rendu.ProduitCellFusion;
-import iepp.ui.iedition.dessin.rendu.ProduitCellSortie;
-import iepp.ui.iedition.dessin.vues.MDElement;
-import iepp.ui.iedition.dessin.vues.MDProduit;
 
 
 /**
@@ -81,7 +74,7 @@ public class CSupprimerComposantGraphe extends CommandeAnnulable
 	{
 		// initialiser le composant à supprimer
 		this.composantCell = compo;
-		this.composant = compo.getMdcomp().getId() ;
+		this.composant = compo.getId() ;
 		this.diagramme = Application.getApplication().getProjet().getFenetreEdition().getVueDPGraphe();
 		
 	}
@@ -94,49 +87,6 @@ public class CSupprimerComposantGraphe extends CommandeAnnulable
 	 */
 	public boolean executer()
 	{
-		
-		// récupère la liste des liens du composant à supprimer
-		Vector listeLiens = ((ComposantProcessus)this.composant.getRef()).getLien();
-		
-		// récupérer la liste des produits en entrée du composant
-		Vector listeEntree = composant.getProduitEntree();
-		for (int i = 0; i < listeEntree.size(); i++)
-		{
-			// récupérer le produit courant
-			IdObjetModele produitCourant = (IdObjetModele)listeEntree.elementAt(i);
-			// supprimer les éventuels produits fusion et supprimer le produit
-			//this.supprimerFusion(produitCourant, listeLiens);		
-		}
-		
-		// récupérer la liste des produits en sortie du composant
-		Vector listeSortie = composant.getProduitSortie();
-		for (int i = 0; i < listeSortie.size(); i++)
-		{
-			// récupérer le produit courant
-			IdObjetModele produitCourant = (IdObjetModele)listeSortie.elementAt(i);
-			// supprimer les éventuels produits fusion et supprimer le produit
-			//this.supprimerFusion(produitCourant, listeLiens);		
-		}
-
-		// suppression du composant
-		this.diagramme.supprimerFigure(this.diagramme.contient(this.composant));
-		 
-		
-		// modif Aldo Nit 15/01/06
-
-		// suppression des liens 
-		
-		
-		/*Vector liens=this.composantCell.getListeLien();
-		LienEdge[] li=new LienEdge[liens.size()];
-		for (int j=0; j<liens.size();j++)
-		{
-			li[j]=(LienEdge)liens.elementAt(j);
-		}
-		this.diagramme.getModel().remove((Object[])li);
-		
-		*/
-		
 		for (int k=0;k<this.diagramme.getElementsCell().size();k++)
 		{
 			//System.out.println(this.diagramme.getElementsCell().elementAt(k).toString());
@@ -197,7 +147,8 @@ public class CSupprimerComposantGraphe extends CommandeAnnulable
 					 this.diagramme.getModel().insert(vecObj.toArray(), AllAttribute, null, null, null);
 					 this.diagramme.getModel().insert(null, null, cs, null, null);
 
-					 this.diagramme.ajouterFigure(prodS.getFprod());
+					 this.diagramme.ajouterProduitEntreeCell(prodS);
+					 this.diagramme.ajouterLien(edge);
 					 this.diagramme.ajouterCell(prodS);
 					 this.diagramme.supprimerCellule(prodF);
 					
@@ -236,8 +187,9 @@ public class CSupprimerComposantGraphe extends CommandeAnnulable
 					 this.diagramme.getModel().insert(vecObj.toArray(), AllAttribute, null, null, null);
 					 this.diagramme.getModel().insert(null, null, cs, null, null);
 					 
-					 this.diagramme.ajouterFigure(prodE.getFprod());
 					 this.diagramme.ajouterCell(prodE);
+					 this.diagramme.ajouterProduitEntreeCell(prodE);
+					 this.diagramme.ajouterLien(edge);
 					 this.diagramme.supprimerCellule(prodF);
 				}
 			}
@@ -259,22 +211,22 @@ public class CSupprimerComposantGraphe extends CommandeAnnulable
 	public void supprimerFusion(IdObjetModele produitCourant, Vector listeLiens)
 	{
 		// vérifier que les produits ne soient pas dans des produits fusions
-		for (int j = 0; j < listeLiens.size(); j++)
-		{
-			// récupérer le lien courant
-			LienProduits lp = (LienProduits)listeLiens.elementAt(j);
-			if (lp.getProduitEntree().equals(produitCourant)
-					|| lp.getProduitSortie().equals(produitCourant))
-			{
-				CSupprimerLienFusion c = new CSupprimerLienFusion(this.diagramme, lp.getLienFusion());
-				c.executer();
-			}
-		}
-		
-		// supprimer le lien
-		FProduit fp = (FProduit)this.diagramme.contient(produitCourant);
-		this.diagramme.supprimerFigure(fp.getLienInterface());
-		// supprimer le produit
-		this.diagramme.supprimerFigure(this.diagramme.contient(produitCourant));
+//		for (int j = 0; j < listeLiens.size(); j++)
+//		{
+//			// récupérer le lien courant
+//			LienProduits lp = (LienProduits)listeLiens.elementAt(j);
+//			if (lp.getProduitEntree().equals(produitCourant)
+//					|| lp.getProduitSortie().equals(produitCourant))
+//			{
+//				CSupprimerLienFusion c = new CSupprimerLienFusion(this.diagramme, lp.getLienFusion());
+//				c.executer();
+//			}
+//		}
+//		
+//		// supprimer le lien
+//		FProduit fp = (FProduit)this.diagramme.contient(produitCourant);
+//		this.diagramme.supprimerFigure(fp.getLienInterface());
+//		// supprimer le produit
+//		this.diagramme.supprimerFigure(this.diagramme.contient(produitCourant));
 	}
 }

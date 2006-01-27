@@ -19,13 +19,6 @@
 
 package iepp.application.aedition;
 
-import java.util.Map;
-import java.util.Vector;
-
-import org.jgraph.graph.ConnectionSet;
-import org.jgraph.graph.DefaultPort;
-import org.jgraph.graph.GraphConstants;
-
 import iepp.Application;
 import iepp.application.CommandeAnnulable;
 import iepp.application.averification.VGestVerification;
@@ -33,22 +26,19 @@ import iepp.domaine.ComposantProcessus;
 import iepp.domaine.IdObjetModele;
 import iepp.domaine.LienProduits;
 import iepp.ui.iedition.VueDPGraphe;
-import iepp.ui.iedition.dessin.rendu.FElement;
-import iepp.ui.iedition.dessin.rendu.FNote;
-import iepp.ui.iedition.dessin.rendu.FProduit;
-import iepp.ui.iedition.dessin.rendu.FProduitFusion;
 import iepp.ui.iedition.dessin.rendu.IeppCell;
-import iepp.ui.iedition.dessin.rendu.LienEdge;
 import iepp.ui.iedition.dessin.rendu.ProduitCell;
 import iepp.ui.iedition.dessin.rendu.ProduitCellEntree;
 import iepp.ui.iedition.dessin.rendu.ProduitCellFusion;
 import iepp.ui.iedition.dessin.rendu.ProduitCellSortie;
-import iepp.ui.iedition.dessin.rendu.liens.FLien;
-import iepp.ui.iedition.dessin.rendu.liens.FLienFusion;
-import iepp.ui.iedition.dessin.vues.MDElement;
-import iepp.ui.iedition.dessin.vues.MDLien;
-import iepp.ui.iedition.dessin.vues.MDLienClassic;
-import iepp.ui.iedition.dessin.vues.MDProduit;
+import iepp.ui.iedition.dessin.rendu.liens.LienEdge;
+
+import java.util.Map;
+import java.util.Vector;
+
+import org.jgraph.graph.ConnectionSet;
+import org.jgraph.graph.DefaultPort;
+import org.jgraph.graph.GraphConstants;
 
 
 /**
@@ -63,11 +53,7 @@ public class CLier2Produits extends CommandeAnnulable
 	 */
 	private VueDPGraphe diagramme;
 
-	/**
-	 * Liens entre le produit fusion créé et les composants concernés
-	 */
-	private FLienFusion lien1, lien2;
-
+	
 	/**
 	 * Liens créés au niveau du modèle entre les produits
 	 */
@@ -77,12 +63,7 @@ public class CLier2Produits extends CommandeAnnulable
 	/**
 	 * Id des éléments sélectionnés pour effectuer la liaison
 	 */
-	private IdObjetModele src, dest;
-
-	/**
-	 * Figure du produit fusion créé si on fusionne 2 produits simples
-	 */
-	private FProduitFusion fusion;
+	private IdObjetModele src, dest, fusion;
 
 	/**
 	 * Indique si la fusion est possible ou pas
@@ -101,17 +82,16 @@ public class CLier2Produits extends CommandeAnnulable
 	*/
 	public CLier2Produits(VueDPGraphe d,  ProduitCell Cellsource, ProduitCell Celldestination, Vector pointsAncrageIntermediaires)
 	{
-		FElement source = Cellsource.getFprod();
-		FElement destination = Celldestination.getFprod();
-		
 		// garder un lien vers le diagramme
         this.diagramme = d;
+        
+        
 
 		// si l'objet source est un produit en entrée on permute le sens du lien entrée
-		this.src = source.getModele().getId();
-		this.dest = destination.getModele().getId();
+		this.src = Cellsource.getId();
+		this.dest = Celldestination.getId();
 
-		// impossible d'avoir des liens avec les notes
+		/*// impossible d'avoir des liens avec les notes
 		if (source instanceof FNote || destination instanceof FNote)
 		{
 			this.executable = false;
@@ -242,44 +222,7 @@ public class CLier2Produits extends CommandeAnnulable
 					//erreur Sur
 					// Suppression du lien (FLienInterface) entre les produits effacés et leur composants
 					//this.diagramme.supprimerFigure((FLien)destination.getLiens().elementAt(0));
-					//this.diagramme.supprimerFigure((FLien)source.getLiens().elementAt(0));
-					// Suppression du lien dans le produit
-					//source.supprimerLien((FLien)source.getLiens().elementAt(0));
-					//destination.supprimerLien((FLien)destination.getLiens().elementAt(0));
-
-					// Suppression des deux produits fusionnés
-					this.diagramme.supprimerFigure(source);
-					this.diagramme.supprimerFigure(destination);
-					// Affectation des liens
-					if (src.estProduitEntree())
-						affectationLien(this.fusion,((FProduit)destination).getComposantInterface(),((FProduit)source).getComposantInterface());
-					else
-						affectationLien(this.fusion,((FProduit)source).getComposantInterface(),((FProduit)destination).getComposantInterface());
-
-					// Si le produit en sortie est issue d'un composant vide
-					if (((FProduit)sortie).getComposantInterface().getModele().getId().estComposantVide())
-					{
-						//Si le produit en entree est suivi d'un composant vide
-						if (((FProduit)entree).getComposantInterface().getModele().getId().estComposantVide())
-							this.fusion.renommer();
-						else
-							this.fusion.setNomFusionAll(entree.getModele().getId().toString());
-					}
-					else
-					{
-						//Si le produit en entree est suivi d'un composant vide
-						if (((FProduit)entree).getComposantInterface().getModele().getId().estComposantVide())
-							this.fusion.setNomFusionAll(sortie.getModele().getId().toString());
-						else
-						{
-							// cas de deux composants pleins
-							if(sortie.getModele().getId().toString().equals(entree.getModele().getId().toString()))
-								this.fusion.setNomFusion(sortie.getModele().getId().toString());
-							else
-								this.fusion.setNomFusion(sortie.getModele().getId().toString()+"("+entree.getModele().getId().toString()+")");
-						}
-						//System.out.println( this.fusion.getNomFusion() );
-					}
+				*/
 					
 					/////////////////////////////////////////////
 					// Ajout pour la prise en compte de JGraph //
@@ -317,21 +260,26 @@ public class CLier2Produits extends CommandeAnnulable
 						LienEdge edge1 = new LienEdge();
 						LienEdge edge2 = new LienEdge();
 
-						MDProduit mdp1 = ((ProduitCell) cellSrc).getMprod();
-						MDProduit mdp2 = ((ProduitCell) cellDes).getMprod();
-
-						mdfusion.setX((mdp1.getX() + mdp2.getX()) / 2);
-						mdfusion.setY((mdp1.getY() + mdp2.getY()) / 2);
+						if (src.estProduitSortie())
+						{
+							this.fusion = src;
+						}
+						else
+						{
+							this.fusion = dest;
+						}
 						
 						ProduitCellFusion newProdCell = new ProduitCellFusion(this.fusion,(ProduitCellEntree)cellEnt,(ProduitCellSortie)cellSor);
-
 						newProdCell.ajoutLien(edge1);
 						newProdCell.ajoutLien(edge2);
+						
 						
 						this.diagramme.supprimerCellule((IeppCell)cellEnt);
 						this.diagramme.supprimerCellule((IeppCell)cellSor);
 						
-						this.diagramme.getElementsCell().add(newProdCell);
+						this.diagramme.ajouterCell(newProdCell);
+						this.diagramme.ajouterLien(edge1);
+						this.diagramme.ajouterLien(edge2);
 						
 						if (!((ProduitCell) cellSrc).getNomCompCell()
 								.equalsIgnoreCase(
@@ -382,46 +330,12 @@ public class CLier2Produits extends CommandeAnnulable
 						this.diagramme.repaint();
 						// System.out.println("SOURCE & DESTINATION identiques");
 					}
-			 	} 
-			}
-		}
+			 	
+			
+		
 	}
 
-	/**
-	 * Mathode privée affectationLien qui affecte aux liens fusion les entrées et les sorties
-	 * @param centre element central auquel les deux liens seront reliés
-	 * @param source1 source du premier lien
-	 * @param destination2 destination du deuxième lien
-	 */
-	private void affectationLien(FElement centre, FElement source1, FElement destination2)
-	{
-		((MDLien) this.lien1.getModele()).setSource((MDElement)source1.getModele());
-		((MDLien) this.lien1.getModele()).setDestination((MDElement)centre.getModele());
 
-		this.lien1.setSource(source1);
-		this.lien1.setDestination(centre);
-		this.lien1.initHandles();
-
-		((MDLien) this.lien2.getModele()).setSource((MDElement)centre.getModele());
-		((MDLien) this.lien2.getModele()).setDestination((MDElement)destination2.getModele());
-
-		this.lien2.setSource(centre);
-		this.lien2.setDestination(destination2);
-		this.lien2.initHandles();
-
-		if (this.src.estProduitEntree())
-		{
-			this.lienModele1 = new LienProduits(this.dest, this.src, lien1);
-			this.lienModele2 = new LienProduits(this.dest, this.src, lien2);
-		}
-		else
-		{
-			this.lienModele1 = new LienProduits(this.src, this.dest, lien1);
-			this.lienModele2 = new LienProduits(this.src, this.dest, lien2);
-			//this.lienModele = new LienProduits(source1.getModele().getId(), destination2.getModele().getId());
-		}
-
-	}
 
 	/**
 	* Retourne le nom de l'édition.
@@ -442,31 +356,9 @@ public class CLier2Produits extends CommandeAnnulable
 	 */
 	public boolean executer()
 	{
-		if ( this.executable )
-		{
-			// Ajout du produit de fusion dans la fenetre d'edition
-			if (this.fusion.getNombreProduits() <= 2)
-			{
-				diagramme.ajouterFigure(this.fusion);
-			}
-			if (this.lien1 != null)
-				diagramme.ajouterFigure(this.lien1);
-			if (this.lien2 != null)
-				diagramme.ajouterFigure(this.lien2);
-
-			// et au niveau du modèle
-			if (this.lien1 != null)
-				((ComposantProcessus)this.lienModele1.getProduitSortie().getRef()).ajouterLien(this.lienModele1);
-
-			if (this.lien2 != null)
-				((ComposantProcessus)this.lienModele1.getProduitEntree().getRef()).ajouterLien(this.lienModele2);
 
 			return true;
-		}
-		else
-		{
-	  		return false;
-		}
+
 	}
 
 }

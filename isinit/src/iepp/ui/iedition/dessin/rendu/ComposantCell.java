@@ -19,66 +19,85 @@ package iepp.ui.iedition.dessin.rendu;
  * 
  */
 
-import iepp.ui.iedition.dessin.vues.MDComposantProcessus;
+import iepp.domaine.ComposantProcessus;
+import iepp.domaine.IdObjetModele;
+
+import java.awt.Font;
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.font.FontRenderContext;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
+
 import javax.swing.ImageIcon;
 import org.jgraph.graph.GraphConstants;
 
 public class ComposantCell extends IeppCell {
 	
-	protected double abscisse;
-	protected double ordonnee;
-	protected double largeur;
-	protected double hauteur;
-	protected FComposantProcessus fcomp;
-	protected MDComposantProcessus mdcomp;
+	protected int abscisse;
+	protected int ordonnee;
+	protected int largeur;
+	protected int hauteur;
+	protected ComposantProcessus compProc;
+	protected ImageIcon i;
 	
-	public ComposantCell( FComposantProcessus fcomp ) { 
+	public ComposantCell(IdObjetModele comp, int x, int y) { 
 		
-		super(((MDComposantProcessus)(fcomp.getModele())).getNom());
+		super(((ComposantProcessus)comp.getRef()).getNomComposant());
 		
-		this.fcomp = fcomp;
-		this.mdcomp = (MDComposantProcessus)fcomp.getModele();
+		this.compProc = (ComposantProcessus)comp.getRef();
+		this.police = new Font("Arial", Font.PLAIN, 12);
 		
 		this.imageComposant = refImageComposant;
 		
 		// On garde dans l'objet un trace de la position du composant sur le graph
-		abscisse=mdcomp.getX();
-		ordonnee=mdcomp.getY();	
-		// On garde aussi une trace de la largeur et de la hauteur du composant
-		largeur=mdcomp.getLargeur();
-		hauteur=mdcomp.getHauteur();
+		this.abscisse=x;
+		this.ordonnee=y;	
 		
 		// Définition de l'image du composant
-		ImageIcon i = new ImageIcon(getCheminImageComposant()+ imageComposant);
+		i = new ImageIcon(getCheminImageComposant()+ imageComposant);
+		
+		// On garde aussi une trace de la largeur et de la hauteur du composant
+		Rectangle2D dim = this.police.getStringBounds(this.getNomCompCell(),new FontRenderContext(new AffineTransform(),false,false));
+		this.largeur = Math.max(i.getIconWidth(), (int)dim.getWidth()) + 1;
+		this.hauteur=i.getIconHeight()+(int)dim.getHeight() + 7;
 		
 		// Définition des attributs du composant
 		GraphConstants.setIcon(getAttributs(), i);
 		GraphConstants.setBounds(getAttributs(), new Rectangle((int)abscisse,(int)ordonnee,(int)largeur,(int)hauteur));
-		GraphConstants.setAutoSize(getAttributs(), true);
+		//GraphConstants.setAutoSize(getAttributs(), true);
 		GraphConstants.setEditable(getAttributs(), false);
 		GraphConstants.setSizeable (getAttributs(), false);
-		GraphConstants.setFont(getAttributs(),mdcomp.getPolice());
+		GraphConstants.setFont(getAttributs(),police);
 		
 	}
 	
-	public double getAbscisse() {
-		return abscisse;
+	
+	public IdObjetModele getId()
+    {
+    	return this.compProc.getIdComposant();
+    }
+	
+	
+	public int getAbscisse() {
+		return (int)(GraphConstants.getBounds(getAttributs()).getX());
 	}
 
 
-	public void setAbscisse(double abscisse) {
+	public void setAbscisse(int abscisse) {
 		this.abscisse = abscisse;
+		GraphConstants.setBounds(getAttributs(), new Rectangle(abscisse,getOrdonnee(),getLargeur(),getHauteur()));
 	}
 
 
-	public double getHauteur() {
-		return hauteur;
+	public int getHauteur() {
+		return (int)(GraphConstants.getBounds(getAttributs()).getHeight());
 	}
 
 
-	public void setHauteur(double hauteur) {
+	public void setHauteur(int hauteur) {
 		this.hauteur = hauteur;
+		GraphConstants.setBounds(getAttributs(), new Rectangle(getAbscisse(),getOrdonnee(),getLargeur(),hauteur));
 	}
 
 
@@ -89,53 +108,49 @@ public class ComposantCell extends IeppCell {
 
 	public void setImageComposant(String imageComposant) {
 		this.imageComposant = imageComposant;
+		i = new ImageIcon(getCheminImageComposant()+ imageComposant);
+		// On garde aussi une trace de la largeur et de la hauteur du composant
+		Graphics2D g2 = (Graphics2D)i.getImage().getGraphics();
+		this.largeur = Math.max(i.getIconWidth(), g2.getFontMetrics(this.police).stringWidth(this.getNomCompCell()));//charsWidth( (this.getNomCompCell()).toCharArray(), 0, this.getNomCompCell().length()));
+		this.hauteur=i.getIconHeight()+g2.getFontMetrics(this.police).getHeight();
+		
+		// Définition des attributs du composant
+		GraphConstants.setIcon(getAttributs(), i);
+		GraphConstants.setBounds(getAttributs(), new Rectangle((int)abscisse,(int)ordonnee,(int)largeur,(int)hauteur));
 	}
 
 
-	public double getLargeur() {
-		return largeur;
+	public int getLargeur() {
+		return (int)(GraphConstants.getBounds(getAttributs()).getWidth());
 	}
 
 
-	public void setLargeur(double largeur) {
+	public void setLargeur(int largeur) {
 		this.largeur = largeur;
+		GraphConstants.setBounds(getAttributs(), new Rectangle(getAbscisse(),getOrdonnee(),largeur,getHauteur()));
 	}
 
 
-	public double getOrdonnee() {
-		return ordonnee;
+	public int getOrdonnee() {
+		return (int)(GraphConstants.getBounds(getAttributs()).getY());
 	}
 
 
-	public void setOrdonnee(double ordonnee) {
+	public void setOrdonnee(int ordonnee) {
 		this.ordonnee = ordonnee;
+		GraphConstants.setBounds(getAttributs(), new Rectangle(getAbscisse(),ordonnee,getLargeur(),getHauteur()));
 	}
 
-	/**
-	 * @return Returns the mdcomp.
-	 */
-	public MDComposantProcessus getMdcomp() {
-		return mdcomp;
-	}
-
-	/**
-	 * @param mdcomp The mdcomp to set.
-	 */
-	public void setMdcomp(MDComposantProcessus mdcomp) {
-		this.mdcomp = mdcomp;
-	}
-
-	/**
-	 * @return Returns the fcomp.
-	 */
-	public FComposantProcessus getFcomp() {
-		return fcomp;
-	}
-
-	/**
-	 * @param fcomp The fcomp to set.
-	 */
-	public void setFcomp(FComposantProcessus fcomp) {
-		this.fcomp = fcomp;
+	public void setNomCompCell(String s) {
+		this.nomComposantCellule=s;
+		
+		// On garde aussi une trace de la largeur et de la hauteur du composant
+		Rectangle2D dim = this.police.getStringBounds(this.getNomCompCell(),new FontRenderContext(new AffineTransform(),false,false));
+		this.largeur = Math.max(i.getIconWidth(), (int)dim.getWidth()) + 1;
+		this.hauteur=i.getIconHeight()+(int)dim.getHeight() + 7;
+		
+		this.setUserObject(nomComposantCellule);
+		
+		GraphConstants.setBounds(getAttributs(), new Rectangle(getAbscisse(),getOrdonnee(),getLargeur(),getHauteur()));
 	}
 }

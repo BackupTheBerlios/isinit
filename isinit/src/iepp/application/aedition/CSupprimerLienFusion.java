@@ -19,19 +19,14 @@
 
 package iepp.application.aedition;
 
-import java.util.Vector;
-
 import iepp.application.CommandeAnnulable;
 import iepp.domaine.ComposantProcessus;
 import iepp.domaine.IdObjetModele;
 import iepp.ui.iedition.VueDPGraphe;
-import iepp.ui.iedition.dessin.rendu.FElement;
-import iepp.ui.iedition.dessin.rendu.FProduit;
-import iepp.ui.iedition.dessin.rendu.FProduitFusion;
-import iepp.ui.iedition.dessin.rendu.liens.FLien;
-import iepp.ui.iedition.dessin.rendu.liens.FLienFusion;
-import iepp.ui.iedition.dessin.rendu.liens.FLienInterface;
-import iepp.ui.iedition.dessin.vues.MDLienDotted;
+
+import java.util.Vector;
+
+// pour moi (stéphane) ne sert plus mé a voir
 
 /**
  * Classe permettant la suppression d'un lien fusion 
@@ -42,18 +37,18 @@ public class CSupprimerLienFusion extends CommandeAnnulable
 	/**
 	 * Lien à supprimer entre un produit fusion et un composant 
 	 */
-	private FLienFusion leLien;
+//	private FLienFusion leLien;
 	
 	/**
 	 * Figure du produit fusion dont on veut enlever un produit
 	 */
-	private FProduitFusion produitFusion;
+//	private FProduitFusion produitFusion;
 	
 	/**
 	 * Figure du composant AJOUTER DES COMMENTAIRES 
 	 */
-	private FElement leComposant;
-	private FElement leComposant2;
+//	private FElement leComposant;
+//	private FElement leComposant2;
 	
 	/**
 	 * Diagramme duquel on veut supprimer un lien fusion 
@@ -75,18 +70,18 @@ public class CSupprimerLienFusion extends CommandeAnnulable
 	 * @param leLien lien fusion à supprimer
 	 * @param d diagramme duquel on veut supprimer un lien fusion
 	 */
-	public CSupprimerLienFusion(VueDPGraphe d,FLienFusion leLien)
+	public CSupprimerLienFusion(VueDPGraphe d)//,FLienFusion leLien)
 	{
 		// garder un lien vers le diagramme
 		this.diagramme = d;
 		// lien à supprimer
-		this.leLien = leLien;
+//		this.leLien = leLien;
 		
 		this.suppTout = false;
 		this.resSupp = true;
 		
 		
-		//Recherche du produit fusion
+/*		//Recherche du produit fusion
 		if (leLien.getSource() instanceof FProduitFusion)
 		{
 			this.produitFusion = (FProduitFusion)leLien.getSource();
@@ -121,7 +116,7 @@ public class CSupprimerLienFusion extends CommandeAnnulable
 		            }
 		        }
 		    }
-		}
+		}*/
 	}
 	
 	/**
@@ -130,7 +125,7 @@ public class CSupprimerLienFusion extends CommandeAnnulable
 	 */
 	public boolean executer() {
 		
-		if (this.produitFusion == null)
+/*		if (this.produitFusion == null)
 			return false;
 		else
 		{
@@ -204,9 +199,9 @@ public class CSupprimerLienFusion extends CommandeAnnulable
 		    return resSupp;
 		}
 		else
-		{
+		{*/
 		    return true;
-		}
+		/*}*/
 	}
 	
 	/**
@@ -214,10 +209,10 @@ public class CSupprimerLienFusion extends CommandeAnnulable
 	 */
 	public void effacerLien(IdObjetModele id)
 	{
-		for (int i = 0; i < produitFusion.getNombreProduits(); i++)
-		{
-			((ComposantProcessus)produitFusion.getProduits(i).getModele().getId().getRef()).supprimerLien(id);
-		}
+//		for (int i = 0; i < produitFusion.getNombreProduits(); i++)
+//		{
+//			((ComposantProcessus)produitFusion.getProduits(i).getModele().getId().getRef()).supprimerLien(id);
+//		}
 	}
 
 }

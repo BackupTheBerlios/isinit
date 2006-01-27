@@ -19,10 +19,9 @@
  
 package iepp.application.aedition;
 
-import util.Vecteur;
 import iepp.application.CommandeAnnulable;
-import iepp.ui.iedition.dessin.rendu.liens.FLien;
-import iepp.ui.iedition.dessin.vues.MDLien;
+import iepp.ui.iedition.dessin.rendu.IeppCell;
+import util.Vecteur;
 
 /**
  * Classe permettant de supprimer un point d'ancrage sur un lien brisé
@@ -32,7 +31,7 @@ public class CSupprimerPointAncrage extends CommandeAnnulable
 	/**
 	 * Lien auquel on enlève un point d'ancrage
 	 */
-	private FLien lien;
+	private IeppCell lien;
 	
 	/**
 	 * Coordonnée du point d'ancrage à supprimer
@@ -44,11 +43,11 @@ public class CSupprimerPointAncrage extends CommandeAnnulable
 	 */
 	int index;
 
-	public CSupprimerPointAncrage(FLien lien, Vecteur p)
+	public CSupprimerPointAncrage(IeppCell lien, Vecteur p)
 	{
 	  this.lien = lien;
 	  this.p = p;
-	  this.index = lien.getIndexPointAncrage(p);
+	  //this.index = lien.getIndexPointAncrage(p);
 	}
 
 	/**
@@ -67,17 +66,17 @@ public class CSupprimerPointAncrage extends CommandeAnnulable
 	 */
 	public boolean executer()
 	{
-	 	if ((((MDLien)this.lien.getModele()).getPointsAncrage().indexOf(p) == 0 )
-	 		|| (((MDLien)this.lien.getModele()).getPointsAncrage().indexOf(p) == ((MDLien)this.lien.getModele()).getPointsAncrage().size() - 1))
-		
-	 	{
-	 		return false;
-	 	}
-	 	else
-	 	{
-		  	this.lien.detruirePointAncrage(p);
+//	 	if ((((MDLien)this.lien.getModele()).getPointsAncrage().indexOf(p) == 0 )
+//	 		|| (((MDLien)this.lien.getModele()).getPointsAncrage().indexOf(p) == ((MDLien)this.lien.getModele()).getPointsAncrage().size() - 1))
+//		
+//	 	{
+//	 		return false;
+//	 	}
+//	 	else
+//	 	{
+//		  	this.lien.detruirePointAncrage(p);
 		  	return true;
-	 	}
+//	 	}
 	}
 
 }

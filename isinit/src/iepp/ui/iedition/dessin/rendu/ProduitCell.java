@@ -19,9 +19,14 @@ package iepp.ui.iedition.dessin.rendu;
  * 
  */
 
-import iepp.ui.iedition.dessin.vues.MDProduit;
+import iepp.domaine.IdObjetModele;
 
+import java.awt.Font;
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.font.FontRenderContext;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 
 import javax.swing.ImageIcon;
 
@@ -29,57 +34,65 @@ import org.jgraph.graph.GraphConstants;
 
 public class ProduitCell extends IeppCell {
 	
-	protected double abscisse;
-	protected double ordonnee;
-	protected double largeur;
-	protected double hauteur;
-	protected MDProduit mprod;
-	protected FProduit fprod;
-	
-	public ProduitCell(FProduit fprod ) {
+	protected int abscisse;
+	protected int ordonnee;
+	protected int largeur;
+	protected int hauteur;
+	protected IdObjetModele produit ;
+	protected ImageIcon i;
+    
+	public ProduitCell(IdObjetModele prod, int x, int y ) {
 		
-		super(((MDProduit)fprod.getModele()).getNom());
+		super(prod.getRef().toString(prod.getNumRang(), prod.getNumType()));
 		
-		this.fprod = fprod;
-		this.mprod = (MDProduit)fprod.getModele();
+		this.produit = prod;
+		this.police = new Font("Arial", Font.PLAIN, 12);
 		
 		this.imageComposant = refImageProduit;
 		
 		// On garde dans l'objet un trace de la position du composant sur le graph
-		abscisse=mprod.getX();
-		ordonnee=mprod.getY();		
-		// On garde aussi une trace de la largeur et de la hauteur du composant
-		largeur=mprod.getLargeur();
-		hauteur=mprod.getHauteur();
+		this.abscisse=x;
+		this.ordonnee=y;		
 		
 		// Définition de l'image
-		ImageIcon i = new ImageIcon(getCheminImageComposant()+ imageComposant);
+		i = new ImageIcon(getCheminImageComposant()+ imageComposant);
+		
+		// On garde aussi une trace de la largeur et de la hauteur du composant
+		Rectangle2D dim = this.police.getStringBounds(this.getNomCompCell(),new FontRenderContext(new AffineTransform(),false,false));
+		this.largeur = Math.max(i.getIconWidth(), (int)dim.getWidth()) + 1;
+		this.hauteur=i.getIconHeight()+(int)dim.getHeight() + 7;
 		
 		// Définition des attributs de la cellule
 		GraphConstants.setIcon(getAttributs(), i);
 		Rectangle r = new Rectangle((int)abscisse,(int)ordonnee,(int)largeur,(int)hauteur);
 		GraphConstants.setBounds(getAttributs(), r);
-		GraphConstants.setAutoSize(getAttributs(), true);
 		GraphConstants.setEditable(getAttributs(), false);
 		GraphConstants.setSizeable (getAttributs(), false);
-		GraphConstants.setFont(getAttributs(),mprod.getPolice());
+		GraphConstants.setFont(getAttributs(),this.police);
 		
 	}
 
-	public double getAbscisse() {
-		return abscisse;
+	public IdObjetModele getId()
+    {
+    	return this.produit;
+    }
+	
+	public int getAbscisse() {
+		return (int)(GraphConstants.getBounds(getAttributs()).getX());
 	}
 
-	public void setAbscisse(double abscisse) {
+	public void setAbscisse(int abscisse) {
 		this.abscisse = abscisse;
+		GraphConstants.setBounds(getAttributs(), new Rectangle(abscisse,getOrdonnee(),getLargeur(),getHauteur()));
 	}
 
-	public double getHauteur() {
-		return hauteur;
+	public int getHauteur() {
+		return (int)(GraphConstants.getBounds(getAttributs()).getHeight());
 	}
 
-	public void setHauteur(double hauteur) {
+	public void setHauteur(int hauteur) {
 		this.hauteur = hauteur;
+		GraphConstants.setBounds(getAttributs(), new Rectangle(getAbscisse(),getOrdonnee(),getLargeur(),hauteur));
 	}
 
 	public String getImageComposant() {
@@ -88,55 +101,49 @@ public class ProduitCell extends IeppCell {
 
 	public void setImageComposant(String imageComposant) {
 		this.imageComposant = imageComposant;
-		ImageIcon i = new ImageIcon(getCheminImageComposant()+ imageComposant);
-		GraphConstants.setIcon(getAttributs(), i);
+		i = new ImageIcon(getCheminImageComposant()+ imageComposant);
+		// On garde aussi une trace de la largeur et de la hauteur du composant
+		Graphics2D g2 = (Graphics2D)i.getImage().getGraphics();
+		this.largeur = Math.max(i.getIconWidth(), g2.getFontMetrics(this.police).stringWidth(this.getNomCompCell()));//charsWidth( (this.getNomCompCell()).toCharArray(), 0, this.getNomCompCell().length()));
+		this.hauteur=i.getIconHeight()+g2.getFontMetrics(this.police).getHeight();
 		
+		// Définition des attributs du composant
+		GraphConstants.setIcon(getAttributs(), i);
+		GraphConstants.setBounds(getAttributs(), new Rectangle((int)abscisse,(int)ordonnee,(int)largeur,(int)hauteur));
 	}
 
-	public double getLargeur() {
-		return largeur;
+	public int getLargeur() {
+		return (int)(GraphConstants.getBounds(getAttributs()).getWidth());
 	}
 
 
-	public void setLargeur(double largeur) {
+	public void setLargeur(int largeur) {
 		this.largeur = largeur;
+		GraphConstants.setBounds(getAttributs(), new Rectangle(getAbscisse(),getOrdonnee(),largeur,getHauteur()));
 	}
 
 
-	public double getOrdonnee() {
-		return ordonnee;
+	public int getOrdonnee() {
+		return (int)(GraphConstants.getBounds(getAttributs()).getY());
 	}
 
 
-	public void setOrdonnee(double ordonnee) {
+	public void setOrdonnee(int ordonnee) {
 		this.ordonnee = ordonnee;
+		GraphConstants.setBounds(getAttributs(), new Rectangle(getAbscisse(),ordonnee,getLargeur(),getHauteur()));
+	}
+	
+	public void setNomCompCell(String s) {
+		this.nomComposantCellule=s;
+		
+		// On garde aussi une trace de la largeur et de la hauteur du composant
+		Rectangle2D dim = this.police.getStringBounds(this.getNomCompCell(),new FontRenderContext(new AffineTransform(),false,false));
+		this.largeur = Math.max(i.getIconWidth(), (int)dim.getWidth()) + 1;
+		this.hauteur=i.getIconHeight()+(int)dim.getHeight() + 7;
+		
+		this.setUserObject(nomComposantCellule);
+		
+		GraphConstants.setBounds(getAttributs(), new Rectangle(getAbscisse(),getOrdonnee(),getLargeur(),getHauteur()));
 	}
 
-	/**
-	 * @return Returns the mprod.
-	 */
-	public MDProduit getMprod() {
-		return mprod;
-	}
-
-	/**
-	 * @param mprod The mprod to set.
-	 */
-	public void setMprod(MDProduit mprod) {
-		this.mprod = mprod;
-	}
-
-	/**
-	 * @return Returns the fprod.
-	 */
-	public FProduit getFprod() {
-		return fprod;
-	}
-
-	/**
-	 * @param fprod The fprod to set.
-	 */
-	public void setFprod(FProduit fprod) {
-		this.fprod = fprod;
-	}
 }

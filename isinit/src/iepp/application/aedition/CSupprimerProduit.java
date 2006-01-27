@@ -19,15 +19,13 @@
 
 package iepp.application.aedition;
 
-import java.util.Vector;
-
 import iepp.Application;
 import iepp.application.CommandeAnnulable;
 import iepp.domaine.ComposantProcessus;
 import iepp.domaine.IdObjetModele;
 import iepp.domaine.LienProduits;
-import iepp.ui.iedition.dessin.rendu.FElement;
-import iepp.ui.iedition.dessin.rendu.liens.FLien;
+
+import java.util.Vector;
 
 
 /**
@@ -73,9 +71,9 @@ public class CSupprimerProduit extends CommandeAnnulable
 	 */
 	public boolean executer()
 	{
-		
+		// pour composant vide
 				
-		// Supprimer les produits fusion de ce produit
+/*		// Supprimer les produits fusion de ce produit
 		for (int i = 0; i < cp.getLien().size(); i++)
 		{
 			if (((LienProduits)cp.getLien().elementAt(i)).contient(produit))
@@ -142,7 +140,7 @@ public class CSupprimerProduit extends CommandeAnnulable
 		
 		// Rafraichir le graphe
 		Application.getApplication().getProjet().getFenetreEdition().getVueDPGraphe().repaint();
-		
+		*/
 		return true;
 		
 	}

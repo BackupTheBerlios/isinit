@@ -59,7 +59,7 @@ public class CZoomer extends CommandeNonAnnulable
 			
 			vue.setScale(vue.getScale()*this.facteurZoom);
 			
-			vue.getModele().setFacteurZoom(this.facteurZoom);
+			//vue.getModele().setFacteurZoom(this.facteurZoom);
 			
 			vue.repaint();
 		}

@@ -21,23 +21,21 @@ package iepp.ui.iedition.popup;
 
 
 import iepp.Application;
-import iepp.application.aedition.CSupprimerComposantGraphe;
-import iepp.application.aedition.CRenommerComposantGraphe;
+import iepp.application.aedition.CSupprimerComposant;
 import iepp.ui.iedition.dessin.rendu.ComposantCell;
-import iepp.ui.iedition.dessin.rendu.FComposantProcessus;
-import iepp.application.aedition.*;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import iepp.domaine.*;
 
 
 
 /**
  *
  */
-public class PopupFComposantProcessus extends JPopupMenu implements ActionListener
+public class PopupComposantProcessus extends JPopupMenu implements ActionListener
 {
 	/**
 	 * Items du menu à afficher
@@ -54,7 +52,7 @@ public class PopupFComposantProcessus extends JPopupMenu implements ActionListen
 	/**
 	 * Création du menu contextuel
 	 */
-	public PopupFComposantProcessus(ComposantCell cp )
+	public PopupComposantProcessus(ComposantCell cp )
 	{
 		this.compo = cp;
 

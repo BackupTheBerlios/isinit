@@ -19,8 +19,6 @@
 
 package iepp.domaine;
 
-import iepp.ui.iedition.dessin.rendu.liens.FLienFusion;
-
 import java.io.Serializable;
 
 /**

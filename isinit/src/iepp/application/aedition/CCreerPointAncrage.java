@@ -19,9 +19,9 @@
  
 package iepp.application.aedition;
 
-import util.Vecteur;
 import iepp.application.CommandeAnnulable;
-import iepp.ui.iedition.dessin.rendu.liens.FLien;
+import iepp.ui.iedition.dessin.rendu.liens.LienEdge;
+import util.Vecteur;
 
 /**
  * Classe permettant d'ajouter un point d'ancrage sur un lien
@@ -31,7 +31,7 @@ public class CCreerPointAncrage extends CommandeAnnulable
 	/**
 	 * Lien sur lequel on va créer un point d'ancrage
 	 */
-	private FLien lien;
+	private LienEdge lien;
 	
 	/**
 	 * Coordonné du point d'ancrage à creer
@@ -44,7 +44,7 @@ public class CCreerPointAncrage extends CommandeAnnulable
 	 * @param lien, lien sur lequel on veut ajouter un point d'ancrage
 	 * @param p, coordonnées du point d'ancrage à créer
 	 */
-	public CCreerPointAncrage(FLien lien, Vecteur p)
+	public CCreerPointAncrage(LienEdge lien, Vecteur p)
 	{
 	  this.lien = lien;
 	  this.p = p;

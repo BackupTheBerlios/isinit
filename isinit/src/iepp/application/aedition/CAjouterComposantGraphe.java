@@ -25,14 +25,8 @@ import iepp.domaine.ComposantProcessus;
 import iepp.domaine.IdObjetModele;
 import iepp.ui.iedition.FenetreEdition;
 import iepp.ui.iedition.dessin.rendu.ComposantCell;
-import iepp.ui.iedition.dessin.rendu.FComposantProcessus;
-import iepp.ui.iedition.dessin.rendu.FProduit;
 import iepp.ui.iedition.dessin.rendu.ProduitCellEntree;
 import iepp.ui.iedition.dessin.rendu.ProduitCellSortie;
-import iepp.ui.iedition.dessin.rendu.liens.FLienInterface;
-import iepp.ui.iedition.dessin.vues.MDComposantProcessus;
-import iepp.ui.iedition.dessin.vues.MDLienDotted;
-import iepp.ui.iedition.dessin.vues.MDProduit;
 
 import java.awt.Point;
 import java.util.Map;
@@ -108,15 +102,8 @@ public class CAjouterComposantGraphe extends CommandeAnnulable
 		}
 
 		// Construire la vue associéé au composant
-		MDComposantProcessus mdcomp = new MDComposantProcessus(((IdObjetModele)this.composant));
-		mdcomp.setY((int)this.point.getY());
-		mdcomp.setX((int)this.point.getX());
-
-		FComposantProcessus fcomp = new FComposantProcessus(mdcomp);
-		ComposantCell composantCell = new ComposantCell(fcomp);
+		ComposantCell composantCell = new ComposantCell(this.composant,(int)this.point.getX(),(int)this.point.getY());
 		
-		fenetre.getVueDPGraphe().ajouterFigure(fcomp);
-		fenetre.getVueDPGraphe().selectionneFigure(fcomp);
 		fenetre.getVueDPGraphe().ajouterCell(composantCell);
 		fenetre.getVueDPGraphe().selectionneCell(composantCell);
 
@@ -127,26 +114,18 @@ public class CAjouterComposantGraphe extends CommandeAnnulable
 
 		for (int i=0; i < prod_entree.size(); i++)
 		{
-			// Création de la vue associée au produit en entrée
-			MDProduit mprod = new MDProduit((IdObjetModele)prod_entree.elementAt(i));
-			mprod.setX((int)this.point.getX() - 100 - mprod.getLargeur());
-		    mprod.setY((int)this.point.getY() + (i * (mprod.getHauteur() + 30)) );
-			
-		    FProduit fprod = new FProduit(mprod);
-			ProduitCellEntree produitCell = new ProduitCellEntree(fprod,composantCell);
+			ProduitCellEntree produitCell = new ProduitCellEntree((IdObjetModele)prod_entree.elementAt(i),(int)this.point.getX(),(int)this.point.getY(),composantCell);
 
-			fenetre.getVueDPGraphe().ajouterFigure(fprod);
-			fenetre.getVueDPGraphe().selectionneFigure(fprod);
+			produitCell.setAbscisse(produitCell.getAbscisse() - 100 - (produitCell.getLargeur()/2));
+			produitCell.setOrdonnee(produitCell.getOrdonnee() + (i * (produitCell.getHauteur() + 30)));
+			
 			fenetre.getVueDPGraphe().ajouterCell(produitCell);
 			fenetre.getVueDPGraphe().selectionneCell(produitCell);
 			
 			AllAttrubiteCell.put(produitCell,produitCell.getAttributs());
 			
-			///////////////////////////////////////////////////
 			// Liaison du produit avec le composant
-
 			CLierInterface c = new CLierInterface(fenetre.getVueDPGraphe(),
-												  new FLienInterface(new MDLienDotted()),
 												  new Vector(),
 												  produitCell,
 												  composantCell);
@@ -159,26 +138,17 @@ public class CAjouterComposantGraphe extends CommandeAnnulable
 
 		 for (int i=0; i < prod_sortie.size(); i++)
 		 {
-			 // Création de la vue associée au produit en sortie
-			 MDProduit mprod = new MDProduit((IdObjetModele)prod_sortie.elementAt(i));
-			 mprod.setX((int)this.point.getX() + mdcomp.getLargeur() + 100);
-		     mprod.setY((int)this.point.getY() + (i * (mprod.getHauteur() + 30)) );
-			
-		     FProduit fprod = new FProduit(mprod);
-			 ProduitCellSortie produitCell = new ProduitCellSortie(fprod,composantCell);
-
-			 fenetre.getVueDPGraphe().ajouterFigure(fprod);
-			 fenetre.getVueDPGraphe().selectionneFigure(fprod);
+			 ProduitCellSortie produitCell = new ProduitCellSortie((IdObjetModele)prod_sortie.elementAt(i),(int)this.point.getX(),(int)this.point.getY(),composantCell);
+			 produitCell.setAbscisse(produitCell.getAbscisse() + composantCell.getLargeur() - (produitCell.getLargeur()/2) + 100);
+			 produitCell.setOrdonnee(produitCell.getOrdonnee() + (i * (produitCell.getHauteur() + 30)));
+			 
 			 fenetre.getVueDPGraphe().ajouterCell(produitCell);
 			 fenetre.getVueDPGraphe().selectionneCell(produitCell);
 			 
 			 AllAttrubiteCell.put(produitCell,produitCell.getAttributs());
 			
-			 ///////////////////////////////////////////////////
 			 // Liaison du produit avec le composant
-
 			 CLierInterface c = new CLierInterface(fenetre.getVueDPGraphe(),
-					 							   new FLienInterface(new MDLienDotted()),
 					 							   new Vector(),
 					 							   composantCell,
 					 							   produitCell);

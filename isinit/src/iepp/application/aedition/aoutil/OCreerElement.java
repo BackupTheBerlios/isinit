@@ -4,19 +4,13 @@ package iepp.application.aedition.aoutil;
 
 import iepp.Application;
 import iepp.ui.iedition.VueDPGraphe;
-import iepp.ui.iedition.dessin.rendu.FElement;
-import iepp.ui.iedition.dessin.rendu.FNote;
 import iepp.ui.iedition.dessin.rendu.TextCell;
-import iepp.ui.iedition.dessin.vues.MDElement;
-import iepp.ui.iedition.dessin.vues.MDNote;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Color;
+import java.awt.event.MouseEvent;
 import java.util.Map;
 
 import org.jgraph.graph.GraphConstants;
-
-import com.sun.rsasign.d;
 
 import util.Vecteur;
 
@@ -27,23 +21,10 @@ public class OCreerElement extends Outil {
 
     static final int MOVE_STATE = 1;
 
-    /**
-    * L'élément qui va être ajouté.
-    */
-    private FElement element;
-
-    /**
-    * Modèle de l'élément qui va être ajouté.
-    */
-    private MDElement modele;
-    private Color lineColor;
        
-    public OCreerElement(VueDPGraphe vue, Color linecolor, FElement e)
+    public OCreerElement(VueDPGraphe vue)
 	{
         super(vue);
-        this.element = e;
-        this.lineColor = linecolor;
-        this.modele = (MDElement) e.getModele();
     }
 
     /**
@@ -54,27 +35,23 @@ public class OCreerElement extends Outil {
         // directement sur le diagramme, soit par-dessus un élément, soit par-dessus un lien.
         Vecteur translation = getCurrent();
 
+        Map NoteAttribute = GraphConstants.createMap();
+		TextCell note = new TextCell(event.getX(),event.getY());
+		NoteAttribute.put(note, note.getAttributs());
+
         // On empêche l'utilisateur de créer un élément qui sort
         // des limites du diagramme.
-        if (translation.y + modele.getHauteur() >= diagramme.getHeight())
-            translation.y = diagramme.getHeight() - modele.getHauteur();
-        if (translation.x + modele.getLargeur() >= diagramme.getWidth())
-            translation.x = diagramme.getWidth() - modele.getLargeur();
-
-		Map NoteAttribute = GraphConstants.createMap();
-		TextCell note = new TextCell((FNote)element);
-		note.setAbscisse(event.getX());
-		note.setOrdonnee(event.getY());
-		NoteAttribute.put(note, note.getAttributs());
+        if (translation.y + note.getHauteur() >= diagramme.getHeight())
+            translation.y = diagramme.getHeight() - note.getHauteur();
+        if (translation.x + note.getLargeur() >= diagramme.getWidth())
+            translation.x = diagramme.getWidth() - note.getLargeur();
 
 		diagramme.getModel().insert(new Object[] { note }, NoteAttribute, null, null, null);
 
-        // On dispose l'élément à l'endroit du click
-        element.translate(translation);
         diagramme.clearSelection();
-        //ajouterEditionDiagramme(new AjouterElement(diagramme, element));
-        this.diagramme.ajouterFigure(element);
-		// reprendre l'outil de séléction
+        this.diagramme.ajouterCell(note);
+		
+        // reprendre l'outil de séléction
         Application.getApplication().getProjet().getFenetreEdition().setOutilSelection();
 		// on avertit qu'il y a eu modification
         Application.getApplication().getProjet().setModified(true);

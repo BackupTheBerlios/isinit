@@ -19,18 +19,16 @@
 
 package iepp.application.aedition;
 
-import java.util.Vector;
-
 import iepp.Application;
 import iepp.application.CommandeAnnulable;
 import iepp.domaine.ComposantProcessus;
 import iepp.domaine.IdObjetModele;
 import iepp.ui.iedition.FenetreEdition;
-import iepp.ui.iedition.dessin.rendu.FElement;
-import iepp.ui.iedition.dessin.rendu.FProduit;
-import iepp.ui.iedition.dessin.rendu.liens.FLienInterface;
-import iepp.ui.iedition.dessin.vues.MDLienDotted;
-import iepp.ui.iedition.dessin.vues.MDProduit;
+import iepp.ui.iedition.dessin.rendu.ComposantCell;
+import iepp.ui.iedition.dessin.rendu.IeppCell;
+import iepp.ui.iedition.dessin.rendu.ProduitCellSortie;
+
+import java.util.Vector;
 
 /**
  * Commande permettant d'ajouter un nouveau produit en sortie à un composant
@@ -70,29 +68,26 @@ public class CAjouterProduitSortie extends CommandeAnnulable
 		FenetreEdition fenetre = Application.getApplication().getProjet().getFenetreEdition() ;
 		
 		// Verifier si le composant est affiché sur le graphe
-		FElement fcomp = fenetre.getVueDPGraphe().contient(this.cp.getIdComposant());
-		if (fcomp != null)
+		IeppCell comp = fenetre.getVueDPGraphe().contient(this.cp.getIdComposant());
+		if (comp != null)
 		{
 			//déselectionner tous les éléments
 			fenetre.getVueDPGraphe().clearSelection();
 			
 			// Rajouter le nouveau produit
-			// Création de la vue associée au produit
-			MDProduit mprod = new MDProduit((IdObjetModele)cp.getProduitSortie().lastElement());
-		 	//mprod.setX((int)this.point.getX() - 100 - mprod.getLargeur());
-			//mprod.setY((int)this.point.getY() + (i * (mprod.getHauteur() + 30)) );
-			FProduit fprod = new FProduit(mprod);
-			Application.getApplication().getProjet().getFenetreEdition().getVueDPGraphe().ajouterFigure(fprod);
-			Application.getApplication().getProjet().getFenetreEdition().getVueDPGraphe().selectionneFigure(fprod);
+			ProduitCellSortie prod = new ProduitCellSortie((IdObjetModele)cp.getProduitSortie().lastElement(),10,10,(ComposantCell)comp);
+			
+			Application.getApplication().getProjet().getFenetreEdition().getVueDPGraphe().ajouterCell(prod);
+			Application.getApplication().getProjet().getFenetreEdition().getVueDPGraphe().ajouterProduitSortieCell(prod);
+			Application.getApplication().getProjet().getFenetreEdition().getVueDPGraphe().selectionneCell(prod);
 			// Liaison du produit avec le composant
 		 	CLierInterface c = new CLierInterface(Application.getApplication().getProjet().getFenetreEdition().getVueDPGraphe(),
-												new FLienInterface(new MDLienDotted()),
-												fcomp,
-												fprod,
-												new Vector());
+		 									new Vector(),
+												comp,
+												prod
+												);
 			c.executer();
-			// sélectionner le nouveau produit
-			fenetre.getVueDPGraphe().selectionneFigure(fprod);
+			
 		  }
 		return true;
 	}
