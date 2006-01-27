@@ -58,8 +58,6 @@ public class PopupFNote extends JPopupMenu implements ActionListener
 		
 		this.noteCell = note;
 		
-		this.note = note.getFnote();
-		
 		// création des items
 		this.suppr = new JMenuItem(Application.getApplication().getTraduction("Supprimer"));
 		//this.propriete = new JMenuItem(Application.getApplication().getTraduction("Proprietes"));
@@ -80,7 +78,6 @@ public class PopupFNote extends JPopupMenu implements ActionListener
 	{
 		 if (event.getSource() == this.suppr)
 		 {
-		 	this.diagramme.supprimerFigure(this.note);
 		 	this.diagramme.supprimerCellule(this.noteCell);
 		 	this.diagramme.repaint();
 		 }

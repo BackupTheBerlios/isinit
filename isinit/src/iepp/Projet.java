@@ -19,16 +19,16 @@
  
 package iepp;
 
+import iepp.domaine.DefinitionProcessus;
+import iepp.domaine.adaptateur.AdaptateurDPArbre;
+import iepp.ui.VueDPArbre;
+import iepp.ui.iedition.FenetreEdition;
+import iepp.ui.iedition.VueDPGraphe;
+
 import java.io.Serializable;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Vector;
-
-import iepp.ui.* ;
-import iepp.ui.iedition.* ;
-import iepp.ui.iedition.dessin.vues.MDDiagramme;
-import iepp.domaine.* ;
-import iepp.domaine.adaptateur.*;
 
 /**
  * Construit le projet à éditer dans le logiciel
@@ -101,7 +101,7 @@ public class Projet implements Serializable, Observer
 	 * @param liens liste des liens présents sur le diagramme
 	 * @param dernierIdUtilise dernier id utilisé pour la dp chargée, permet de continuer là où on s'est arrêté
 	 */
-	public Projet(DefinitionProcessus dp, MDDiagramme diag, Vector elements , Vector liens, int dernierIdUtilise)
+	public Projet(DefinitionProcessus dp, Vector elements , Vector liens, int dernierIdUtilise)
 	{
 		this.defProc = dp;
 		this.defProc.addObserver(this);
@@ -115,8 +115,7 @@ public class Projet implements Serializable, Observer
 		Application.getApplication().getFenetrePrincipale().enregistrerVueArbre (vue) ;
 		// Créer la fenêtre d'édition et la vue du graphe
 		VueDPGraphe diagr = new VueDPGraphe (this.defProc);
-		diagr.setModele(diag);
-		diagr.setElements(elements);
+		//diagr.setElements(elements);
 		diagr.setLiens(liens);
 		this.fenEdit = new FenetreEdition (diagr) ;
 		Application.getApplication().getFenetrePrincipale().setPanneauGenerique(this.fenEdit) ;

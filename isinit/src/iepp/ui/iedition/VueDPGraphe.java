@@ -30,30 +30,13 @@ import iepp.domaine.ComposantProcessus;
 import iepp.domaine.DefinitionProcessus;
 import iepp.domaine.IdObjetModele;
 import iepp.ui.iedition.dessin.rendu.ComposantCell;
-import iepp.ui.iedition.dessin.rendu.FComposantProcessus;
-import iepp.ui.iedition.dessin.rendu.FElement;
-import iepp.ui.iedition.dessin.rendu.FNote;
-import iepp.ui.iedition.dessin.rendu.FProduit;
-import iepp.ui.iedition.dessin.rendu.FProduitFusion;
-import iepp.ui.iedition.dessin.rendu.Figure;
 import iepp.ui.iedition.dessin.rendu.IeppCell;
-import iepp.ui.iedition.dessin.rendu.LienEdge;
 import iepp.ui.iedition.dessin.rendu.ProduitCell;
-import iepp.ui.iedition.dessin.rendu.ProduitCellEntree;
 import iepp.ui.iedition.dessin.rendu.ProduitCellFusion;
-import iepp.ui.iedition.dessin.rendu.ProduitCellSortie;
 import iepp.ui.iedition.dessin.rendu.TextCell;
-import iepp.ui.iedition.dessin.rendu.handle.Handle;
-import iepp.ui.iedition.dessin.rendu.liens.FLien;
-import iepp.ui.iedition.dessin.rendu.liens.FLienInterface;
+import iepp.ui.iedition.dessin.rendu.liens.LienEdge;
 import iepp.ui.iedition.dessin.tools.EdgeTool;
 import iepp.ui.iedition.dessin.vues.ComposantView;
-import iepp.ui.iedition.dessin.vues.MDDiagramme;
-import iepp.ui.iedition.dessin.vues.MDElement;
-import iepp.ui.iedition.dessin.vues.MDLien;
-import iepp.ui.iedition.dessin.vues.MDLienDotted;
-import iepp.ui.iedition.dessin.vues.MDNote;
-import iepp.ui.iedition.dessin.vues.MDProduit;
 import iepp.ui.iedition.dessin.vues.ProduitView;
 import iepp.ui.iedition.dessin.vues.TextView;
 
@@ -74,21 +57,15 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.io.Serializable;
 import java.util.Enumeration;
-import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Vector;
 
 import org.jgraph.JGraph;
 import org.jgraph.graph.CellMapper;
-import org.jgraph.graph.ConnectionSet;
 import org.jgraph.graph.DefaultGraphModel;
-import org.jgraph.graph.DefaultPort;
-import org.jgraph.graph.GraphConstants;
 import org.jgraph.graph.GraphModel;
 import org.jgraph.graph.VertexView;
-
-import util.Vecteur;
 
 /**
  * Classe permettant d'afficher un diagramme d'assemblage de composant
@@ -102,35 +79,35 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 	private Outil diagramTool;
 
 	/**
-	 * Modèle du diagramme.
-	 */
-	private MDDiagramme modele;
-
-	/**
 	 * Modèle du diagramme JGraph.
 	 */
 	private GraphModel Gmodele = new DefaultGraphModel();
 
 	/**
-	 * Eléments présents sur le diagramme (Figure).
-	 */
-	private Vector elements;
-	
-	/**
 	 * Eléments présents sur le diagramme (Cellule).
 	 */
 	private Vector elementCells;
+	
+	/**
+	 * ComposantCell présents sur le diagramme (Cellule).
+	 */
+	private Vector composantCellCells;
+	
+	/**
+	 * ProduitCellEntree présents sur le diagramme (Cellule).
+	 */
+	private Vector produitCellEntreeCells;
 
+	/**
+	 * ProduitCellSortie présents sur le diagramme (Cellule).
+	 */
+	private Vector produitCellSortieCells;
+	
 	/**
 	 * Liens présents sur le diagramme.
 	 */
 	private Vector liens;
 
-	/**
-	 * Figures sélectionnés.
-	 */
-	private Vector selection;
-	
 	/**
 	 * Cellule sélectionnés.
 	 */
@@ -155,20 +132,19 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 	public VueDPGraphe(DefinitionProcessus defProc) {
 		// la vue observe le modèle
 		defProc.addObserver(this);
-		// le diagramme au départ est vide
-		this.setModele(new MDDiagramme());
-
+		
 		this.setModel(Gmodele);
 
 		this.setOpaque(true);
 		this.setLayout(null);
 
 		// initialiser les listes d'éléments
-		this.elements = new Vector();
 		this.liens = new Vector();
-		this.selection = new Vector();
 		this.elementCells = new Vector();
 		this.selectionCells = new Vector();
+		this.composantCellCells = new Vector();
+		this.produitCellEntreeCells = new Vector();
+		this.produitCellSortieCells = new Vector();
 
 		// par défault, on utilise l'outil de sélection
 		this.diagramTool = new OSelection(this);
@@ -182,7 +158,7 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 		this.setAutoscrolls(true);
 
 		// on met la couleur par défaut au diagramme
-		modele.setFillColor(new Color(Integer.parseInt(Application
+		this.setBackground(new Color(Integer.parseInt(Application
 						.getApplication().getConfigPropriete(
 								"couleur_fond_diagrmme"))));
 
@@ -210,10 +186,10 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 	 * Charge le diagramme
 	 */
 	public void charger() {
-		 // Dessine les éléments
+/*		 // Dessine les éléments
 		 for (int i = 0; i < this.elements.size(); i++)
 		 {
-			 /*
+			 
 			 if ( this.elements.elementAt(i) instanceof FComposantProcessus )
 			 {
 				 // On recupere l'identifiant de l'objet
@@ -318,7 +294,7 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 				 
 				 this.repaint();
 			 }
-			 else*/ if ( this.elements.elementAt(i) instanceof FNote )
+			 else if ( this.elements.elementAt(i) instanceof FNote )
 			 {
 				 TextCell note = new TextCell((FNote)this.elements.elementAt(i));
 				 
@@ -333,12 +309,12 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 
 				 this.getModel().insert(new Object[] { note }, NoteAttribute, null, null, null);
 			 }
-			 /*
+			 
 			 else
 			 {
 				 System.out.println( ((FElement) (this.elements.elementAt(i))).toString() );
 			 }
-			 */
+			 
 		}
 		 // Dessine les liens
 		 for (int i = 0; i < this.liens.size(); i++)
@@ -499,7 +475,7 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 		     this.getModel().insert(vecObj.toArray(), AllAttribute, null, null, null);
 		     this.getModel().insert(null, null, cs, null, null);
 			 }
-		 }
+		 }*/
 		 /*
 		  * // Dessine les poignées (handles)
 		  * for (int i = 0; i < this.selection.size(); i++)
@@ -516,53 +492,9 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 		super.paintComponent(g);
 	}
 
-	//-------------------------------------------------------------------------
-	//                         Relations avec le modèle
-	//-------------------------------------------------------------------------
-
-	/**
-	 * Retourne le modèle représenté par le diagramme.
-	 * @return le modèle de dessin associé au diagramme
-	 */
-	public MDDiagramme getModele() {
-		return this.modele;
-	}
-
-	/**
-	 * Fixe le modèle de dessin représenté par le diagramme.
-	 * @param m, modèle de dessin à afficher
-	 */
-	public void setModele(MDDiagramme m) {
-		this.modele = m;
-	}
-
 	//---------------------------------------------------------------------
 	//                       Gestion des figures
 	//---------------------------------------------------------------------
-
-	/**
-	 * Recherche parmi les figures sélectionnées, si on a clické sur un handle.
-	 * @param x, abscisse du click
-	 * @param y, ordonnée du click
-	 * @return le handle sur lequel on a cliqué, null su aucun handle n'est sélectionné
-	 */
-	public Handle chercherHandleFigure(int x, int y) {
-		int n = this.selection.size();
-		Vecteur v = new Vecteur(x, y);
-		Figure f;
-		Handle h;
-
-		for (int i = 0; i < n; i++) {
-			f = (Figure) this.selection.elementAt(i);
-			h = f.getHandle(v.x, v.y);
-			if (h != null) {
-				if (h.getVisible() == true) {
-					return h;
-				}
-			}
-		}
-		return null;
-	}
 
 	/**
 	 * Recherche la figure sur laquelle on a clické
@@ -570,8 +502,8 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 	 * @param y, ordonnée du click
 	 * @return la figure sur laquelle on a cliqué, null sinon
 	 */
-	public Figure chercherFigure(int x, int y) {
-		Vecteur v = new Vecteur(x, y);
+	public IeppCell chercherFigure(int x, int y) {
+		/*Vecteur v = new Vecteur(x, y);
 		Figure f;
 		int n;
 
@@ -591,26 +523,16 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 			if (f.contient(v)) {
 				return f;
 			}
-		}
+		}*/
 		return null;
 	}
 
-	/**
-	 * Retourne tous les éléments du diagramme.
-	 */
-	public Enumeration elements() {
-		return elements.elements();
-	}
-
+	
 	/**
 	 * Retourne tous les liens du diagramme.
 	 */
 	public Enumeration liens() {
 		return liens.elements();
-	}
-
-	public Vector getElements() {
-		return this.elements;
 	}
 
 	public Vector getLiens() {
@@ -620,17 +542,14 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 	public void setLiens(Vector l) {
 		this.liens = l;
 	}
-
-	public void setElements(Vector l) {
-		this.elements = l;
+	
+	public void ajouterLien(LienEdge c) {
+		this.liens.addElement(c);
 	}
 
 	/**
 	 * Définition des acceseurs elementCells 
 	 */
-	public void setElementsCell(Vector l) {
-		this.elementCells.add(l);
-	}
 	
 	public Vector getElementsCell() {
 		return this.elementCells;
@@ -640,6 +559,7 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 		return this.elementCells.elements();
 	}
 	
+	//////////////////////////////////////////////////////////////////////////////////////////
 	/**
 	 * Définition des acceseurs selectionCells 
 	 */
@@ -655,27 +575,16 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 		return this.selectionCells.elements();
 	}
 	
+	public Vector getComposantCellCells(){
+		return this.composantCellCells;		
+	}
 	
-	/**
-	 * Ajoute une figure au diagramme (élément ou lien).
-	 * @param f, figure à ajouter au diagramme
-	 */
-	public void ajouterFigure(Figure f) {
-		
-		// selon le type de la figure
-		if (f instanceof FElement) {
-			this.elements.addElement(f);
-		}
-		// lien
-		else if (f instanceof FLien) {
-			this.liens.addElement(f);
-			((FLien) f).getSource().ajouterLien((FLien) f);
-			((FLien) f).getDestination().ajouterLien((FLien) f);
-		}
-		this.getModele().ajouterModeleFigure(f.getModele());
-		
-		// mettre à jour l'affichage
-		this.repaint();
+	public Vector getProduitCellEntreeCells(){
+		return this.produitCellEntreeCells;		
+	}
+	
+	public Vector getProduitCellSortieCells(){
+		return this.produitCellSortieCells;		
 	}
 		
 	/**
@@ -685,22 +594,31 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 	public void ajouterCell(IeppCell c) {
 		this.elementCells.addElement(c);
 	}
-
-	/**
-	 * Supprime un élément du diagramme.
-	 * @param f, l'élément à supprimer du diagramme
-	 */
-	public void supprimerFigure(Figure f) {
-		
-		// enlever l'élément de toutes les listes disponibles
-		this.selection.removeElement(f);
-		this.elements.removeElement(f);
-		this.liens.removeElement(f);
-
-		// enlever la figure du modèle de dessin
-		this.getModele().supprimerModeleFigure(f.getModele());
+	
+	public void ajouterComposantCell(IeppCell c) {
+		this.composantCellCells.addElement(c);
 	}
 	
+	public void supprimerComposantCell(IeppCell c) {
+		this.composantCellCells.removeElement(c);
+	}
+	
+	public void ajouterProduitEntreeCell(IeppCell c) {
+		this.produitCellEntreeCells.addElement(c);
+	}
+	
+	public void supprimerProduitEntreeCell(IeppCell c) {
+		this.produitCellEntreeCells.removeElement(c);
+	}
+	
+	public void ajouterProduitSortieCell(IeppCell c) {
+		this.produitCellSortieCells.addElement(c);
+	}
+	
+	public void supprimerProduitSortieCell(IeppCell c) {
+		this.produitCellSortieCells.removeElement(c);
+	}
+
 	/**
 	 * Supprime un élément du diagramme.
 	 * @param f, l'élément à supprimer du diagramme
@@ -710,17 +628,24 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 		// enlever l'élément de toutes les listes disponibles
 		this.selectionCells.removeElement(cell);
 		this.elementCells.removeElement(cell);
+		this.produitCellSortieCells.removeElement(cell);
+		this.produitCellEntreeCells.removeElement(cell);
+		this.composantCellCells.removeElement(cell);
 		
 		Vector vecObj = new Vector();
 		
-		for (int i = 0; i < ((IeppCell) cell).getListeLien().size(); i++)
-			vecObj.add(((IeppCell) cell).getListeLien()
-					.get(i));
+		for (int i = 0; i < ((IeppCell) cell).getListeLien().size(); i++){
+			this.liens.removeElement(((IeppCell) cell).getListeLien().get(i));
+			vecObj.add(((IeppCell) cell).getListeLien().get(i));
+		}
 
+		//((IeppCell) cell).removeAllChildren();
+		
 		vecObj.add(((IeppCell) cell).getPortComp());
 		vecObj.add(cell);
 		
 		this.getModel().remove(vecObj.toArray());
+		this.repaint();
 		
 	}
 
@@ -728,29 +653,7 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 	//                       Gestion de la sélection
 	//---------------------------------------------------------------------
 
-	/**
-	 * Retourne tous les éléments sélectionnés.
-	 */
-	public Enumeration selectedElements() {
-		return this.selection.elements();
-	}
 
-	/**
-	 * Retourne le nombre d'éléments sélectionnés.
-	 */
-	public int nbSelectedElements() {
-		return this.selection.size();
-	}
-
-	/**
-	 * Sélectionne une figure.
-	 */
-	public void selectionneFigure(Figure figure) {
-		if (!this.selection.contains(figure)) {
-			this.selection.addElement(figure);
-			figure.setSelectionne(true);
-		}
-	}
 
 	/**
 	 * Sélectionne une cell.
@@ -761,66 +664,21 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 		}
 	}
 	
-	/**
-	 * Dé-sélectionne une figure.
-	 */
-	public void deSelectionneFigure(Figure figure) {
-		this.selection.removeElement(figure);
-		figure.setSelectionne(false);
-	}
-
-	/**
-	 * Inverse la sélection d'une figure.
-	 */
-	public void changeSelection(Figure figure) {
-		if (this.selection.contains(figure)) {
-			this.deSelectionneFigure(figure);
-		} else {
-			this.selectionneFigure(figure);
-		}
-	}
-
-	/**
-	 * Inverse la sélection de toutes les figures comprises entre les deux points A (en haut à gauche)
-	 * et B (en bas à droite).
-	 */
-	public void changeSelectionFigures(Vecteur A, Vecteur B) {
-		Enumeration e = this.elements.elements();
-		while (e.hasMoreElements()) {
-			Figure figure = (Figure) e.nextElement();
-			if (figure.appartient(A, B)) {
-				this.changeSelection(figure);
-			}
-		}
-
-		e = this.liens.elements();
-		while (e.hasMoreElements()) {
-			Figure figure = (Figure) e.nextElement();
-			if (figure.appartient(A, B)) {
-				this.changeSelection(figure);
-			}
-		}
-	}
-
+	
 	/**
 	 * Désélectionne toutes les figures de la sélection.
 	 */
 	public void clearSelection() {
-		Figure figure;
-		while (selection.size() > 0) {
-			figure = (Figure) this.selection.elementAt(0);
-			this.deSelectionneFigure(figure);
-		}
+		
 		selectionCells.removeAllElements();
+		this.setSelectionCells(null);
 	}
 
 	/**
 	 * Efface complètement le diagramme
 	 */
 	public void effacerDiagramme() {
-		this.selection.removeAllElements();
 		this.liens.removeAllElements();
-		this.elements.removeAllElements();
 		this.elementCells.removeAllElements();
 		this.selectionCells.removeAllElements();
 		this.removeAll();
@@ -832,31 +690,13 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 	 */
 	public void selectionnerTout() {
 		
-		Enumeration e = this.elements.elements();
-		while (e.hasMoreElements()) {
-			Figure figure = (Figure) e.nextElement();
-			this.selectionneFigure(figure);
-		}
-
-		e = this.liens.elements();
-		while (e.hasMoreElements()) {
-			Figure figure = (Figure) e.nextElement();
-			this.selectionneFigure(figure);
-		}
-		
-		e = this.elementCells.elements();
+		Enumeration e = this.elementCells.elements();
 		while (e.hasMoreElements()) {
 			IeppCell cell = (IeppCell) e.nextElement();
 			if (!this.selectionCells.contains(cell)) {
 				this.selectionCells.addElement(cell);
 			}
 		}
-
-		/*e = this.liens.elements();
-		while (e.hasMoreElements()) {
-			Figure figure = (Figure) e.nextElement();
-			this.selectionneFigure(figure);
-		}*/
 		
 		// mettre à jour l'affichage
 		this.repaint();
@@ -913,9 +753,9 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 	/**
 	 * Fixe l'outil courant en tant que OCreerElement
 	 */
-	public void setOutilCreerElement(FElement e) {
+	public void setOutilCreerElement() {
 		
-		this.setOutil(new OCreerElement(this, new Color(153, 0, 51), e));
+		this.setOutil(new OCreerElement(this));
 		edgeTool.uninstall(this);
 	}
 
@@ -1036,13 +876,13 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 	 * @param IdObjetModele de l'objet
 	 * @return FElement si l'objet est present dans le graphe, null sinon
 	 */
-	public FElement contient(IdObjetModele id) {
-		FElement courant;
+	public IeppCell contient(IdObjetModele id) {
+		IeppCell courant;
 
-		for (int i = 0; i < this.elements.size(); i++) {
-			courant = (FElement) this.elements.elementAt(i);
-			if (courant.getModele().getId() != null) {
-				if (courant.getModele().getId().equals(id)) {
+		for (int i = 0; i < this.elementCells.size(); i++) {
+			courant = (IeppCell) this.elementCells.elementAt(i);
+			if (courant.getId() != null) {
+				if (courant.getId().equals(id)) {
 					return courant;
 				}
 			}
@@ -1050,20 +890,6 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 		return null;
 	}
 	
-	public ProduitCell contientProduit(IdObjetModele id) {
-		
-		ProduitCell courant;
-
-		for (int i = 0; i < this.elementCells.size(); i++) {
-			courant = (ProduitCell) this.elementCells.elementAt(i);
-			if (courant.getMprod().getId() != null) {
-				if (courant.getMprod().getId().equals(id)) {
-					return courant;
-				}
-			}
-		}
-		return null;
-	}
 	
 	protected void overlay(JGraph gpgraph, Graphics g, boolean clear) {
 	

@@ -19,17 +19,19 @@
 
 package iepp.ui;
 
+import iepp.Application;
+import iepp.application.CAjouterComposantDP;
+import iepp.application.areferentiel.CRemplacerComposantRef;
+import iepp.application.areferentiel.ElementReferentiel;
+import iepp.application.areferentiel.Referentiel;
+import iepp.domaine.ComposantProcessus;
+import iepp.infrastructure.jsx.ChargeurComposant;
+
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
-import java.io.File;
-import java.io.FileNotFoundException;
-
-import iepp.Application;
-import iepp.application.CFermerProjet;
-import iepp.application.areferentiel.Referentiel;
-import iepp.application.areferentiel.ElementReferentiel; // modif 2XMI Albert
+import java.util.Date;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -37,43 +39,6 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-
-import util.ErrorManager;
-import iepp.application.areferentiel.CAjouterComposantRef;
-import iepp.application.areferentiel.CRetirerComposant;
-import iepp.domaine.ComposantProcessus;
-import iepp.application.aedition.CSupprimerComposant;
-import java.util.Date;
-import java.util.Vector;
-import iepp.infrastructure.jsx.ChargeurComposant;
-import iepp.Projet;
-import iepp.domaine.DefinitionProcessus;
-import iepp.domaine.LienProduits;
-import iepp.domaine.Produit;
-import java.util.Iterator;
-import iepp.domaine.IdObjetModele;
-import org.ipsquad.apes.adapters.FlowGraphAdapter;
-import iepp.ui.iedition.VueDPGraphe;
-import java.awt.Color;
-import iepp.ui.iedition.FenetreEdition;
-import java.awt.Component;
-import javax.swing.JScrollPane;
-import javax.swing.JViewport;
-import iepp.ui.iedition.dessin.rendu.FComposantProcessus;
-import iepp.ui.iedition.dessin.rendu.Figure;
-import iepp.application.CAjouterComposantDP;
-import iepp.application.aedition.CAjouterComposantGraphe;
-import iepp.application.aedition.CSupprimerComposantGraphe;
-import iepp.ui.iedition.dessin.vues.MDComposantProcessus;
-import java.awt.Point;
-import iepp.domaine.ObjetModele;
-import iepp.application.aedition.CLier2Produits;
-import iepp.application.aedition.CLierInterface;
-import iepp.ui.iedition.dessin.rendu.FElement;
-import java.util.Enumeration;
-import iepp.ui.iedition.dessin.rendu.FProduit;
-import iepp.ui.iedition.dessin.vues.MDProduit;
-import iepp.application.areferentiel.CRemplacerComposantRef;
 
 /**
  *

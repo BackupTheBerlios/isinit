@@ -20,17 +20,20 @@
 package iepp.ui.iedition;
 
 import iepp.Application;
-import iepp.ui.iedition.dessin.rendu.FNote;
-import iepp.ui.iedition.dessin.vues.MDNote;
 
-import util.IconManager;
-
-import javax.swing.*;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JToggleButton;
+
+import util.IconManager;
 
 /**
  * Classe permettant de créer et d'afficher le panneau d'assemblage des composants
@@ -155,7 +158,7 @@ public class FenetreEdition extends JPanel implements ActionListener
 		}
 		else if (e.getSource() == this.oNote)
 		{
-			this.vueDPGraphe.setOutilCreerElement(new FNote(new MDNote()));
+			this.vueDPGraphe.setOutilCreerElement();
 		}
 	}
 }
