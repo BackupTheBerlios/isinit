@@ -18,17 +18,9 @@ package iepp.ui.iedition.dessin.rendu;
 * 
 */
 
-import iepp.domaine.IdObjetModele;
-
-import java.awt.Font;
-import java.awt.Graphics2D;
+import iepp.ui.iedition.dessin.vues.MDProduit;
 import java.awt.Rectangle;
-import java.awt.font.FontRenderContext;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
-
 import javax.swing.ImageIcon;
-
 import org.jgraph.graph.GraphConstants;
 
 
@@ -38,40 +30,38 @@ public class ProduitCellFusion extends IeppCell {
 	protected double ordonnee;
 	protected double largeur;
 	protected double hauteur;
-	protected Font police;
-    protected IdObjetModele produit;
+	protected MDProduit mprod;
+	protected FProduitFusion fprodf;
 	protected ProduitCellEntree produitCellEntree;
 	protected ProduitCellSortie produitCellSortie;
 		
-	public ProduitCellFusion(IdObjetModele prodf, ProduitCellEntree entree, ProduitCellSortie sortie) {
+	public ProduitCellFusion(FProduitFusion fprodf, ProduitCellEntree entree, ProduitCellSortie sortie) {
 		
-		super(prodf.getRef().toString(prodf.getNumRang(), prodf.getNumType()));
+		super(((MDProduit)fprodf.getModele()).getNom());
 		
-		this.produit = prodf;
-		this.police = new Font("Arial", Font.PLAIN, 12);
-			
+		this.fprodf = fprodf;
+		this.mprod = (MDProduit)fprodf.getModele();
+		
 		this.imageComposant = refImageProduitLier;
 		
 		// On garde dans l'objet un trace de la position du composant sur le graph
-		abscisse=((entree.getAbscisse() + sortie.getAbscisse()) / 2);
-		ordonnee=((entree.getOrdonnee() + sortie.getOrdonnee()) / 2);
+		abscisse=mprod.getX();
+		ordonnee=mprod.getY();	
+		// On garde aussi une trace de la largeur et de la hauteur du composant
+		largeur=mprod.getLargeur();
+		hauteur=mprod.getHauteur();
 		
 		// Définition de l'image
 		ImageIcon i = new ImageIcon(getCheminImageComposant()+ imageComposant);
-		
-		// On garde aussi une trace de la largeur et de la hauteur du composant
-		Rectangle2D dim = this.police.getStringBounds(this.getNomCompCell(),new FontRenderContext(new AffineTransform(),false,false));
-		this.largeur = Math.max(i.getIconWidth(), (int)dim.getWidth()) + 1;
-		this.hauteur=i.getIconHeight()+(int)dim.getHeight() + 7;
-	
 		
 		// Définition des attributs de la cellule
 		GraphConstants.setIcon(getAttributs(), i);
 		Rectangle r = new Rectangle((int)abscisse,(int)ordonnee,(int)largeur,(int)hauteur);
 		GraphConstants.setBounds(getAttributs(), r);
+		GraphConstants.setAutoSize(getAttributs(), true);
 		GraphConstants.setEditable(getAttributs(), false);
 		GraphConstants.setSizeable (getAttributs(), false);
-		GraphConstants.setFont(getAttributs(),this.police);
+		GraphConstants.setFont(getAttributs(),mprod.getPolice());
 		
 		// Garde en mémoirs les produit qu'elle a remplacée
 		this.produitCellEntree = entree;
@@ -107,30 +97,90 @@ public class ProduitCellFusion extends IeppCell {
 		this.produitCellSortie = produitCellSortie;
 	}
 
-	
-	public IdObjetModele getId()
-    {
-    	return this.produit;
-    }
-	
-	public int getAbscisse() {
-		return (int)(GraphConstants.getBounds(getAttributs()).getX());
+	/**
+	 * @return Returns the abscisse.
+	 */
+	public double getAbscisse() {
+		return abscisse;
 	}
 
-	public void setAbscisse(int abscisse) {
+	/**
+	 * @param abscisse The abscisse to set.
+	 */
+	public void setAbscisse(double abscisse) {
 		this.abscisse = abscisse;
-		GraphConstants.setBounds(getAttributs(), new Rectangle(abscisse,getOrdonnee(),getLargeur(),getHauteur()));
 	}
 
-	public int getHauteur() {
-		return (int)(GraphConstants.getBounds(getAttributs()).getHeight());
+	/**
+	 * @return Returns the fprodf.
+	 */
+	public FProduitFusion getFprod() {
+		return fprodf;
 	}
 
-	public void setHauteur(int hauteur) {
+	/**
+	 * @param fprodf The fprodf to set.
+	 */
+	public void setFprod(FProduitFusion fprodf) {
+		this.fprodf = fprodf;
+	}
+
+	/**
+	 * @return Returns the hauteur.
+	 */
+	public double getHauteur() {
+		return hauteur;
+	}
+
+	/**
+	 * @param hauteur The hauteur to set.
+	 */
+	public void setHauteur(double hauteur) {
 		this.hauteur = hauteur;
-		GraphConstants.setBounds(getAttributs(), new Rectangle(getAbscisse(),getOrdonnee(),getLargeur(),hauteur));
 	}
 
+	/**
+	 * @return Returns the largeur.
+	 */
+	public double getLargeur() {
+		return largeur;
+	}
+
+	/**
+	 * @param largeur The largeur to set.
+	 */
+	public void setLargeur(double largeur) {
+		this.largeur = largeur;
+	}
+
+	/**
+	 * @return Returns the mprod.
+	 */
+	public MDProduit getMprod() {
+		return mprod;
+	}
+
+	/**
+	 * @param mprod The mprod to set.
+	 */
+	public void setMprod(MDProduit mprod) {
+		this.mprod = mprod;
+	}
+
+	/**
+	 * @return Returns the ordonnee.
+	 */
+	public double getOrdonnee() {
+		return ordonnee;
+	}
+
+	/**
+	 * @param ordonnee The ordonnee to set.
+	 */
+	public void setOrdonnee(double ordonnee) {
+		this.ordonnee = ordonnee;
+	}
+	
 	public String getImageComposant() {
 		return imageComposant;
 	}
@@ -138,35 +188,8 @@ public class ProduitCellFusion extends IeppCell {
 	public void setImageComposant(String imageComposant) {
 		this.imageComposant = imageComposant;
 		ImageIcon i = new ImageIcon(getCheminImageComposant()+ imageComposant);
-		// On garde aussi une trace de la largeur et de la hauteur du composant
-		Graphics2D g2 = (Graphics2D)i.getImage().getGraphics();
-		this.largeur = Math.max(i.getIconWidth(), g2.getFontMetrics(this.police).stringWidth(this.getNomCompCell()));//charsWidth( (this.getNomCompCell()).toCharArray(), 0, this.getNomCompCell().length()));
-		this.hauteur=i.getIconHeight()+g2.getFontMetrics(this.police).getHeight();
-		
-		// Définition des attributs du composant
 		GraphConstants.setIcon(getAttributs(), i);
-		GraphConstants.setBounds(getAttributs(), new Rectangle((int)abscisse,(int)ordonnee,(int)largeur,(int)hauteur));
-	}
-
-	public int getLargeur() {
-		return (int)(GraphConstants.getBounds(getAttributs()).getWidth());
-	}
-
-
-	public void setLargeur(int largeur) {
-		this.largeur = largeur;
-		GraphConstants.setBounds(getAttributs(), new Rectangle(getAbscisse(),getOrdonnee(),largeur,getHauteur()));
-	}
-
-
-	public int getOrdonnee() {
-		return (int)(GraphConstants.getBounds(getAttributs()).getY());
-	}
-
-
-	public void setOrdonnee(int ordonnee) {
-		this.ordonnee = ordonnee;
-		GraphConstants.setBounds(getAttributs(), new Rectangle(getAbscisse(),ordonnee,getLargeur(),getHauteur()));
+		
 	}
 	
 }

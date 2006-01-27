@@ -1,7 +1,5 @@
 package iepp.ui.iedition.dessin.rendu;
 
-import iepp.domaine.IdObjetModele;
-
 /* IEPP: Isi Engineering Process Publisher
 *
 * This program is free software; you can redistribute it and/or
@@ -24,9 +22,9 @@ public class ProduitCellSortie extends ProduitCell {
 
 	protected ComposantCell compParent;
 	
-	public ProduitCellSortie(IdObjetModele prod, int x, int y, ComposantCell comp) {
+	public ProduitCellSortie(FProduit fprod , ComposantCell comp) {
 		
-		super(prod,x,y);
+		super(fprod);
 
 		compParent = comp;
 	}

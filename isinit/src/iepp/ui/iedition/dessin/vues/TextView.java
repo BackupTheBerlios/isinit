@@ -116,7 +116,7 @@ public class TextView extends VertexView {
                 Rectangle editingBounds = editorComponent.getBounds();
                 GraphConstants.setBounds(map, new Rectangle((int) cellBounds.getX(), (int) cellBounds.getY(), editingBounds.width, editingBounds.height));
 
-                ((TextCell)graph.getEditingCell()).setMessage(editorComponent.getText());
+                ((TextCell)graph.getEditingCell()).getMdnote().setMessage(editorComponent.getText());
                 Application.getApplication().getProjet().setModified(true);
                 
                 return super.stopCellEditing();

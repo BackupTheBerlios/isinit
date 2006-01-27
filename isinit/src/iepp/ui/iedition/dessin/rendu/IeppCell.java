@@ -20,8 +20,6 @@ package iepp.ui.iedition.dessin.rendu;
  */
 
 import iepp.Application;
-import iepp.domaine.IdObjetModele;
-import iepp.ui.iedition.dessin.rendu.liens.LienEdge;
 
 import java.util.Map;
 import java.util.Vector;
@@ -103,10 +101,6 @@ public class IeppCell extends DefaultGraphCell {
 	
 	public Vector getListeLien(){
 		return listeLien;
-	}
-	
-	public IdObjetModele getId(){
-		return null;
 	}
 	
 	/**

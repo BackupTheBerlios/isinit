@@ -18,101 +18,116 @@ package iepp.ui.iedition.dessin.rendu;
 * 
 */
 
-import java.awt.Color;
-import java.awt.Font;
+import iepp.ui.iedition.dessin.vues.MDNote;
+
 import java.awt.Rectangle;
 
 import org.jgraph.graph.GraphConstants;
 
 public class TextCell extends IeppCell {
 	
-	protected int abscisse;
-	protected int ordonnee;
-	protected int largeur;
-	protected int hauteur;
-	private String message;
-	protected Font police;
-
-	public TextCell( int x, int y ) {
+	protected double abscisse;
+	protected double ordonnee;
+	protected double largeur;
+	protected double hauteur;
+	protected MDNote mdnote;
+	protected FNote fnote;
+	
+	public TextCell( FNote fnote ) {
 		
 		super();
 	
-		this.message="";
-		
-		this.police = new Font("Arial", Font.PLAIN, 12);
+		this.fnote = fnote;
+		this.mdnote = (MDNote)fnote.getModele();
 		
 		// On garde dans l'objet un trace de la position du composant sur le graph
-		this.abscisse=x;
-		this.ordonnee=y;		
+		abscisse=mdnote.getX();
+		ordonnee=mdnote.getY();		
 		// On garde aussi une trace de la largeur et de la hauteur du composant
-		this.largeur=90;
-		this.hauteur=40;
+		largeur=mdnote.getLargeur();
+		hauteur=mdnote.getHauteur();
 		
 		// Mise en place des Attributs de la cellule text pas défaut
 		GraphConstants.setBounds(getAttributs(), new Rectangle((int)abscisse,(int)ordonnee,(int)largeur,(int)hauteur));
 		GraphConstants.setEditable(getAttributs(), true);
+		GraphConstants.setAutoSize(getAttributs(), true);
 		GraphConstants.setOpaque(getAttributs(), true);
-		GraphConstants.setFont(getAttributs(),this.police);
-		GraphConstants.setBackground(getAttributs(),new Color(255, 255, 204));
+		GraphConstants.setFont(getAttributs(),mdnote.getPolice());
+		GraphConstants.setBackground(getAttributs(),mdnote.getFillColor());
 	}
 	
-	public int getAbscisse() {
-		return (int)(GraphConstants.getBounds(getAttributs()).getX());
+	public double getAbscisse() {
+		return abscisse;
 	}
 
 
-	public void setAbscisse(int abscisse) {
+	public void setAbscisse(double abscisse) {
 		this.abscisse = abscisse;
-		GraphConstants.setBounds(getAttributs(), new Rectangle(abscisse,getOrdonnee(),getLargeur(),getHauteur()));
+		GraphConstants.setBounds(getAttributs(), new Rectangle((int)this.abscisse,(int)this.ordonnee,(int)this.largeur,(int)this.hauteur));
 	}
 
 
-	public int getHauteur() {
-		return (int)(GraphConstants.getBounds(getAttributs()).getHeight());
+	public double getHauteur() {
+		return hauteur;
 	}
 
 
-	public void setHauteur(int hauteur) {
+	public void setHauteur(double hauteur) {
 		this.hauteur = hauteur;
-		GraphConstants.setBounds(getAttributs(), new Rectangle(getAbscisse(),getOrdonnee(),getLargeur(),hauteur));
+		GraphConstants.setBounds(getAttributs(), new Rectangle((int)this.abscisse,(int)this.ordonnee,(int)this.largeur,(int)this.hauteur));
 	}
 
 
-	public int getLargeur() {
-		return (int)(GraphConstants.getBounds(getAttributs()).getWidth());
+	public double getLargeur() {
+		return largeur;
 	}
 
 
-	public void setLargeur(int largeur) {
+	public void setLargeur(double largeur) {
 		this.largeur = largeur;
-		GraphConstants.setBounds(getAttributs(), new Rectangle(getAbscisse(),getOrdonnee(),largeur,getHauteur()));
+		GraphConstants.setBounds(getAttributs(), new Rectangle((int)this.abscisse,(int)this.ordonnee,(int)this.largeur,(int)this.hauteur));
 	}
 
 
-	public int getOrdonnee() {
-		return (int)(GraphConstants.getBounds(getAttributs()).getY());
+	public double getOrdonnee() {
+		return ordonnee;
 	}
 
 
-	public void setOrdonnee(int ordonnee) {
+	public void setOrdonnee(double ordonnee) {
 		this.ordonnee = ordonnee;
-		GraphConstants.setBounds(getAttributs(), new Rectangle(getAbscisse(),ordonnee,getLargeur(),getHauteur()));
+		GraphConstants.setBounds(getAttributs(), new Rectangle((int)this.abscisse,(int)this.ordonnee,(int)this.largeur,(int)this.hauteur));
 	}
 
 	/**
-	 * @return Returns the message.
+	 * @return Returns the fnote.
 	 */
-	public String getMessage() {
-		return message;
+	public FNote getFnote() {
+		return fnote;
 	}
 
 	/**
-	 * @param message The message to set.
+	 * @param fnote The fnote to set.
 	 */
-	public void setMessage(String message) {
-		this.message = message;
+	public void setFnote(FNote fnote) {
+		this.fnote = fnote;
 	}
 
+	/**
+	 * @return Returns the mdnote.
+	 */
+	public MDNote getMdnote() {
+		return mdnote;
+	}
+
+	/**
+	 * @param mdnote The mdnote to set.
+	 */
+	public void setMdnote(MDNote mdnote) {
+		this.mdnote = mdnote;
+	}
+	
+	
 
 	
 }
