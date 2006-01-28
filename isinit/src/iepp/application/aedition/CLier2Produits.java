@@ -30,6 +30,7 @@ import iepp.ui.iedition.dessin.rendu.ProduitCellEntree;
 import iepp.ui.iedition.dessin.rendu.ProduitCellFusion;
 import iepp.ui.iedition.dessin.rendu.ProduitCellSortie;
 import iepp.ui.iedition.dessin.rendu.liens.LienEdge;
+import iepp.ui.iedition.dessin.rendu.liens.LienEdgeFusion;
 
 import java.util.Map;
 import java.util.Vector;
@@ -292,8 +293,8 @@ public class CLier2Produits extends CommandeAnnulable
 				return false;
 			}
 
-			LienEdge edge1 = new LienEdge();
-			LienEdge edge2 = new LienEdge();
+			LienEdgeFusion edge1 = new LienEdgeFusion();
+			LienEdgeFusion edge2 = new LienEdgeFusion();
 
 			if (src.estProduitSortie())
 			{

@@ -22,7 +22,6 @@ package iepp.application.aedition;
 
 import iepp.Application;
 import iepp.application.CommandeAnnulable;
-import iepp.domaine.ComposantProcessus;
 import iepp.domaine.IdObjetModele;
 import iepp.ui.iedition.VueDPGraphe;
 import iepp.ui.iedition.dessin.rendu.ComposantCell;
@@ -48,10 +47,6 @@ import org.jgraph.graph.GraphConstants;
  */
 public class CSupprimerComposantGraphe extends CommandeAnnulable
 {
-	/**
-	 * Id du composant à supprimer du graphe
-	 */
-	private IdObjetModele composant;
 	
 	/**
 	 * Cellule du composant à supprimer du graphe
@@ -74,7 +69,6 @@ public class CSupprimerComposantGraphe extends CommandeAnnulable
 	{
 		// initialiser le composant à supprimer
 		this.composantCell = compo;
-		this.composant = compo.getId() ;
 		this.diagramme = Application.getApplication().getProjet().getFenetreEdition().getVueDPGraphe();
 		
 	}
@@ -149,6 +143,7 @@ public class CSupprimerComposantGraphe extends CommandeAnnulable
 					 this.diagramme.ajouterLien(edge);
 					 this.diagramme.ajouterCell(prodS);
 					 this.diagramme.supprimerCellule(prodF);
+					 k--;
 					
 				}
 				else if (prodF.getProduitCellSortie().getCompParent()==this.composantCell)
@@ -187,6 +182,7 @@ public class CSupprimerComposantGraphe extends CommandeAnnulable
 					 this.diagramme.ajouterCell(prodE);
 					 this.diagramme.ajouterLien(edge);
 					 this.diagramme.supprimerCellule(prodF);
+					 k--;
 				}
 			}
 		}
