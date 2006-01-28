@@ -104,6 +104,10 @@ public class IeppCell extends DefaultGraphCell {
 		listeLien.add(lien);
 	}
 	
+	public void supprimerLien(LienEdge lien){
+		listeLien.removeElement(lien);
+	}
+	
 	public Vector getListeLien(){
 		return listeLien;
 	}

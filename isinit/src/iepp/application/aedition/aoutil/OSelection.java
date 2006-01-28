@@ -26,6 +26,7 @@ import iepp.ui.iedition.dessin.rendu.IeppCell;
 import iepp.ui.iedition.dessin.rendu.ProduitCellFusion;
 import iepp.ui.iedition.dessin.rendu.TextCell;
 import iepp.ui.iedition.dessin.rendu.liens.LienEdge;
+import iepp.ui.iedition.dessin.rendu.liens.LienEdgeNote;
 import iepp.ui.iedition.popup.PopupComposantProcessus;
 import iepp.ui.iedition.popup.PopupDiagramme;
 import iepp.ui.iedition.popup.PopupFusion;
@@ -188,6 +189,16 @@ public class OSelection extends Outil {
 		if (event.getKeyCode() == KeyEvent.VK_DELETE) {
 			if (this.diagramme.getSelectionCount() > 0) {
 				// ajouterEditionDiagramme(new SupprimerSelection(diagramme));
+				 
+				if(this.diagramme.getSelectionCell() instanceof LienEdgeNote){
+					LienEdgeNote lien = (LienEdgeNote)this.diagramme.getSelectionCell();
+					TextCell note = (TextCell)lien.getDestination();
+					note.supprimerLien(lien);
+					this.diagramme.supprimerLien(lien);
+					this.diagramme.getModel().remove(new Object[]{lien});
+					this.diagramme.setSelectionCell(null);
+				 }
+				 
 			}
 		}
 		this.terminer();

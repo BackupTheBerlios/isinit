@@ -23,7 +23,6 @@ import iepp.ui.iedition.dessin.rendu.IeppCell;
 import java.util.Map;
 import java.util.Vector;
 
-import org.jgraph.graph.DefaultEdge;
 import org.jgraph.graph.GraphConstants;
 
 import util.Vecteur;
@@ -32,7 +31,7 @@ import util.Vecteur;
  * @author Stéphane
  *
  */
-public class LienEdgeNote extends DefaultEdge {
+public class LienEdgeNote extends LienEdge {
 
 	protected Map edgeAttribute;
 	protected IeppCell source, destination;

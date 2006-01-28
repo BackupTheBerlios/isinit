@@ -23,6 +23,7 @@ import iepp.Application;
 import iepp.application.CAjouterComposantDP;
 import iepp.application.aedition.CAjouterComposantGraphe;
 import iepp.application.aedition.aoutil.OCreerElement;
+import iepp.application.aedition.aoutil.OLier2Elements;
 import iepp.application.aedition.aoutil.OSelection;
 import iepp.application.aedition.aoutil.Outil;
 import iepp.application.areferentiel.Referentiel;
@@ -37,7 +38,7 @@ import iepp.ui.iedition.dessin.rendu.ProduitCellFusion;
 import iepp.ui.iedition.dessin.rendu.ProduitCellSortie;
 import iepp.ui.iedition.dessin.rendu.TextCell;
 import iepp.ui.iedition.dessin.rendu.liens.LienEdge;
-import iepp.ui.iedition.dessin.tools.EdgeTool;
+import iepp.ui.iedition.dessin.rendu.liens.LienEdgeNote;
 import iepp.ui.iedition.dessin.vues.ComposantView;
 import iepp.ui.iedition.dessin.vues.ProduitView;
 import iepp.ui.iedition.dessin.vues.TextView;
@@ -54,6 +55,8 @@ import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -66,6 +69,7 @@ import java.util.Vector;
 import org.jgraph.JGraph;
 import org.jgraph.graph.CellMapper;
 import org.jgraph.graph.DefaultGraphModel;
+import org.jgraph.graph.EdgeView;
 import org.jgraph.graph.GraphModel;
 import org.jgraph.graph.VertexView;
 
@@ -73,7 +77,7 @@ import org.jgraph.graph.VertexView;
  * Classe permettant d'afficher un diagramme d'assemblage de composant
  */
 public class VueDPGraphe extends JGraph implements Observer, MouseListener,
-		MouseMotionListener, Serializable, DropTargetListener {
+		MouseMotionListener, Serializable, KeyListener, DropTargetListener {
 
 	/**
 	 * Outil courant.
@@ -129,7 +133,7 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 	/**
 	 * Outil pour la création des liens entre produits
 	 */
-	private EdgeTool edgeTool = new EdgeTool(new LienEdge());
+	private OLier2Elements edgeTool = new OLier2Elements();
 	
 	/**
 	 * Construire le diagramme à partir de la définition de processus et 
@@ -160,7 +164,8 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 		// ajouter les controleurs
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
-
+		this.addKeyListener(this);
+		
 		// Information pour la fenetre
 		this.zone_affichage = this.getSize();
 		this.setAutoscrolls(true);
@@ -779,8 +784,6 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 	 */
 	public void setOutilLier() {
 		
-		//this.setOutil(new OLier2Elements(this, Color.BLACK, new FLienClassic(new MDLienClassic())));
-
 		edgeTool.install(this);
 		
 		this.update(this.getGraphics());
@@ -834,6 +837,23 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 		this.diagramTool.mouseMoved(event);		
 	}
 
+
+	//---------------------------------------------------------------------
+	//    gestion du clavier sur le diagramme
+	//---------------------------------------------------------------------
+
+	public void keyPressed(KeyEvent e) {
+		
+	}
+
+	public void keyReleased(KeyEvent e) {
+		this.diagramTool.keyReleased(e);
+	}
+
+	public void keyTyped(KeyEvent e) {
+		
+	}
+	
 	//---------------------------------------------------------------------
 	//    gestion du drop sur le diagramme
 	//---------------------------------------------------------------------
@@ -953,5 +973,22 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 		}
 
 	}
+
+	/* (non-Javadoc)
+	 * @see org.jgraph.JGraph#createEdgeView(java.lang.Object, org.jgraph.graph.CellMapper)
+	 */
+	protected EdgeView createEdgeView(Object v, CellMapper cm) {
+//		if (v instanceof LienEdge) {
+//			return new LienEdgeView(v, this, cm);
+//		}else {
+			return super.createEdgeView(v, cm);
+//		}
+	}
+
+	
+
+	
+	
+	
 	
 }

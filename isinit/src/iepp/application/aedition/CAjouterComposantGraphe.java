@@ -117,6 +117,7 @@ public class CAjouterComposantGraphe extends CommandeAnnulable
 			ProduitCellEntree produitCell = new ProduitCellEntree((IdObjetModele)prod_entree.elementAt(i),(int)this.point.getX(),(int)this.point.getY(),composantCell);
 
 			produitCell.setAbscisse(produitCell.getAbscisse() - 100 - (produitCell.getLargeur()/2));
+			if (produitCell.getAbscisse() < 0){produitCell.setAbscisse(0);}
 			produitCell.setOrdonnee(produitCell.getOrdonnee() + (i * (produitCell.getHauteur() + 30)));
 			
 			fenetre.getVueDPGraphe().ajouterCell(produitCell);
