@@ -10,10 +10,12 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Line2D;
+import java.awt.geom.Line2D.Double;
 import java.awt.geom.Rectangle2D;
 import java.util.EventObject;
 import java.util.Map;
@@ -44,6 +46,103 @@ public class TextView extends VertexView {
 	public TextView(Object cell, JGraph jg, CellMapper cm) {
 		super(cell, jg, cm);
 	}
+	
+	
+	/**
+	 * Returns the intersection of the bounding rectangle and the
+	 * straight line between the source and the specified point p.
+	 * The specified point is expected not to intersect the bounds.
+	 */
+	public Point getPerimeterPoint(Point source, Point p) 
+	{
+		Line2D.Double line1 = new Line2D.Double(p,getCenterPoint());
+		Line2D.Double line2;
+		Rectangle r = getBounds();
+			
+		
+		/*
+		 * 0       1
+		 * ________
+		 * |        \ 2
+		 * |        |
+		 * |        |
+		 * |        |
+		 * |        |
+		 * |        |
+		 * |________|
+		 * 4         3
+		 * 
+		 */
+		int x[]=new int[5];
+		int y[]=new int[5];	
+		
+		x[0]= r.x;
+		y[0]= r.y;
+		
+		x[1]= r.x + (r.width) - 10;
+		y[1]= r.y;
+		
+		x[2]= r.x + (r.width);
+		y[2]= r.y + 10;
+		
+		x[3]= r.x + (r.width);
+		y[3]= r.y + (r.height);
+		
+		x[4]= r.x;
+		y[4]= r.y + (r.height);
+		
+		
+		line2 = new Line2D.Double((double) x[0], (double) y[0], (double) x[1], (double) y[1]);
+		
+		if (line1.intersectsLine(line2) == true)
+		{
+			return calculeDuPoint(line1, line2);
+		}
+		
+		line2 = new Line2D.Double((double) x[1], (double) y[1], (double) x[2], (double) y[2]);
+		if (line1.intersectsLine(line2) == true)
+		{
+			return calculeDuPoint(line1, line2);
+		}
+		
+		line2 = new Line2D.Double((double) x[2], (double) y[2], (double) x[3], (double) y[3]);
+		if (line1.intersectsLine(line2) == true)
+		{
+			return calculeDuPoint(line1, line2);
+		}
+		
+		line2 = new Line2D.Double((double) x[3], (double) y[3], (double) x[4], (double) y[4]);
+		if (line1.intersectsLine(line2) == true)
+		{
+			return calculeDuPoint(line1, line2);
+		}
+		
+		line2 = new Line2D.Double((double) x[4], (double) y[4], (double) x[0], (double) y[0]);
+		if (line1.intersectsLine(line2) == true)
+		{
+			return calculeDuPoint(line1, line2);
+		}
+		
+		return getCenterPoint();
+	}
+
+	public Point calculeDuPoint(Double line1, Double line2){
+		
+		double a1 = line1.getY2() - line1.getY1() ; 
+		double b1 = line1.getX1() - line1.getX2() ; 
+		double c1 = line1.getY1() * line1.getX2() - line1.getX1() * line1.getY2() ;
+		double a2 = line2.getY2() - line2.getY1() ; 
+		double b2 = line2.getX1() - line2.getX2() ; 
+		double c2 = line2.getY1() * line2.getX2() - line2.getX1() * line2.getY2() ;
+		double det = a1 * b2 - a2 * b1 ;
+		
+		double xout = (c2 * b1 - c1 * b2) / det ;
+		double yout = (a2 * c1 - a1 * c2) / det ;
+		
+		return new Point((int)xout, (int)yout);
+		
+	}
+	
 	
 	protected static transient MultiLinedEditor editor = new MultiLinedEditor();
 	protected static transient MultiLinedRenderer renderer = new MultiLinedRenderer();
