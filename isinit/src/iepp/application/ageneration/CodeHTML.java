@@ -24,6 +24,8 @@ import java.util.*;
 
 import iepp.*;
 import iepp.domaine.*;
+import iepp.ui.iedition.dessin.rendu.ComposantCell;
+import iepp.ui.iedition.dessin.rendu.ProduitCell;
 import iepp.ui.iedition.dessin.vues.*;
 
 /**
@@ -133,19 +135,19 @@ public class CodeHTML
     // todo chaouk img cliquables
     String result = "<map name=\"diag_principal\">";
     // recuperer toutes les figures presentes sur le diagrammes
-    Enumeration enumer = Application.getApplication().getProjet().getFenetreEdition().getVueDPGraphe().getModele().modeleFigures();
+    Enumeration enumer = Application.getApplication().getProjet().getFenetreEdition().getVueDPGraphe().elementsCell();
     // parcours de la liste et verification de l'existence des activites
     while (enumer.hasMoreElements()) {
       Object aux = enumer.nextElement();
       IdObjetModele io = null;
       int x, y, l, h = 0;
-      if (aux instanceof MDComposantProcessus)
+      if (aux instanceof ComposantCell)
       {
-        MDComposantProcessus comp = (MDComposantProcessus) aux;
+    	  ComposantCell comp = (ComposantCell) aux;
         // r\uFFFDcup\uFFFDrer les coordonn\uFFFDes de l'activit\uFFFD dans le diagramme
         // pour faire le carr\uFFFD de la zone cliquable
-        x = comp.getX();
-        y = comp.getY();
+        x = comp.getAbscisse();
+        y = comp.getOrdonnee();
         l = x + comp.getLargeur();
         h = y + comp.getHauteur();
         io = comp.getId();
@@ -193,13 +195,13 @@ public class CodeHTML
           }
         }
       }
-      else if (aux instanceof MDProduit)
+      else if (aux instanceof ProduitCell)
       {
-        MDProduit prod = (MDProduit) aux;
+    	  ProduitCell prod = (ProduitCell) aux;
         // r\uFFFDcup\uFFFDrer les coordonn\uFFFDes de l'activit\uFFFD dans le diagramme
         // pour faire le carr\uFFFD de la zone cliquable
-        x = prod.getX();
-        y = prod.getY();
+        x = prod.getAbscisse();
+        y = prod.getOrdonnee();
         l = x + prod.getLargeur();
         h = y + prod.getHauteur();
         io = prod.getId();

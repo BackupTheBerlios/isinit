@@ -22,6 +22,7 @@ package iepp.domaine;
 import iepp.Application;
 import iepp.application.aedition.annulation.Memento;
 import iepp.application.aedition.annulation.ObjetAnnulable;
+import iepp.ui.iedition.dessin.rendu.liens.LienEdge;
 
 import java.util.HashMap;
 import java.util.Vector;
@@ -347,7 +348,7 @@ public class ComposantProcessus extends ObjetModele implements ObjetAnnulable
 		this.listeLiens.removeElement(lien);
 	}
 
-	public void supprimerLien(FLien lien)
+	public void supprimerLien(LienEdge lien)
 	{
 		for (int i = 0; i < this.listeLiens.size(); i++)
 		{

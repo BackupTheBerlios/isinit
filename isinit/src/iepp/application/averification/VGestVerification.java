@@ -19,13 +19,11 @@
 
 package iepp.application.averification;
 
-import java.util.Vector;
-
 import iepp.Application;
 import iepp.Projet;
 import iepp.domaine.IdObjetModele;
-import iepp.ui.iedition.dessin.rendu.FElement;
-import iepp.ui.iedition.dessin.rendu.FProduitFusion;
+
+import java.util.Vector;
 
 /**
  * Classe permettant d'effectuer les diff\uFFFDrentes v\uFFFDrifications \uFFFD appliquer sur le
@@ -178,37 +176,37 @@ public class VGestVerification
 		return resVerif ;
 	}
 
-	public VResultatVerif connexionPossible(FProduitFusion fusion, FElement produit)
-	{
-		VResultatVerif resVerif ;	// R\uFFFDsultat \uFFFD renvoyer
-
-		// v\uFFFDrifier que l'objet source et l'objet destination sont des produits
-		resVerif = new VResultatVerif("Verification connexion");
-		if (!produit.getModele().getId().estProduit() )
-                {System.out.println("veriiiiiiiiiiif");
-			resVerif.ajouterErr ("Connexion avec un composant impossible");
-		}
-		// on a deux produits il ne faut pas que ce soit le m\uFFFDme produit
-		else
-                {
-			if (fusion.isLinkedComponent(produit.getModele().getId().getRef()))
-			{
-				resVerif.ajouterErr ("Connexion entre produits d'un m\uFFFDme composant");
-			}
-			else
-                        {
-				if (produit.getModele().getId().estProduitSortie())
-                                {
-                                  	// modif 2XMI chaouk
-                                        // voir le document 2XMI_Referentiel_exigence_v1.0
-                                        // r\uFFFDalisation de l'ev4
-                                        // annulation ev4 : la ligne suivante est decommentee
-					resVerif.ajouterErr ("Connexion avec un produit en sortie ");
-				}
-			}
-                }
-		return resVerif ;
-	}
+//	public VResultatVerif connexionPossible(FProduitFusion fusion, FElement produit)
+//	{
+//		VResultatVerif resVerif ;	// R\uFFFDsultat \uFFFD renvoyer
+//
+//		// v\uFFFDrifier que l'objet source et l'objet destination sont des produits
+//		resVerif = new VResultatVerif("Verification connexion");
+//		if (!produit.getModele().getId().estProduit() )
+//                {System.out.println("veriiiiiiiiiiif");
+//			resVerif.ajouterErr ("Connexion avec un composant impossible");
+//		}
+//		// on a deux produits il ne faut pas que ce soit le m\uFFFDme produit
+//		else
+//                {
+//			if (fusion.isLinkedComponent(produit.getModele().getId().getRef()))
+//			{
+//				resVerif.ajouterErr ("Connexion entre produits d'un m\uFFFDme composant");
+//			}
+//			else
+//                        {
+//				if (produit.getModele().getId().estProduitSortie())
+//                                {
+//                                  	// modif 2XMI chaouk
+//                                        // voir le document 2XMI_Referentiel_exigence_v1.0
+//                                        // r\uFFFDalisation de l'ev4
+//                                        // annulation ev4 : la ligne suivante est decommentee
+//					resVerif.ajouterErr ("Connexion avec un produit en sortie ");
+//				}
+//			}
+//                }
+//		return resVerif ;
+//	}
 
 
 }

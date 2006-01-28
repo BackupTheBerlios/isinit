@@ -21,7 +21,7 @@ package iepp.ui;
 
 import iepp.Application;
 import iepp.ui.iedition.FenetreEdition;
-import iepp.ui.iedition.dessin.rendu.FProduitFusion;
+import iepp.ui.iedition.dessin.rendu.ProduitCellFusion;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -46,9 +46,9 @@ public class FenetreRenommerProduitFusion extends JDialog
 	private JComboBox comboNom = new JComboBox();
 	private JButton okButton = new JButton();
 	private JButton cancelButton = new JButton();
-	private FProduitFusion fusion;
+	private ProduitCellFusion fusion;
 	
-	public FenetreRenommerProduitFusion(JFrame parent,FProduitFusion f)
+	public FenetreRenommerProduitFusion(JFrame parent,ProduitCellFusion f)
 	{
 		super(parent,Application.getApplication().getTraduction("FusionRename"),true);
 		
@@ -73,16 +73,8 @@ public class FenetreRenommerProduitFusion extends JDialog
 		comboNom.setMaximumSize(new Dimension(500, 25));
 		comboNom.setPreferredSize(new Dimension(300, 25));
 		
-		if (fusion.getProduits(fusion.getNombreProduits()-1).getModele().getId().estProduitSortie())
-		{
-			comboNom.addItem(fusion.getProduits(fusion.getNombreProduits()-1).getModele().getId().toString());
-			comboNom.addItem(fusion.getNomFusion());
-		}
-		else
-		{
-			comboNom.addItem(fusion.getNomFusion());
-			comboNom.addItem(fusion.getProduits(fusion.getNombreProduits()-1).getModele().getId().toString());
-		}			
+		
+		comboNom.addItem(fusion.getNomCompCell());
 				
 		panelCentre.add(nomFusion);
 		panelCentre.add(comboNom);
@@ -125,7 +117,7 @@ public class FenetreRenommerProduitFusion extends JDialog
 		}
 		fusion.setNomFusion(nom3);*/
 		
-		fusion.setNomFusionAll(comboNom.getSelectedItem().toString());
+		fusion.setNomCompCell(comboNom.getSelectedItem().toString());
 		this.dispose();
 	}
 }

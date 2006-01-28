@@ -21,8 +21,6 @@ package iepp.application.aedition;
 
 import iepp.Application;
 import iepp.application.CommandeAnnulable;
-import iepp.application.averification.VGestVerification;
-import iepp.domaine.ComposantProcessus;
 import iepp.domaine.IdObjetModele;
 import iepp.domaine.LienProduits;
 import iepp.ui.iedition.VueDPGraphe;

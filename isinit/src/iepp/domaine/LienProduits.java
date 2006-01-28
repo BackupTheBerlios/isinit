@@ -19,6 +19,8 @@
 
 package iepp.domaine;
 
+import iepp.ui.iedition.dessin.rendu.liens.LienEdge;
+
 import java.io.Serializable;
 
 /**
@@ -30,7 +32,7 @@ public class LienProduits implements Serializable
 {
 	private IdObjetModele produitSortie ;
 	private IdObjetModele produitEntree ;
-	private FLienFusion lien;
+	private LienEdge lien;
 	
 	/**
 	 * Création d'un lien au niveau du modèle entre deux produits désignés
@@ -38,7 +40,7 @@ public class LienProduits implements Serializable
 	 * @param sortie, produit en sortie d'un composant
 	 * @param destination, produit en entrée d'un autre composant
 	 */
-	public LienProduits(IdObjetModele sortie, IdObjetModele entree, FLienFusion lien)
+	public LienProduits(IdObjetModele sortie, IdObjetModele entree, LienEdge lien)
 	{
 		this.produitSortie = sortie ;
 		this.produitEntree = entree ;
@@ -63,7 +65,7 @@ public class LienProduits implements Serializable
 		return this.produitEntree;
 	}
 	
-	public FLienFusion getLienFusion()
+	public LienEdge getLienFusion()
 	{
 		return this.lien;
 	}
