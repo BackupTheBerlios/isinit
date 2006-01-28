@@ -32,7 +32,9 @@ import iepp.domaine.IdObjetModele;
 import iepp.ui.iedition.dessin.rendu.ComposantCell;
 import iepp.ui.iedition.dessin.rendu.IeppCell;
 import iepp.ui.iedition.dessin.rendu.ProduitCell;
+import iepp.ui.iedition.dessin.rendu.ProduitCellEntree;
 import iepp.ui.iedition.dessin.rendu.ProduitCellFusion;
+import iepp.ui.iedition.dessin.rendu.ProduitCellSortie;
 import iepp.ui.iedition.dessin.rendu.TextCell;
 import iepp.ui.iedition.dessin.rendu.liens.LienEdge;
 import iepp.ui.iedition.dessin.tools.EdgeTool;
@@ -104,6 +106,11 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 	private Vector produitCellSortieCells;
 	
 	/**
+	 * produitCellFusion présents sur le diagramme (Cellule).
+	 */
+	private Vector produitCellFusionCells;
+	
+	/**
 	 * Liens présents sur le diagramme.
 	 */
 	private Vector liens;
@@ -145,6 +152,7 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 		this.composantCellCells = new Vector();
 		this.produitCellEntreeCells = new Vector();
 		this.produitCellSortieCells = new Vector();
+		this.produitCellFusionCells = new Vector();
 
 		// par défault, on utilise l'outil de sélection
 		this.diagramTool = new OSelection(this);
@@ -586,6 +594,10 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 	public Vector getProduitCellSortieCells(){
 		return this.produitCellSortieCells;		
 	}
+	
+	public Vector getProduitCellFusionCells(){
+		return this.produitCellFusionCells;		
+	}
 		
 	/**
 	 * Ajoute une cellule au diagramme (élément ou lien).
@@ -593,31 +605,49 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 	 */
 	public void ajouterCell(IeppCell c) {
 		this.elementCells.addElement(c);
+		
+		if(c instanceof ComposantCell){
+			this.composantCellCells.addElement(c);
+		}else if (c instanceof ProduitCellEntree){
+			this.produitCellEntreeCells.addElement(c);
+		}else if (c instanceof ProduitCellSortie){
+			this.produitCellSortieCells.addElement(c);
+		}else if (c instanceof ProduitCellFusion){
+			this.produitCellFusionCells.addElement(c);
+		}
 	}
 	
-	public void ajouterComposantCell(IeppCell c) {
-		this.composantCellCells.addElement(c);
-	}
-	
-	public void supprimerComposantCell(IeppCell c) {
-		this.composantCellCells.removeElement(c);
-	}
-	
-	public void ajouterProduitEntreeCell(IeppCell c) {
-		this.produitCellEntreeCells.addElement(c);
-	}
-	
-	public void supprimerProduitEntreeCell(IeppCell c) {
-		this.produitCellEntreeCells.removeElement(c);
-	}
-	
-	public void ajouterProduitSortieCell(IeppCell c) {
-		this.produitCellSortieCells.addElement(c);
-	}
-	
-	public void supprimerProduitSortieCell(IeppCell c) {
-		this.produitCellSortieCells.removeElement(c);
-	}
+//	public void ajouterComposantCell(IeppCell c) {
+//		this.composantCellCells.addElement(c);
+//	}
+//	
+//	public void supprimerComposantCell(IeppCell c) {
+//		this.composantCellCells.removeElement(c);
+//	}
+//	
+//	public void ajouterProduitEntreeCell(IeppCell c) {
+//		this.produitCellEntreeCells.addElement(c);
+//	}
+//	
+//	public void supprimerProduitEntreeCell(IeppCell c) {
+//		this.produitCellEntreeCells.removeElement(c);
+//	}
+//	
+//	public void ajouterProduitSortieCell(IeppCell c) {
+//		this.produitCellSortieCells.addElement(c);
+//	}
+//	
+//	public void supprimerProduitSortieCell(IeppCell c) {
+//		this.produitCellSortieCells.removeElement(c);
+//	}
+//	
+//	public void ajouterProduitFusionCell(IeppCell c) {
+//		this.produitCellFusionCells.addElement(c);
+//	}
+//	
+//	public void supprimerProduitFusionCell(IeppCell c) {
+//		this.produitCellFusionCells.removeElement(c);
+//	}
 
 	/**
 	 * Supprime un élément du diagramme.
@@ -631,6 +661,7 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 		this.produitCellSortieCells.removeElement(cell);
 		this.produitCellEntreeCells.removeElement(cell);
 		this.composantCellCells.removeElement(cell);
+		this.produitCellFusionCells.removeElement(cell);
 		
 		Vector vecObj = new Vector();
 		
@@ -647,6 +678,10 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 		this.getModel().remove(vecObj.toArray());
 		this.repaint();
 		
+	}
+	
+	public void supprimerLien(LienEdge l) {
+		this.liens.removeElement(l);
 	}
 
 	//---------------------------------------------------------------------
@@ -695,6 +730,7 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 			IeppCell cell = (IeppCell) e.nextElement();
 			if (!this.selectionCells.contains(cell)) {
 				this.selectionCells.addElement(cell);
+				this.setSelectionCells(selectionCells.toArray());
 			}
 		}
 		

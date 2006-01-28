@@ -88,11 +88,9 @@ public class CSupprimerProduitFusion extends CommandeAnnulable
 		*/
 		// modif Aldo Nit 15/01/06
 		// on remet le produit en entrée
-		ProduitCellEntree pe=this.produitF.getProduitCellEntree();
-		
+	   	 ProduitCellEntree pe=this.produitF.getProduitCellEntree();
 		 pe.setPortComp(new DefaultPort());
-		 ((IeppCell) pe.getCompParent()).setPortComp(new DefaultPort());
-		 
+	 
 		 // On cree un edge pour la connection
 		 LienEdge edge = new LienEdge();
 		 
@@ -121,13 +119,11 @@ public class CSupprimerProduitFusion extends CommandeAnnulable
 		 this.diagramme.getModel().insert(null, null, cs, null, null);
 
 		 this.diagramme.ajouterCell(pe);
-		 this.diagramme.ajouterProduitEntreeCell(pe);
 		 this.diagramme.ajouterLien(edge);
 		
-		// on remet le produit en sortie
+		 // on remet le produit en sortie
 		 ProduitCellSortie ps=this.produitF.getProduitCellSortie();
 		 ps.setPortComp(new DefaultPort());
-		 ((IeppCell) ps.getCompParent()).setPortComp(new DefaultPort());
 		 
 		 // On cree un edge pour la connection
 		 LienEdge edge2 = new LienEdge();
@@ -157,15 +153,14 @@ public class CSupprimerProduitFusion extends CommandeAnnulable
 		 this.diagramme.getModel().insert(null, null, cs2, null, null);
 
 		 this.diagramme.ajouterCell(ps);
-		 this.diagramme.ajouterProduitSortieCell(ps);
 		 this.diagramme.ajouterLien(edge2);
 		
 		
-		this.diagramme.supprimerCellule(produitF);
+		 this.diagramme.supprimerCellule(produitF);
 		
-		diagramme.repaint();
+		 diagramme.repaint();
 		
-		return true;
+		 return true;
 		
 	}
 	

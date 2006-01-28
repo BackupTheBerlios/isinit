@@ -78,7 +78,6 @@ public class CAjouterProduitSortie extends CommandeAnnulable
 			ProduitCellSortie prod = new ProduitCellSortie((IdObjetModele)cp.getProduitSortie().lastElement(),10,10,(ComposantCell)comp);
 			
 			Application.getApplication().getProjet().getFenetreEdition().getVueDPGraphe().ajouterCell(prod);
-			Application.getApplication().getProjet().getFenetreEdition().getVueDPGraphe().ajouterProduitSortieCell(prod);
 			Application.getApplication().getProjet().getFenetreEdition().getVueDPGraphe().selectionneCell(prod);
 			// Liaison du produit avec le composant
 		 	CLierInterface c = new CLierInterface(Application.getApplication().getProjet().getFenetreEdition().getVueDPGraphe(),

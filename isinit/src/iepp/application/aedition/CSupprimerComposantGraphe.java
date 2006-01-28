@@ -118,7 +118,6 @@ public class CSupprimerComposantGraphe extends CommandeAnnulable
 				{
 					 ProduitCellSortie prodS=prodF.getProduitCellSortie();
 					 prodS.setPortComp(new DefaultPort());
-					 ((IeppCell) prodS.getCompParent()).setPortComp(new DefaultPort());
 					 
 					 // On cree un edge pour la connection
 					 LienEdge edge = new LienEdge();
@@ -147,7 +146,6 @@ public class CSupprimerComposantGraphe extends CommandeAnnulable
 					 this.diagramme.getModel().insert(vecObj.toArray(), AllAttribute, null, null, null);
 					 this.diagramme.getModel().insert(null, null, cs, null, null);
 
-					 this.diagramme.ajouterProduitEntreeCell(prodS);
 					 this.diagramme.ajouterLien(edge);
 					 this.diagramme.ajouterCell(prodS);
 					 this.diagramme.supprimerCellule(prodF);
@@ -157,7 +155,6 @@ public class CSupprimerComposantGraphe extends CommandeAnnulable
 				{
 					 ProduitCellEntree prodE=prodF.getProduitCellEntree();
 					 prodE.setPortComp(new DefaultPort());
-					 (prodE.getCompParent()).setPortComp(new DefaultPort());
 					 
 					 //On cree un edge pour la connection
 					 LienEdge edge = new LienEdge();
@@ -188,7 +185,6 @@ public class CSupprimerComposantGraphe extends CommandeAnnulable
 					 this.diagramme.getModel().insert(null, null, cs, null, null);
 					 
 					 this.diagramme.ajouterCell(prodE);
-					 this.diagramme.ajouterProduitEntreeCell(prodE);
 					 this.diagramme.ajouterLien(edge);
 					 this.diagramme.supprimerCellule(prodF);
 				}

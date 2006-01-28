@@ -77,7 +77,6 @@ public class CAjouterProduitEntree extends CommandeAnnulable
 			ProduitCellEntree prod = new ProduitCellEntree((IdObjetModele)cp.getProduitEntree().lastElement(),10,10,(ComposantCell)comp);
 			
 			Application.getApplication().getProjet().getFenetreEdition().getVueDPGraphe().ajouterCell(prod);
-			Application.getApplication().getProjet().getFenetreEdition().getVueDPGraphe().ajouterProduitEntreeCell(prod);
 			Application.getApplication().getProjet().getFenetreEdition().getVueDPGraphe().selectionneCell(prod);
 	
 			// Liaison du produit avec le composant

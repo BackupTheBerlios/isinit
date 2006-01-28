@@ -68,7 +68,11 @@ public class CLier2Produits extends CommandeAnnulable
 	 */
 	private boolean executable ;
 
-
+	/**
+	 * ProduitCell des éléments sélectionnés pour effectuer la liaison
+	 */
+	private ProduitCell cellsource, celldestination;
+		
 	/**
 	* Constructeur de la commande à partir du diagramme sur lequel on va effectuer la liaison
 	* les deux éléments que l'on veut fusionner et l'ensemble des points d'ancrage utilisés pour
@@ -83,11 +87,15 @@ public class CLier2Produits extends CommandeAnnulable
 		// garder un lien vers le diagramme
         this.diagramme = d;
         
-        
+        // initiaisation
+        this.celldestination = Celldestination;
+        this.cellsource = Cellsource;
 
 		// si l'objet source est un produit en entrée on permute le sens du lien entrée
 		this.src = Cellsource.getId();
 		this.dest = Celldestination.getId();
+		
+		
 
 		/*// impossible d'avoir des liens avec les notes
 		if (source instanceof FNote || destination instanceof FNote)
@@ -222,112 +230,8 @@ public class CLier2Produits extends CommandeAnnulable
 					//this.diagramme.supprimerFigure((FLien)destination.getLiens().elementAt(0));
 				*/
 					
-					/////////////////////////////////////////////
-					// Ajout pour la prise en compte de JGraph //
-					/////////////////////////////////////////////
 					
-					this.diagramme.clearSelection();
-					this.diagramme.setSelectionCells(null);
 					
-					Object cellSrc = Cellsource;
-					Object cellDes = Celldestination;
-
-					Object cellEnt = null;
-					Object cellSor = null;
-
-					if (((cellSrc instanceof ProduitCellEntree) && (cellDes instanceof ProduitCellSortie))
-							|| (cellSrc instanceof ProduitCellSortie)
-							&& (cellDes instanceof ProduitCellEntree)) {
-						// verif ke les 2 soit un produit de type differents
-
-						if (cellDes instanceof ProduitCellEntree) {
-							cellEnt = cellDes;
-							cellSor = cellSrc;
-						} else {
-							cellEnt = cellSrc;
-							cellSor = cellDes;
-						}
-
-						// On essaie de relier un produit en entree et en sortie d'un meme composant
-						if (((ProduitCellEntree) cellEnt).getCompParent().equals(
-								((ProduitCellSortie) cellSor).getCompParent())) {
-							this.diagramme.repaint();
-							return;
-						}
-
-						LienEdge edge1 = new LienEdge();
-						LienEdge edge2 = new LienEdge();
-
-						if (src.estProduitSortie())
-						{
-							this.fusion = src;
-						}
-						else
-						{
-							this.fusion = dest;
-						}
-						
-						ProduitCellFusion newProdCell = new ProduitCellFusion(this.fusion,(ProduitCellEntree)cellEnt,(ProduitCellSortie)cellSor);
-						newProdCell.ajoutLien(edge1);
-						newProdCell.ajoutLien(edge2);
-						
-						
-						this.diagramme.supprimerCellule((IeppCell)cellEnt);
-						this.diagramme.supprimerCellule((IeppCell)cellSor);
-						
-						this.diagramme.ajouterCell(newProdCell);
-						this.diagramme.ajouterLien(edge1);
-						this.diagramme.ajouterLien(edge2);
-						
-						if (!((ProduitCell) cellSrc).getNomCompCell()
-								.equalsIgnoreCase(
-										((ProduitCell) cellDes).getNomCompCell())) {
-							newProdCell.setNomCompCell(((ProduitCell) cellSrc)
-									.getNomCompCell()
-									+ "("
-									+ ((ProduitCell) cellDes).getNomCompCell()
-									+ ")");
-						}
-
-						Map AllAttribute = GraphConstants.createMap();
-
-						AllAttribute.put(edge1, edge1.getEdgeAttribute());
-						AllAttribute.put(edge2, edge2.getEdgeAttribute());
-						AllAttribute.put(newProdCell, newProdCell.getAttributs());
-
-						DefaultPort portS = ((ProduitCellSortie) cellSor)
-								.getCompParent().getPortComp();
-						DefaultPort portDInt = ((ProduitCellFusion) newProdCell)
-								.getPortComp();
-						DefaultPort portD = ((ProduitCellEntree) cellEnt)
-								.getCompParent().getPortComp();
-
-						ConnectionSet cs1 = new ConnectionSet(edge1, portS,
-								portDInt);
-						ConnectionSet cs2 = new ConnectionSet(edge2, portDInt,
-								portD);
-
-						Vector vecObj = new Vector();
-						vecObj.add(newProdCell);
-						vecObj.add(edge1);
-						vecObj.add(edge2);
-
-						this.diagramme.getModel().insert(vecObj.toArray(), AllAttribute,
-								null, null, null);
-						this.diagramme.getModel().insert(null, null, cs1, null, null);
-						this.diagramme.getModel().insert(null, null, cs2, null, null);
-
-						this.diagramme.setSelectionCell(newProdCell);
-						
-						this.diagramme.repaint();
-						
-						// reprendre l'outil de séléction
-						Application.getApplication().getProjet().getFenetreEdition().setOutilSelection();
-
-					} else {
-						this.diagramme.repaint();
-						// System.out.println("SOURCE & DESTINATION identiques");
-					}
 			 	
 			
 		
@@ -354,7 +258,114 @@ public class CLier2Produits extends CommandeAnnulable
 	 */
 	public boolean executer()
 	{
+		/////////////////////////////////////////////
+		// Ajout pour la prise en compte de JGraph //
+		/////////////////////////////////////////////
+		
 
+		this.diagramme.clearSelection();
+		this.diagramme.setSelectionCells(null);
+		
+		Object cellSrc = cellsource;
+		Object cellDes = celldestination;
+
+		Object cellEnt = null;
+		Object cellSor = null;
+
+		if (((cellSrc instanceof ProduitCellEntree) && (cellDes instanceof ProduitCellSortie))
+				|| (cellSrc instanceof ProduitCellSortie)
+				&& (cellDes instanceof ProduitCellEntree)) {
+			// verif ke les 2 soit un produit de type differents
+
+			if (cellDes instanceof ProduitCellEntree) {
+				cellEnt = cellDes;
+				cellSor = cellSrc;
+			} else {
+				cellEnt = cellSrc;
+				cellSor = cellDes;
+			}
+
+			// On essaie de relier un produit en entree et en sortie d'un meme composant
+			if (((ProduitCellEntree) cellEnt).getCompParent().equals(
+					((ProduitCellSortie) cellSor).getCompParent())) {
+				this.diagramme.repaint();
+				return false;
+			}
+
+			LienEdge edge1 = new LienEdge();
+			LienEdge edge2 = new LienEdge();
+
+			if (src.estProduitSortie())
+			{
+				this.fusion = src;
+			}
+			else
+			{
+				this.fusion = dest;
+			}
+			
+			ProduitCellFusion newProdCell = new ProduitCellFusion(this.fusion,(ProduitCellEntree)cellEnt,(ProduitCellSortie)cellSor);
+			newProdCell.ajoutLien(edge1);
+			newProdCell.ajoutLien(edge2);
+			
+			
+			this.diagramme.supprimerCellule((IeppCell)cellEnt);
+			this.diagramme.supprimerCellule((IeppCell)cellSor);
+			
+			this.diagramme.ajouterCell(newProdCell);
+			this.diagramme.ajouterLien(edge1);
+			this.diagramme.ajouterLien(edge2);
+			
+			if (!((ProduitCell) cellSrc).getNomCompCell()
+					.equalsIgnoreCase(
+							((ProduitCell) cellDes).getNomCompCell())) {
+				newProdCell.setNomCompCell(((ProduitCell) cellSrc)
+						.getNomCompCell()
+						+ "("
+						+ ((ProduitCell) cellDes).getNomCompCell()
+						+ ")");
+			}
+
+			Map AllAttribute = GraphConstants.createMap();
+
+			AllAttribute.put(edge1, edge1.getEdgeAttribute());
+			AllAttribute.put(edge2, edge2.getEdgeAttribute());
+			AllAttribute.put(newProdCell, newProdCell.getAttributs());
+
+			DefaultPort portS = ((ProduitCellSortie) cellSor)
+					.getCompParent().getPortComp();
+			DefaultPort portDInt = ((ProduitCellFusion) newProdCell)
+					.getPortComp();
+			DefaultPort portD = ((ProduitCellEntree) cellEnt)
+					.getCompParent().getPortComp();
+
+			ConnectionSet cs1 = new ConnectionSet(edge1, portS,
+					portDInt);
+			ConnectionSet cs2 = new ConnectionSet(edge2, portDInt,
+					portD);
+
+			Vector vecObj = new Vector();
+			vecObj.add(newProdCell);
+			vecObj.add(edge1);
+			vecObj.add(edge2);
+
+			this.diagramme.getModel().insert(vecObj.toArray(), AllAttribute,
+					null, null, null);
+			this.diagramme.getModel().insert(null, null, cs1, null, null);
+			this.diagramme.getModel().insert(null, null, cs2, null, null);
+
+			this.diagramme.setSelectionCell(newProdCell);
+			
+			this.diagramme.repaint();
+			
+			// reprendre l'outil de séléction
+			Application.getApplication().getProjet().getFenetreEdition().setOutilSelection();
+
+		} else {
+			this.diagramme.repaint();
+			// System.out.println("SOURCE & DESTINATION identiques");
+		}
+		
 			return true;
 
 	}
