@@ -21,9 +21,11 @@ package iepp.ui.iedition.dessin.tools;
 
 import iepp.Application;
 import iepp.application.aedition.CLier2Produits;
+import iepp.application.aedition.CLierCellNote;
 import iepp.ui.iedition.VueDPGraphe;
 import iepp.ui.iedition.dessin.rendu.IeppCell;
 import iepp.ui.iedition.dessin.rendu.ProduitCell;
+import iepp.ui.iedition.dessin.rendu.TextCell;
 import iepp.ui.iedition.dessin.rendu.liens.LienEdge;
 import iepp.ui.iedition.popup.PopupDiagramme;
 
@@ -47,15 +49,13 @@ import org.jgraph.graph.PortView;
  * This tool allows to create edges in the graph It use the prototype design
  * pattern to clone edges
  * 
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
-public class EdgeTool extends Tool {
+public class EdgeTool {
 	protected VueDPGraphe mGraph;
 
 	protected DefaultEdge mPrototype;
 
-	protected BasicMarqueeHandler lastHandler;
-	
 	protected EdgeHandler mHandler = new EdgeHandler();
 
 	protected boolean mStable = true;
@@ -72,7 +72,6 @@ public class EdgeTool extends Tool {
 
 	public void install(JGraph graph) {
 		mGraph = (VueDPGraphe)graph;
-		lastHandler = graph.getMarqueeHandler();
 		graph.setMarqueeHandler(mHandler);
 		graph.setMoveable(false);
 		graph.setSizeable(false);
@@ -81,7 +80,7 @@ public class EdgeTool extends Tool {
 
 	public void uninstall(JGraph graph) {
 		mGraph = null;
-		graph.setMarqueeHandler(lastHandler);
+		graph.setMarqueeHandler(new BasicMarqueeHandler());
 		graph.setMoveable(true);
 		graph.setSizeable(true);
 		graph.setPortsVisible(false);
@@ -110,7 +109,7 @@ public class EdgeTool extends Tool {
 
 		public void mousePressed(MouseEvent e) {
 			if (mPort != null && !e.isConsumed() && mGraph.isPortsVisible()) {
-				fireToolStarted();
+				//fireToolStarted();
 				mStart = mGraph.toScreen(mPort.getLocation(null));
 				mFirstPort = mPort;
 				e.consume();
@@ -140,26 +139,26 @@ public class EdgeTool extends Tool {
 		        // Modification pour les lien avec les notes
 		        if ( (cellSrc instanceof ProduitCell) && (cellDes instanceof ProduitCell) ){
 		        	
-		         
-					CLier2Produits c = new CLier2Produits(mGraph, (ProduitCell)cellDes, (ProduitCell)cellSrc, new Vector());
+		     		CLier2Produits c = new CLier2Produits(mGraph, (ProduitCell)cellDes, (ProduitCell)cellSrc, new Vector());
 		             if (c.executer())
 		             {
 		      			Application.getApplication().getProjet().setModified(true);
 		      		 }
 		           
+		        }else if ( (cellSrc instanceof TextCell) || (cellDes instanceof TextCell) ){
+		        	
+		        	CLierCellNote c = new CLierCellNote(mGraph, (IeppCell)cellDes, (IeppCell)cellSrc);
+		             if (c.executer())
+		             {
+		      			Application.getApplication().getProjet().setModified(true);
+		      		 }
 		        }
 		        
 			}
 			
 			// reprendre l'outil de séléction
 			Application.getApplication().getProjet().getFenetreEdition().setOutilSelection();
-			fireToolFinished();
-		}
-
-		protected void createEdge(DefaultEdge edge, ConnectionSet cs,
-				Map attributes) {
-			mGraph.getModel().insert(new Object[] { edge }, attributes, cs,
-					null, null);
+			//fireToolFinished();
 		}
 
 		public void mouseDragged(MouseEvent e) {
