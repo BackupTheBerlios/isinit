@@ -1,3 +1,5 @@
+package iepp.application.aedition.aoutil;
+
 /*
  * IEPP: Isi Engineering Process Publisher
  *
@@ -16,220 +18,217 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  * 
  */
- 
- 
-package iepp.application.aedition.aoutil;
 
-
+import iepp.Application;
+import iepp.application.aedition.CLier2Produits;
+import iepp.application.aedition.CLierCellNote;
 import iepp.ui.iedition.VueDPGraphe;
+import iepp.ui.iedition.dessin.rendu.IeppCell;
+import iepp.ui.iedition.dessin.rendu.ProduitCell;
+import iepp.ui.iedition.dessin.rendu.TextCell;
+import iepp.ui.iedition.dessin.rendu.liens.LienEdge;
+import iepp.ui.iedition.popup.PopupDiagramme;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Stroke;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
-import java.awt.geom.Line2D;
 import java.util.Vector;
 
-import util.Vecteur;
+import org.jgraph.JGraph;
+import org.jgraph.graph.BasicMarqueeHandler;
+import org.jgraph.graph.GraphConstants;
+import org.jgraph.graph.PortView;
 
 /**
-* Outil permettant d'interpréter les clicks & déplacement de l'utilisateur pour lier
-* et afficher le lien entre deux éléments
-*/
-public class OLier2Elements extends Outil
-{
+ * This tool allows to create edges in the graph It use the prototype design
+ * pattern to clone edges
+ * 
+ * @version $Revision: 1.6 $
+ */
+public class OLier2Elements {
+	protected VueDPGraphe mGraph;
 
-	// propriétés des liens
-    final static BasicStroke classic = new BasicStroke(1.0f,BasicStroke.CAP_ROUND , BasicStroke.JOIN_ROUND);
-    final static float dot1[] = {3.0f};
-    final static BasicStroke dotted = new BasicStroke(1.0f,BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 4.0f, dot1, 0.0f);
-    final static float dash1[] = {10.0f};
-    final static BasicStroke dashed = new BasicStroke(1.0f,BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 4.0f, dash1, 0.0f);
+	
+	protected EdgeHandler mHandler = new EdgeHandler();
 
-    /**
-    * Lien qui va être créé
-    */
-    //private FLien lien;
-
-    /**
-    * Figures source et destination du lien.
-    */
-	//private FElement source, destination;
-
-    /**
-    * Dernière figure cliquée. NULL si on a cliqué sur le diagramme.
-    */
-	//private Figure figureCliquee;
-    
-    /**
-     * Couleur du lien
-     */
-	private Color lineColor;
-
-    /**
-    * Etat de départ : on a cliqué sur la première figure (source du lien).
-    */
-	private static final int START_STATE = 1;
-
-    /**
-    * Fin de la liaison.
-    */
-	private static final int END_STATE = 2;
+	protected boolean mStable = true;
 
 	/**
-	 * Liste des points d'ancrage du lien courant
+	 * Build a new EdgeTool
+	 * 
 	 */
-    protected Vector pointsAncrageIntermediaires;
+	public OLier2Elements() {
+		
+	}
 
+	public void install(JGraph graph) {
+		mGraph = (VueDPGraphe)graph;
+		graph.setMarqueeHandler(mHandler);
+		graph.setMoveable(false);
+		graph.setSizeable(false);
+		graph.setPortsVisible(true);
+	}
 
-	/**
-	 * Construire l'outil à partir du lien à créer, de la couleur du lien et du diagramme
-	 * sur lequel on veut réaliser le lien
-	 * @param vue, diagramme sur lequel on veut réaliser le lien
-	 * @param lineColorn couleur du lien à dessiner
-	 * @param lien, nouveau lien à initialiser
-	 */
-    public OLier2Elements(VueDPGraphe vue, Color lineColor)//, FLien lien)
-    {
-        super(vue);
-        //this.lien = lien;
-        this.lineColor = lineColor;
-        this.pointsAncrageIntermediaires = new Vector();
-    }
+	public void uninstall(JGraph graph) {
+		mGraph = null;
+		graph.setMarqueeHandler(new BasicMarqueeHandler());
+		graph.setMoveable(true);
+		graph.setSizeable(true);
+		graph.setPortsVisible(false);
+	}
 
+	public boolean isStable() {
+		boolean oldStable = mStable;
+		if (!mStable) {
+			mStable = true;
+		}
 
-    /**
-    * Retourne la couleur des traits.
-    */
-    public Color getLineColor()
-    {
-        return this.lineColor;
-    }
-    /**
-    * Fixe la couleur des traits.
-    */
-    public void setLineColor(Color c) 
-    {
-        this.lineColor = c;
-    }
+		return oldStable;
+	}
 
+	protected class EdgeHandler extends BasicMarqueeHandler {
+		protected PortView mPort, mFirstPort;
 
-    /**
-    * Dessine le lien en cours de création.
-    */
-    public void draw(Graphics g)
-    {
-        if(this.state == START_STATE)
-        {
-            Graphics2D g2d = (Graphics2D) g;
-            Stroke stroke = g2d.getStroke();
+		protected Point mStart, mCurrent;
 
-            // Dessine le corps du lien (lignes entre les points d'ancrage)
-            /*if (((MDLien) this.lien.getModele()).getStyle() == MDLien.STYLE_CLASSIC)
-            {
-            	g2d.setStroke(classic);
-            }
-            else if (((MDLien) this.lien.getModele()).getStyle() == MDLien.STYLE_DOTTED)
-            {
-            	g2d.setStroke(dotted);
-            } 
-            else if (((MDLien) this.lien.getModele()).getStyle() == MDLien.STYLE_DASHED)
-            {
-            	g2d.setStroke(dashed);
-            } 
+		public boolean isForceMarqueeEvent(MouseEvent e) {
+			mPort = getSourcePortAt(e.getPoint());
+			if (mPort != null && mGraph.isPortsVisible())
+				return true;
+			return false;
+		}
 
-            g2d.setColor(this.lineColor);
+		public void mousePressed(MouseEvent e) {
+			if (mPort != null && !e.isConsumed() && mGraph.isPortsVisible()) {
+				//fireToolStarted();
+				mStart = mGraph.toScreen(mPort.getLocation(null));
+				mFirstPort = mPort;
+				e.consume();
+			}
+		}
 
-            Vecteur v1, v2;
-            MDElement ms = (MDElement) this.source.getModele();
-            // v1 contient les coordonnées du centre de l'élément de départ.
-            v1 = new Vecteur(ms.getX() + ms.getLargeur()/2,
-                             ms.getY() + ms.getHauteur()/2);
-            for (int i = 0; i < this.pointsAncrageIntermediaires.size(); i++)
-            {
-              v2 = (Vecteur) this.pointsAncrageIntermediaires.elementAt(i);
-              g2d.draw(new Line2D.Double(v1.x, v1.y, v2.x, v2.y));
-              v1 = v2;
-            }
+		public void mouseReleased(MouseEvent e) {
+			
+	        super.mouseReleased(e);
+	        
+	        if (!((mGraph.getFirstCellForLocation(e.getX(), e.getY()) instanceof IeppCell)||(mGraph.getFirstCellForLocation(e.getX(), e.getY()) instanceof LienEdge)))
+			{
+				if (e.isPopupTrigger())
+	          	{
+					PopupDiagramme p = new PopupDiagramme(Application.getApplication().getProjet().getFenetreEdition().getVueDPGraphe(), e.getX(), e.getY());
+				    p.show(mGraph,e.getX(),e.getY());
+			 	}
+			}
+			 
+			if (e != null && !e.isConsumed() && mPort != null
+					&& mFirstPort != null && mFirstPort != mPort) {
+			
+				
+		        Object cellSrc = mFirstPort.getParentView().getCell();
+		        Object cellDes = mPort.getParentView().getCell();
+		        
+		        // Modification pour les lien avec les notes
+		        if ( (cellSrc instanceof ProduitCell) && (cellDes instanceof ProduitCell) ){
+		        	
+		     		CLier2Produits c = new CLier2Produits(mGraph, (ProduitCell)cellDes, (ProduitCell)cellSrc, new Vector());
+		             if (c.executer())
+		             {
+		      			Application.getApplication().getProjet().setModified(true);
+		      		 }
+		           
+		        }else if ( (cellSrc instanceof TextCell) || (cellDes instanceof TextCell) ){
+		        	
+		        	CLierCellNote c = new CLierCellNote(mGraph, (IeppCell)cellDes, (IeppCell)cellSrc);
+		             if (c.executer())
+		             {
+		      			Application.getApplication().getProjet().setModified(true);
+		      		 }
+		        }
+		        
+			}
+			
+			// reprendre l'outil de séléction
+			Application.getApplication().getProjet().getFenetreEdition().setOutilSelection();
+			//fireToolFinished();
+		}
 
-            g2d.draw(new Line2D.Double(v1.x, v1.y, getCurrent().x, getCurrent().y));
-            g2d.setStroke(stroke);*/
-        }
-    }
+		public void mouseDragged(MouseEvent e) {
+			if (mStart != null && !e.isConsumed()) {
+				Graphics g = mGraph.getGraphics();
 
-    public void mouseMoved( MouseEvent event )
-    {
-        super.mouseMoved(event);
+				paintConnector(Color.black, mGraph.getBackground(), g);
 
-        if(this.state == START_STATE)
-        {
-            this.update();
-        }
-    }
+				mPort = getTargetPortAt(e.getPoint());
 
-    /**
-    * Un click sur un premier élément démarre la construction du lien.
-    * Un click sur un second élément finalise le lien.
-    */
-    public void mousePressed( MouseEvent event )
-    {
-        super.mousePressed(event);
+				if (mPort != null) {
+					mCurrent = mGraph.toScreen(mPort.getLocation(null));
+				} else {
+					mCurrent = mGraph.snap(e.getPoint());
+				}
 
-       /* this.figureCliquee = this.diagramme.chercherFigure(start.x, start.y);
+				paintConnector(mGraph.getBackground(), Color.black, g);
 
-        // Click sur autre chose qu'un élément
-        if (this.figureCliquee != null && (this.figureCliquee instanceof FElement))
-        {
-            // Premier click.
-            if (this.state == IDLE_STATE)
-            {
-                this.source = (FElement) this.figureCliquee;
-                this.diagramme.clearSelection();
-                this.state = START_STATE;
-            }
-            // A partir du deuxième click.
-            else if (this.state == START_STATE)
-            {
-            	if (this.figureCliquee != source || this.pointsAncrageIntermediaires.size() > 0)
-            	{
-                	this.destination = (FElement) this.figureCliquee;
-              		//  ajouterEditionDiagramme(new Lier2Elements(diagramme, lien, source, destination, pointsAncrageIntermediaires));
-              		CLier2Produits c = new CLier2Produits(diagramme, source, destination, pointsAncrageIntermediaires);
-              		if (c.executer())
-      			    {
-      			   		Application.getApplication().getProjet().setModified(true);
-      			    }
-                	this.state = END_STATE;
-              	}
-            }
-        }
-        else
-        {
-            if (state == START_STATE)
-            {
-            	this.pointsAncrageIntermediaires.add(new Vecteur(getCurrent()));
-            }
-            else
-            {
-            	this.state = END_STATE;
-            } 
-        }*/
-    }
+				e.consume();
+			}
 
-    /**
-    * On relâche la souris.
-    */
-    public void mouseReleased( MouseEvent event )
-    {
-        //super.mouseReleased(event);
+		}
 
-        // Si la liaison est terminée (qu'elle ait échoué ou pas)
-        if (this.state == END_STATE)
-        {
-			// rafraichir le diagramme
-        	this.terminer();
-        }
-    }
+		public void mouseMoved(MouseEvent e) {
+			if (e != null && getSourcePortAt(e.getPoint()) != null
+					&& !e.isConsumed() && mGraph.isPortsVisible()) {
+				mGraph.setCursor(new Cursor(Cursor.HAND_CURSOR));
+				e.consume();
+			}
+		}
+
+		private PortView getSourcePortAt(Point point) {
+			if (point == null || mGraph == null) {
+				return null;
+			}
+
+			Point tmp = mGraph.fromScreen(new Point(point));
+
+			return (PortView) mGraph.getPortViewAt(tmp.x, tmp.y);
+		}
+
+		private PortView getTargetPortAt(Point point) {
+			Object cell = mGraph.getFirstCellForLocation(point.x, point.y);
+
+			for (int i = 0; i < mGraph.getModel().getChildCount(cell); i++) {
+				Object tmp = mGraph.getModel().getChild(cell, i);
+
+				tmp = mGraph.getGraphLayoutCache().getMapping(tmp, false);
+
+				if (tmp instanceof PortView && tmp != mFirstPort) {
+					return (PortView) tmp;
+				}
+			}
+
+			return getSourcePortAt(point);
+		}
+
+		private void paintConnector(Color fg, Color bg, Graphics g) {
+			g.setColor(fg);
+			g.setXORMode(bg);
+			paintPort(mGraph.getGraphics());
+
+			if (mFirstPort != null && mStart != null && mCurrent != null) {
+				g.drawLine(mStart.x, mStart.y, mCurrent.x, mCurrent.y);
+			}
+		}
+
+		private void paintPort(Graphics g) {
+			if (mPort != null) {
+				boolean o = (GraphConstants.getOffset(mPort.getAttributes()) != null);
+				Rectangle r = (o) ? mPort.getBounds() : mPort.getParentView()
+						.getBounds();
+				r = mGraph.toScreen(new Rectangle(r));
+				r.setBounds(r.x - 3, r.y - 3, r.width + 6, r.height + 6);
+				mGraph.getUI().paintCell(g, mPort, r, true);
+			}
+		}
+	}
 }

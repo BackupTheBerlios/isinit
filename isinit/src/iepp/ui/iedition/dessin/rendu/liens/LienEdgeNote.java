@@ -32,7 +32,7 @@ import util.Vecteur;
  * @author Stéphane
  *
  */
-public class LienEdge extends DefaultEdge {
+public class LienEdgeNote extends DefaultEdge {
 
 	protected Map edgeAttribute;
 	protected IeppCell source, destination;
@@ -41,14 +41,14 @@ public class LienEdge extends DefaultEdge {
 	/**
 	 * 
 	 */
-	public LienEdge() {
+	public LienEdgeNote() {
 		super();
 		
 		pointsAncrage = new Vector();
 		
 		this.edgeAttribute = GraphConstants.createMap();
 		
-		GraphConstants.setLineEnd(edgeAttribute, GraphConstants.ARROW_CLASSIC);
+		GraphConstants.setLineEnd(edgeAttribute, GraphConstants.ARROW_NONE);
 		GraphConstants.setEndFill(edgeAttribute, true);
 		GraphConstants.setDashPattern(edgeAttribute, new float[] { 3, 3 });
 		GraphConstants.setDisconnectable(edgeAttribute,false);
@@ -58,12 +58,12 @@ public class LienEdge extends DefaultEdge {
 		this.destination = null;
 	}
 	
-	public LienEdge(IeppCell source, IeppCell destination) {
+	public LienEdgeNote(IeppCell source, IeppCell destination) {
 		super();
 		
 		edgeAttribute = GraphConstants.createMap();
 		
-		GraphConstants.setLineEnd(edgeAttribute, GraphConstants.ARROW_CLASSIC);
+		GraphConstants.setLineEnd(edgeAttribute, GraphConstants.ARROW_NONE);
 		GraphConstants.setEndFill(edgeAttribute, true);
 		GraphConstants.setDashPattern(edgeAttribute, new float[] { 3, 3 });
 		GraphConstants.setDisconnectable(edgeAttribute,false);
@@ -76,7 +76,7 @@ public class LienEdge extends DefaultEdge {
 	/**
 	 * @param userObject
 	 */
-	public LienEdge(Object userObject) {
+	public LienEdgeNote(Object userObject) {
 		super(userObject);
 		
 	}
@@ -85,7 +85,7 @@ public class LienEdge extends DefaultEdge {
 	 * @param arg0
 	 * @param arg1
 	 */
-	public LienEdge(Object arg0, boolean arg1) {
+	public LienEdgeNote(Object arg0, boolean arg1) {
 		super(arg0, arg1);
 		
 	}
