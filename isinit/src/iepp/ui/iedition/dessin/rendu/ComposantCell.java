@@ -153,4 +153,9 @@ public class ComposantCell extends IeppCell {
 		
 		GraphConstants.setBounds(getAttributs(), new Rectangle(getAbscisse(),getOrdonnee(),getLargeur(),getHauteur()));
 	}
+
+
+	public ComposantProcessus getCompProc() {
+		return compProc;
+	}
 }

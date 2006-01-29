@@ -18,19 +18,19 @@
  */
 package iepp.application;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.util.Vector;
-import java.util.zip.ZipOutputStream;
-
-
-import util.ErrorManager;
-
 import iepp.Application;
 import iepp.application.areferentiel.Referentiel;
 import iepp.domaine.ComposantProcessus;
 import iepp.domaine.IdObjetModele;
 import iepp.infrastructure.jsx.EnregistreurDP;
+
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.Vector;
+import java.util.zip.ZipOutputStream;
+
+import util.ErrorManager;
 
 public class CSauvegarderDP extends CommandeNonAnnulable
 {
@@ -61,8 +61,11 @@ public class CSauvegarderDP extends CommandeNonAnnulable
 				nomFichier += ".iepp";
 			}
 			FileOutputStream outstream = new FileOutputStream( new File( nomFichier) );
-			ZipOutputStream zipFile = new ZipOutputStream( outstream );
-
+			BufferedOutputStream buff = new BufferedOutputStream(outstream);
+			ZipOutputStream zipFile = new ZipOutputStream( buff );
+			zipFile.setMethod(ZipOutputStream.DEFLATED);
+			zipFile.setLevel(9);
+			
 			EnregistreurDP enregistre = new EnregistreurDP(zipFile);
 			enregistre.sauver();
 			

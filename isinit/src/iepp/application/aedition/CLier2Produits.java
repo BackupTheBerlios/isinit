@@ -230,12 +230,6 @@ public class CLier2Produits extends CommandeAnnulable
 					// Suppression du lien (FLienInterface) entre les produits effacés et leur composants
 					//this.diagramme.supprimerFigure((FLien)destination.getLiens().elementAt(0));
 				*/
-					
-					
-					
-			 	
-			
-		
 	}
 
 
@@ -309,9 +303,17 @@ public class CLier2Produits extends CommandeAnnulable
 			newProdCell.ajoutLien(edge1);
 			newProdCell.ajoutLien(edge2);
 			
+			// On declare les sources et les destinations des liens
+			edge1.setSourceEdge((ProduitCellSortie) cellSor);
+			edge1.setDestination(newProdCell);
+			edge2.setSourceEdge(newProdCell);
+			edge2.setDestination((ProduitCellEntree) cellEnt);
 			
+			// On supprime les liens et on declare les cellules liees
 			this.diagramme.supprimerCellule((IeppCell)cellEnt);
 			this.diagramme.supprimerCellule((IeppCell)cellSor);
+			((ProduitCellEntree)cellEnt).setCellLiee(true);
+			((ProduitCellSortie)cellSor).setCellLiee(true);
 			
 			this.diagramme.ajouterCell(newProdCell);
 			this.diagramme.ajouterLien(edge1);
