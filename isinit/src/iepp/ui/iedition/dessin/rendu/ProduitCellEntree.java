@@ -24,11 +24,15 @@ public class ProduitCellEntree extends ProduitCell {
 
 	protected ComposantCell compParent;
 	
+	protected boolean CellLiee;
+	
 	public ProduitCellEntree(IdObjetModele prod, int x, int y, ComposantCell comp) {
 		
 		super(prod,x,y);
 
 		compParent = comp;
+		
+		CellLiee = false;
 	}
 	/**
 	 * @return Returns the compParent.
@@ -42,5 +46,11 @@ public class ProduitCellEntree extends ProduitCell {
 	public void setCompParent(ComposantCell compParent) {
 		this.compParent = compParent;
 	}
-
+	public boolean isCellLiee() {
+		return CellLiee;
+	}
+	
+	public void setCellLiee(boolean l) {
+		CellLiee = l;
+	}
 }

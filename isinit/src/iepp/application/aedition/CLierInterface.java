@@ -22,6 +22,8 @@ package iepp.application.aedition;
 import iepp.application.CommandeNonAnnulable;
 import iepp.ui.iedition.VueDPGraphe;
 import iepp.ui.iedition.dessin.rendu.IeppCell;
+import iepp.ui.iedition.dessin.rendu.ProduitCellEntree;
+import iepp.ui.iedition.dessin.rendu.ProduitCellSortie;
 import iepp.ui.iedition.dessin.rendu.liens.LienEdge;
 
 import java.util.Map;
@@ -102,6 +104,9 @@ public class CLierInterface extends CommandeNonAnnulable
 		
 		((IeppCell)cellS).ajoutLien(lienComp);
 		((IeppCell)cellD).ajoutLien(lienComp);
+		// On declare les sources et les destinations des liens
+		lienComp.setSourceEdge((IeppCell) cellS);
+		lienComp.setDestination((IeppCell) cellD);
 		
         vecObj.add(lienComp);
         
