@@ -6,7 +6,6 @@ import iepp.Application;
 import iepp.ui.iedition.VueDPGraphe;
 import iepp.ui.iedition.dessin.rendu.TextCell;
 
-import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.util.Map;
 

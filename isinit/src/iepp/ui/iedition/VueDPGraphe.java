@@ -115,6 +115,11 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 	private Vector produitCellFusionCells;
 	
 	/**
+	 * TextCell(note) présents sur le diagramme (Cellule).
+	 */
+	private Vector noteCellCells;
+	
+	/**
 	 * Liens présents sur le diagramme.
 	 */
 	private Vector liens;
@@ -157,6 +162,7 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 		this.produitCellEntreeCells = new Vector();
 		this.produitCellSortieCells = new Vector();
 		this.produitCellFusionCells = new Vector();
+		this.noteCellCells = new Vector();
 
 		// par défault, on utilise l'outil de sélection
 		this.diagramTool = new OSelection(this);
@@ -603,6 +609,10 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 	public Vector getProduitCellFusionCells(){
 		return this.produitCellFusionCells;		
 	}
+	
+	public Vector getNoteCellCells(){
+		return this.noteCellCells;		
+	}
 		
 	/**
 	 * Ajoute une cellule au diagramme (élément ou lien).
@@ -619,6 +629,8 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 			this.produitCellSortieCells.addElement(c);
 		}else if (c instanceof ProduitCellFusion){
 			this.produitCellFusionCells.addElement(c);
+		}else if (c instanceof TextCell){
+			this.noteCellCells.addElement(c);
 		}
 	}
 	
@@ -667,6 +679,7 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 		this.produitCellEntreeCells.removeElement(cell);
 		this.composantCellCells.removeElement(cell);
 		this.produitCellFusionCells.removeElement(cell);
+		this.noteCellCells.removeElement(cell);
 		
 		Vector vecObj = new Vector();
 		
