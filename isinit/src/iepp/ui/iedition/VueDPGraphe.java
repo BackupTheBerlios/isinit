@@ -903,8 +903,8 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 			IeppCell cell = (IeppCell) e.nextElement();
 			if (!this.selectionCells.contains(cell)) {
 				this.selectionCells.addElement(cell);
-				this.setSelectionCells(selectionCells.toArray());
 			}
+			this.setSelectionCells(selectionCells.toArray());
 		}
 		
 		// mettre à jour l'affichage
