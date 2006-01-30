@@ -104,7 +104,11 @@ public class CLierCellNote extends CommandeAnnulable
 		
 		LienEdgeNote edge = new LienEdgeNote(cell,note);
 		note.ajoutLien(edge);
-			
+		cell.ajoutLien(edge);
+		
+		edge.setSourceEdge(note);
+		edge.setDestination(cell);
+		
 		this.diagramme.ajouterLien(edge);
 		Map AllAttribute = GraphConstants.createMap();
 

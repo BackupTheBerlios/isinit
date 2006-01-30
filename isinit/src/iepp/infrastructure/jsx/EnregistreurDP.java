@@ -21,11 +21,14 @@ package iepp.infrastructure.jsx;
 import iepp.Application;
 import iepp.ui.iedition.VueDPGraphe;
 import iepp.ui.iedition.dessin.rendu.ComposantCell;
+import iepp.ui.iedition.dessin.rendu.IeppCell;
 import iepp.ui.iedition.dessin.rendu.ProduitCellEntree;
 import iepp.ui.iedition.dessin.rendu.ProduitCellFusion;
 import iepp.ui.iedition.dessin.rendu.ProduitCellSortie;
 import iepp.ui.iedition.dessin.rendu.TextCell;
 import iepp.ui.iedition.dessin.rendu.liens.LienEdge;
+import iepp.ui.iedition.dessin.rendu.liens.LienEdgeFusion;
+import iepp.ui.iedition.dessin.rendu.liens.LienEdgeNote;
 
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
@@ -246,35 +249,97 @@ public class EnregistreurDP
 		Vector listLiens = vdpg.getLiens();
 		data.writeChars("		<liens>\n");
 		for( int i = 0 ; i < listLiens.size() ; i++) {
-			LienEdge l = (LienEdge)listLiens.get(i);
-			data.writeChars("			<lien>\n");
-			data.writeChars("				<source>\n");
-			data.writeChars("					<typesource>\n");
-		data.writeChars("						"+l.getSourceEdge().getClass()+"\n");
-			data.writeChars("					</typesource>\n");
-			data.writeChars("					<idsource>\n");
-			data.writeChars("						"+Application.getApplication().getReferentiel().chercherId( l.getSourceEdge().getId().getRef() )+"\n");
-			data.writeChars("					</idsource>\n");
-			data.writeChars("					<nomsource>\n");
-			data.writeChars("						"+l.getSourceEdge().getNomCompCell()+"\n");
-			data.writeChars("					</nomsource>\n");
-			data.writeChars("				</source>\n");
-			data.writeChars("				<destination>\n");
-			data.writeChars("					<typesource>\n");
-			data.writeChars("						"+l.getDestination().getClass()+"\n");
-			data.writeChars("					</typesource>\n");
-			data.writeChars("					<iddestination>\n");
-			data.writeChars("						"+Application.getApplication().getReferentiel().chercherId( l.getDestination().getId().getRef() )+"\n");
-			data.writeChars("					</iddestination>\n");
-			data.writeChars("					<nomdestination>\n");
-			data.writeChars("						"+l.getDestination().getNomCompCell()+"\n");
-			data.writeChars("					</nomdestination>\n");
-			data.writeChars("				</destination>\n");
-			/*
-			data.writeChars("				<pointsancrage>\n");
-			data.writeChars("				</pointsancrage>\n");
-			*/
-			data.writeChars("			</lien>\n");
+			if( listLiens.get(i) instanceof LienEdgeNote) {
+				TextCell tc = (TextCell) ((LienEdgeNote)listLiens.get(i)).getSourceEdge();
+				LienEdgeNote l = (LienEdgeNote)listLiens.get(i);
+				data.writeChars("			<liennote>\n");
+				data.writeChars("				<source>\n");
+				data.writeChars("					<positionx>\n");
+				data.writeChars("						"+tc.getAbscisse()+"\n");
+				data.writeChars("					</positionx>\n");
+				data.writeChars("					<positiony>\n");
+				data.writeChars("						"+tc.getOrdonnee()+"\n");
+				data.writeChars("					</positiony>\n");
+				data.writeChars("				</source>\n");
+				data.writeChars("				<destination>\n");
+				data.writeChars("					<typesource>\n");
+				data.writeChars("						"+l.getDestination().getClass()+"\n");
+				data.writeChars("					</typesource>\n");
+				data.writeChars("					<iddestination>\n");
+				data.writeChars("						"+Application.getApplication().getReferentiel().chercherId( l.getDestination().getId().getRef() )+"\n");
+				data.writeChars("					</iddestination>\n");
+				data.writeChars("					<nomdestination>\n");
+				data.writeChars("						"+l.getDestination().getNomCompCell()+"\n");
+				data.writeChars("					</nomdestination>\n");
+				data.writeChars("				</destination>\n");
+				/*
+				data.writeChars("				<pointsancrage>\n");
+				data.writeChars("				</pointsancrage>\n");
+				*/
+				data.writeChars("			</liennote>\n");
+			}
+			else if( listLiens.get(i) instanceof LienEdgeFusion) {
+				LienEdgeFusion l = (LienEdgeFusion)listLiens.get(i);
+				data.writeChars("			<lienfusion>\n");
+				data.writeChars("				<source>\n");
+				data.writeChars("					<typesource>\n");
+				data.writeChars("						"+l.getSourceEdge().getClass()+"\n");
+				data.writeChars("					</typesource>\n");
+				data.writeChars("					<idsource>\n");
+				data.writeChars("						"+Application.getApplication().getReferentiel().chercherId( l.getSourceEdge().getId().getRef() )+"\n");
+				data.writeChars("					</idsource>\n");
+				data.writeChars("					<nomsource>\n");
+				data.writeChars("						"+l.getSourceEdge().getNomCompCell()+"\n");
+				data.writeChars("					</nomsource>\n");
+				data.writeChars("				</source>\n");
+				data.writeChars("				<destination>\n");
+				data.writeChars("					<typesource>\n");
+				data.writeChars("						"+l.getDestination().getClass()+"\n");
+				data.writeChars("					</typesource>\n");
+				data.writeChars("					<iddestination>\n");
+				data.writeChars("						"+Application.getApplication().getReferentiel().chercherId( l.getDestination().getId().getRef() )+"\n");
+				data.writeChars("					</iddestination>\n");
+				data.writeChars("					<nomdestination>\n");
+				data.writeChars("						"+l.getDestination().getNomCompCell()+"\n");
+				data.writeChars("					</nomdestination>\n");
+				data.writeChars("				</destination>\n");
+				/*
+				data.writeChars("				<pointsancrage>\n");
+				data.writeChars("				</pointsancrage>\n");
+				*/
+				data.writeChars("			</lienfusion>\n");
+			}
+			else {
+				LienEdge l = (LienEdge)listLiens.get(i);
+				data.writeChars("			<lien>\n");
+				data.writeChars("				<source>\n");
+				data.writeChars("					<typesource>\n");
+				data.writeChars("						"+l.getSourceEdge().getClass()+"\n");
+				data.writeChars("					</typesource>\n");
+				data.writeChars("					<idsource>\n");
+				data.writeChars("						"+Application.getApplication().getReferentiel().chercherId( l.getSourceEdge().getId().getRef() )+"\n");
+				data.writeChars("					</idsource>\n");
+				data.writeChars("					<nomsource>\n");
+				data.writeChars("						"+l.getSourceEdge().getNomCompCell()+"\n");
+				data.writeChars("					</nomsource>\n");
+				data.writeChars("				</source>\n");
+				data.writeChars("				<destination>\n");
+				data.writeChars("					<typesource>\n");
+				data.writeChars("						"+l.getDestination().getClass()+"\n");
+				data.writeChars("					</typesource>\n");
+				data.writeChars("					<iddestination>\n");
+				data.writeChars("						"+Application.getApplication().getReferentiel().chercherId( l.getDestination().getId().getRef() )+"\n");
+				data.writeChars("					</iddestination>\n");
+				data.writeChars("					<nomdestination>\n");
+				data.writeChars("						"+l.getDestination().getNomCompCell()+"\n");
+				data.writeChars("					</nomdestination>\n");
+				data.writeChars("				</destination>\n");
+				/*
+				data.writeChars("				<pointsancrage>\n");
+				data.writeChars("				</pointsancrage>\n");
+				*/
+				data.writeChars("			</lien>\n");
+			}
 		}
 		data.writeChars("		</liens>\n");
 

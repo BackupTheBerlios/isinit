@@ -563,18 +563,27 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 	}
 
 	public ProduitCell chercherProduit(long idprod, String nomprod) {
-		ProduitCell pc = null;
-		Vector listProduitsEntree = this.getProduitCellEntreeCells();
-		for( int i = 0 ; i < listProduitsEntree.size() ; i++) {
-			ProduitCell c = (ProduitCell)listProduitsEntree.get(i);
-			if (( idprod == Application.getApplication().getReferentiel().chercherId( c.getId().getRef() )) &&
-				( nomprod == c.getNomCompCell() ))	{
-				pc = c;
+		ProduitCell pce = chercherProduitEntree(idprod, nomprod);
+		if (pce == null) {
+			ProduitCell pcs = chercherProduitSortie(idprod, nomprod);
+			if (pcs == null) {
+				System.out.println("Erreur lors d ela recherche du produit");
+				return null;
+			}
+			else {
+				return pcs;
 			}
 		}
-		Vector listProduitsSortie = this.getProduitCellSortieCells();
-		for( int i = 0 ; i < listProduitsSortie.size() ; i++) {
-			ProduitCell c = (ProduitCell)listProduitsSortie.get(i);
+		else {
+			return pce;
+		}
+	}
+
+	public ProduitCell chercherProduitEntree(long idprod, String nomprod) {
+		ProduitCellEntree pc = null;
+		Vector listProduitsEntree = this.getProduitCellEntreeCells();
+		for( int i = 0 ; i < listProduitsEntree.size() ; i++) {
+			ProduitCellEntree c = (ProduitCellEntree)listProduitsEntree.get(i);
 			if (( idprod == Application.getApplication().getReferentiel().chercherId( c.getId().getRef() )) &&
 				( nomprod == c.getNomCompCell() ))	{
 				pc = c;
@@ -583,6 +592,28 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 		return pc;
 	}
 
+	public ProduitCell chercherProduitSortie(long idprod, String nomprod) {
+		ProduitCellSortie pc = null;
+		Vector listProduitsSortie = this.getProduitCellSortieCells();
+		for( int i = 0 ; i < listProduitsSortie.size() ; i++) {
+			ProduitCellSortie c = (ProduitCellSortie)listProduitsSortie.get(i);
+			if (( idprod == Application.getApplication().getReferentiel().chercherId( c.getId().getRef() )) &&
+				( nomprod == c.getNomCompCell() ))	{
+				pc = c;
+			}
+		}
+		return pc;
+	}
+	
+	public TextCell chercherTextCell(int x, int y) {
+		TextCell c = null;
+		Vector listTextCell = this.getNoteCellCells();
+		for( int i = 0 ; i < listTextCell.size() ; i++) {
+			c = (TextCell) listTextCell.get(i);
+		}
+		return c;
+	}
+	
 	/**
 	 * Retourne tous les liens du diagramme.
 	 */
