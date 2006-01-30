@@ -76,6 +76,7 @@ public class PopupNote extends JPopupMenu implements ActionListener
 		 if (event.getSource() == this.suppr)
 		 {
 		 	this.diagramme.supprimerCellule(this.noteCell);
+		 	Application.getApplication().getProjet().setModified(true);
 		 	this.diagramme.repaint();
 		 }
 		

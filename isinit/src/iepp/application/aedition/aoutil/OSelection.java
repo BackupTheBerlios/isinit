@@ -99,6 +99,7 @@ public class OSelection extends Outil {
 			if (event.isControlDown()) {
 				this.state = CTRL_HANDLE;
 			}
+			this.state = TRANSLATE_STATE;
 
 		} else {
 
@@ -150,7 +151,9 @@ public class OSelection extends Outil {
 				}
 			}
 			// modif aldo nit 15/01/06
-			else if (event.isPopupTrigger()) {
+			else {
+				if (event.isPopupTrigger()) {
+			
 						if (diagramme.getFirstCellForLocation(event.getX(), event.getY()) instanceof ComposantCell){
 							ComposantCell ic = (ComposantCell) diagramme.getFirstCellForLocation(event.getX(), event.getY());
 							
@@ -167,6 +170,8 @@ public class OSelection extends Outil {
 							PopupFusion f=new PopupFusion(diagramme,pf,event.getX(),event.getY());
 							f.show(diagramme,event.getX(),event.getY());
 						}
+				}
+				
 				// On bouge un objet
 				Vecteur translation = new Vecteur();
 				translation.setSubstraction(this.current, this.start);

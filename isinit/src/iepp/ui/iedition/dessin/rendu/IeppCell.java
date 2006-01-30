@@ -66,11 +66,11 @@ public class IeppCell extends DefaultGraphCell {
 	}
 
 	public void setAttribut(Map map) {
-		attributs=map;
+		changeAttributes(map);
 	}
 	
 	public Map getAttributs() {
-		return(attributs);
+		return(getAttributes());
 	}
 	
 	public void setCheminImageComposant(String s) {

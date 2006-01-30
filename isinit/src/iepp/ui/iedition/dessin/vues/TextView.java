@@ -2,6 +2,7 @@ package iepp.ui.iedition.dessin.vues;
 
 import iepp.Application;
 import iepp.ui.iedition.dessin.rendu.TextCell;
+import iepp.ui.iedition.dessin.vues.LienEdgeView.LienEdgeHandle;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -14,6 +15,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Line2D;
 import java.awt.geom.Line2D.Double;
 import java.awt.geom.Rectangle2D;
@@ -32,12 +34,16 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 
 import org.jgraph.JGraph;
+import org.jgraph.graph.CellHandle;
 import org.jgraph.graph.CellMapper;
 import org.jgraph.graph.CellView;
 import org.jgraph.graph.CellViewRenderer;
 import org.jgraph.graph.DefaultGraphCellEditor;
+import org.jgraph.graph.EdgeView;
 import org.jgraph.graph.GraphCellEditor;
 import org.jgraph.graph.GraphConstants;
+import org.jgraph.graph.GraphContext;
+import org.jgraph.graph.PortView;
 import org.jgraph.graph.VertexView;
 
 public class TextView extends VertexView {
@@ -392,4 +398,37 @@ public class TextView extends VertexView {
     		//gradientColor = GraphConstants.getGradientColor(attributes);
         }
     }
+
+
+	
+	public CellHandle getHandle(GraphContext context)
+	{
+		return new TextCellHandle(this, context);
+	}
+
+	public class TextCellHandle extends VertexView.SizeHandle
+	{
+		public TextCellHandle(VertexView view, GraphContext cxt) {
+			super(view, cxt);
+		}
+		
+		public void mousePressed(MouseEvent event) {
+			super.mousePressed(event);
+		}
+
+		public void mouseDragged(MouseEvent event) {
+			super.mouseDragged(event);
+		}
+
+		public void mouseMoved(MouseEvent event) {
+			super.mouseMoved(event);
+		}
+
+		public void mouseReleased(MouseEvent event) {
+			Application.getApplication().getProjet().setModified(true);
+			super.mouseReleased(event);
+		}
+		
+	}
+
 }
