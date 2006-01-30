@@ -62,14 +62,18 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.io.Serializable;
 import java.util.Enumeration;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Vector;
 
 import org.jgraph.JGraph;
 import org.jgraph.graph.CellMapper;
+import org.jgraph.graph.ConnectionSet;
 import org.jgraph.graph.DefaultGraphModel;
+import org.jgraph.graph.DefaultPort;
 import org.jgraph.graph.EdgeView;
+import org.jgraph.graph.GraphConstants;
 import org.jgraph.graph.GraphModel;
 import org.jgraph.graph.VertexView;
 
@@ -546,7 +550,39 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 		return null;
 	}
 
-	
+	public ComposantCell chercherComposant(long idcomp) {
+		ComposantCell cc = null;
+		Vector listComposants = this.getComposantCellCells();
+		for( int i = 0 ; i < listComposants.size() ; i++) {
+			ComposantCell c = (ComposantCell)listComposants.get(i);
+			if ( idcomp == Application.getApplication().getReferentiel().chercherId( c.getCompProc() )) {
+				cc = c;
+			}
+		}
+		return cc;
+	}
+
+	public ProduitCell chercherProduit(long idprod, String nomprod) {
+		ProduitCell pc = null;
+		Vector listProduitsEntree = this.getProduitCellEntreeCells();
+		for( int i = 0 ; i < listProduitsEntree.size() ; i++) {
+			ProduitCell c = (ProduitCell)listProduitsEntree.get(i);
+			if (( idprod == Application.getApplication().getReferentiel().chercherId( c.getId().getRef() )) &&
+				( nomprod == c.getNomCompCell() ))	{
+				pc = c;
+			}
+		}
+		Vector listProduitsSortie = this.getProduitCellSortieCells();
+		for( int i = 0 ; i < listProduitsSortie.size() ; i++) {
+			ProduitCell c = (ProduitCell)listProduitsSortie.get(i);
+			if (( idprod == Application.getApplication().getReferentiel().chercherId( c.getId().getRef() )) &&
+				( nomprod == c.getNomCompCell() ))	{
+				pc = c;
+			}
+		}
+		return pc;
+	}
+
 	/**
 	 * Retourne tous les liens du diagramme.
 	 */
@@ -697,7 +733,126 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 		this.repaint();
 		
 	}
+
+	public void MasquerCellule(IeppCell cell) {
+		Vector vecObj = new Vector();
+		
+		// On supprime tous les liens pointants vers la cellule
+		for (int i = 0; i < ((IeppCell) cell).getListeLien().size(); i++){
+			this.liens.removeElement(((IeppCell) cell).getListeLien().get(i));
+			vecObj.add(((IeppCell) cell).getListeLien().get(i));
+		}
+
+		//((IeppCell) cell).removeAllChildren();
+		
+		// On supprime le port et la cellule
+		vecObj.add(cell.getPortComp());
+		vecObj.add(cell);
+		
+		this.getModel().remove(vecObj.toArray());
+		this.repaint();
+	}
 	
+	public void AfficherCelluleMasquee(IeppCell cell) {
+		if( cell instanceof ProduitCellEntree) {
+			AfficherCelluleEntreeMasquee((ProduitCellEntree) cell);
+		}
+		else if( cell instanceof ProduitCellSortie) {
+			AfficherCelluleSortieMasquee((ProduitCellSortie) cell);
+		}
+		else
+		{
+			System.out.println("Impossible d'afficher ce type de cellule");
+		}
+	}
+	
+	public void AfficherCelluleEntreeMasquee(ProduitCellEntree cell) {
+		ComposantCell cc;
+		 
+		 ProduitCellEntree pce;
+		 
+		 // On cree un edge pour la connection
+		 LienEdge edge = new LienEdge();
+		 
+		 // On declare la source et l'extremite
+		 cc = this.chercherComposant(Application.getApplication().getReferentiel().chercherId(cell.getCompParent().getCompProc()));
+		 pce = (ProduitCellEntree)this.chercherProduit(Application.getApplication().getReferentiel().chercherId( cc.getCompProc() ), cell.getNomCompCell());
+	     pce.setPortComp(new DefaultPort());		 
+		 pce.setCellLiee(false);
+		 edge.setSourceEdge(pce);
+		 edge.setDestination(cc);
+
+		 // on cree la map
+		 Map AllAttribute = GraphConstants.createMap();
+
+		 // On ajoute l'edge
+		 AllAttribute.put(edge, edge.getEdgeAttribute());
+		 AllAttribute.put(pce, pce.getAttributs());
+
+		 // On recupere les ports
+	     DefaultPort portS = cc.getPortComp();
+	     DefaultPort portD = pce.getPortComp();
+	     
+		 cc.ajoutLien(edge);
+		 pce.ajoutLien(edge);
+		 
+		 ConnectionSet cs = new ConnectionSet(edge, portD, portS);
+		 
+		 // On l'ajoute au modele
+		 Vector vecObj = new Vector();
+		 vecObj.add(pce);
+		 vecObj.add(edge);
+
+		 this.getModel().insert(vecObj.toArray(), AllAttribute, null, null, null);
+		 this.getModel().insert(null, null, cs, null, null);
+
+		 this.ajouterLien(edge);
+
+		 repaint();
+	}
+	public void AfficherCelluleSortieMasquee(ProduitCellSortie cell) {
+		 ProduitCellSortie pcs;
+		 
+		 // On cree un edge pour la connection
+		 LienEdge edge = new LienEdge();
+		 
+		 // On declare la source et l'extremite
+		 ComposantCell cc = this.chercherComposant(Application.getApplication().getReferentiel().chercherId(cell.getCompParent().getCompProc()));
+		 pcs = (ProduitCellSortie) this.chercherProduit(Application.getApplication().getReferentiel().chercherId( cc.getCompProc() ), cell.getNomCompCell());
+		 pcs.setPortComp(new DefaultPort());
+		 pcs.setCellLiee(false);
+		 edge.setSourceEdge(cc);
+		 edge.setDestination(pcs);
+
+		 // on cree la map
+		 Map AllAttribute2 = GraphConstants.createMap();
+
+		 // On ajoute l'edge
+		 AllAttribute2.put(edge, edge.getEdgeAttribute());
+		 AllAttribute2.put(pcs, pcs.getAttributs());
+
+		 // On recupere les ports
+	     DefaultPort portS2 = cc.getPortComp();
+	     DefaultPort portD2 = pcs.getPortComp();
+		 
+		 pcs.ajoutLien(edge);
+		 cc.ajoutLien(edge);
+		 
+		 ConnectionSet cs2 = new ConnectionSet(edge, portS2, portD2);
+		 
+		 // On l'ajoute au modele
+		 Vector vecObj2 = new Vector();
+		 vecObj2.add(pcs);
+		 vecObj2.add(edge);
+
+		 this.getModel().insert(vecObj2.toArray(), AllAttribute2, null, null, null);
+		 this.getModel().insert(null, null, cs2, null, null);
+
+		 //this.diagramme.ajouterCell(ps);
+		 this.ajouterLien(edge);
+				
+		 repaint();
+	}
 	public void supprimerLien(LienEdge l) {
 		this.liens.removeElement(l);
 	}

@@ -1,10 +1,13 @@
 package iepp.application.aedition;
 
+import iepp.Application;
 import iepp.application.CommandeAnnulable;
 import iepp.domaine.IdObjetModele;
 import iepp.domaine.LienProduits;
 import iepp.ui.iedition.VueDPGraphe;
+import iepp.ui.iedition.dessin.rendu.ComposantCell;
 import iepp.ui.iedition.dessin.rendu.IeppCell;
+import iepp.ui.iedition.dessin.rendu.ProduitCell;
 import iepp.ui.iedition.dessin.rendu.ProduitCellEntree;
 import iepp.ui.iedition.dessin.rendu.ProduitCellFusion;
 import iepp.ui.iedition.dessin.rendu.ProduitCellSortie;
@@ -88,80 +91,62 @@ public class CSupprimerProduitFusion extends CommandeAnnulable
 		*/
 		// modif Aldo Nit 15/01/06
 		// on remet le produit en entrée
-	   	 ProduitCellEntree pe=this.produitF.getProduitCellEntree();
-		 pe.setPortComp(new DefaultPort());
-	 
-		 // On cree un edge pour la connection
-		 LienEdge edge = new LienEdge();
+		this.diagramme.AfficherCelluleMasquee(this.produitF.getProduitCellEntree());
+		this.diagramme.AfficherCelluleMasquee(this.produitF.getProduitCellSortie());
+		 /*
+		 ProduitCellSortie pcs;
 		 
-		 // on cree la map
-		 Map AllAttribute = GraphConstants.createMap();
-
-		 // On ajoute l'edge
-		 AllAttribute.put(edge, edge.getEdgeAttribute());
-		 AllAttribute.put(pe, pe.getAttributs());
-
-		 // On recupere les ports
-	     DefaultPort portS = ((IeppCell) pe.getCompParent()).getPortComp();
-		 DefaultPort portD = pe.getPortComp();
-		 
-		 pe.ajoutLien(edge);
-		 (pe.getCompParent()).ajoutLien(edge);
-		 
-		 ConnectionSet cs = new ConnectionSet(edge, portD, portS);
-		 
-		 // On l'ajoute au modele
-		 Vector vecObj = new Vector();
-		 vecObj.add(pe);
-		 vecObj.add(edge);
-
-		 this.diagramme.getModel().insert(vecObj.toArray(), AllAttribute, null, null, null);
-		 this.diagramme.getModel().insert(null, null, cs, null, null);
-
-		 this.diagramme.ajouterCell(pe);
-		 this.diagramme.ajouterLien(edge);
-		
 		 // on remet le produit en sortie
 		 ProduitCellSortie ps=this.produitF.getProduitCellSortie();
-		 ps.setPortComp(new DefaultPort());
 		 
 		 // On cree un edge pour la connection
 		 LienEdge edge2 = new LienEdge();
 		 
+		 // On declare la source et l'extremite
+		 cc = this.diagramme.chercherComposant(Application.getApplication().getReferentiel().chercherId(ps.getCompParent().getCompProc()));
+		 pcs = (ProduitCellSortie) this.diagramme.chercherProduit(Application.getApplication().getReferentiel().chercherId( cc.getCompProc() ), ps.getNomCompCell());
+		 pcs.setPortComp(new DefaultPort());
+		 pcs.setCellLiee(false);
+		 edge.setSource(cc);
+		 edge.setDestination(pcs);
+
+		 System.out.println("Composant:"+cc.getNomCompCell());
+		 System.out.println("Produit:"+pcs.getNomCompCell());
+
 		 // on cree la map
 		 Map AllAttribute2 = GraphConstants.createMap();
 
 		 // On ajoute l'edge
 		 AllAttribute2.put(edge2, edge2.getEdgeAttribute());
-		 AllAttribute2.put(ps, ps.getAttributs());
+		 AllAttribute2.put(pcs, pcs.getAttributs());
 
 		 // On recupere les ports
-	     DefaultPort portS2 = ((IeppCell) ps.getCompParent()).getPortComp();
-		 DefaultPort portD2 = ps.getPortComp();
+	     DefaultPort portS2 = cc.getPortComp();
+	     DefaultPort portD2 = pcs.getPortComp();
 		 
-		 ps.ajoutLien(edge2);
-		 (ps.getCompParent()).ajoutLien(edge2);
+		 pcs.ajoutLien(edge2);
+		 cc.ajoutLien(edge2);
 		 
 		 ConnectionSet cs2 = new ConnectionSet(edge2, portS2, portD2);
 		 
 		 // On l'ajoute au modele
 		 Vector vecObj2 = new Vector();
-		 vecObj2.add(ps);
+		 vecObj2.add(pcs);
 		 vecObj2.add(edge2);
 
 		 this.diagramme.getModel().insert(vecObj2.toArray(), AllAttribute2, null, null, null);
 		 this.diagramme.getModel().insert(null, null, cs2, null, null);
 
-		 this.diagramme.ajouterCell(ps);
+		 //this.diagramme.ajouterCell(ps);
 		 this.diagramme.ajouterLien(edge2);
-		
 		
 		 this.diagramme.supprimerCellule(produitF);
 		
 		 diagramme.repaint();
-		
+		 */
+		 this.diagramme.supprimerCellule(produitF);
 		 return true;
-		
+ 
 	}
 	
 	/**

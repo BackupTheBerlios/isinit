@@ -194,7 +194,7 @@ public class EnregistreurDP
 			data.writeChars("			</produitsortie>\n");
 		}
 
-		// Sauvegarde de la liste des produits en sortie
+		// Sauvegarde de la liste des produits fusionnes
 		Vector listProduitsFusion = vdpg.getProduitCellFusionCells();
 		for( int i = 0 ; i < listProduitsFusion.size() ; i++) {
 			ProduitCellFusion c = (ProduitCellFusion)listProduitsFusion.get(i);
@@ -220,6 +220,24 @@ public class EnregistreurDP
 			data.writeChars("				<imageprod>\n");
 			data.writeChars("					"+c.getImageComposant()+"\n");
 			data.writeChars("				</imageprod>\n");
+			data.writeChars("				<produitsorigine>\n");
+			data.writeChars("					<produit>\n");
+			data.writeChars("						<id>\n");
+			data.writeChars("							"+Application.getApplication().getReferentiel().chercherId( c.getProduitCellEntree().getId().getRef() )+"\n");
+			data.writeChars("						</id>\n");
+			data.writeChars("						<nom>\n");
+			data.writeChars("							"+c.getProduitCellEntree().getNomCompCell()+"\n");
+			data.writeChars("						</nom>\n");
+			data.writeChars("					</produit>\n");
+			data.writeChars("					<produit>\n");
+			data.writeChars("						<id>\n");
+			data.writeChars("							"+Application.getApplication().getReferentiel().chercherId( c.getProduitCellSortie().getId().getRef() )+"\n");
+			data.writeChars("						</id>\n");
+			data.writeChars("						<nom>\n");
+			data.writeChars("							"+c.getProduitCellSortie().getNomCompCell()+"\n");
+			data.writeChars("						</nom>\n");
+			data.writeChars("					</produit>\n");
+			data.writeChars("				</produitsorigine>\n");
 			data.writeChars("			</produitfusion>\n");
 		}
 		data.writeChars("		</produits>\n");
@@ -231,6 +249,9 @@ public class EnregistreurDP
 			LienEdge l = (LienEdge)listLiens.get(i);
 			data.writeChars("			<lien>\n");
 			data.writeChars("				<source>\n");
+			data.writeChars("					<typesource>\n");
+		data.writeChars("						"+l.getSourceEdge().getClass()+"\n");
+			data.writeChars("					</typesource>\n");
 			data.writeChars("					<idsource>\n");
 			data.writeChars("						"+Application.getApplication().getReferentiel().chercherId( l.getSourceEdge().getId().getRef() )+"\n");
 			data.writeChars("					</idsource>\n");
@@ -239,6 +260,9 @@ public class EnregistreurDP
 			data.writeChars("					</nomsource>\n");
 			data.writeChars("				</source>\n");
 			data.writeChars("				<destination>\n");
+			data.writeChars("					<typesource>\n");
+			data.writeChars("						"+l.getDestination().getClass()+"\n");
+			data.writeChars("					</typesource>\n");
 			data.writeChars("					<iddestination>\n");
 			data.writeChars("						"+Application.getApplication().getReferentiel().chercherId( l.getDestination().getId().getRef() )+"\n");
 			data.writeChars("					</iddestination>\n");
