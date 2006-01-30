@@ -230,7 +230,6 @@ public class OSelection extends Outil {
 	 */
 	protected void showPopupMenuNote(TextCell note) {
 		PopupNote p = new PopupNote(diagramme, note);
-		System.out.println("Modification note");
 		p.show(diagramme, getStart().x, getStart().y);
 	}
 	
