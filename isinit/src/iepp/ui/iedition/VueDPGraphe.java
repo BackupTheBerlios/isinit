@@ -40,6 +40,7 @@ import iepp.ui.iedition.dessin.rendu.TextCell;
 import iepp.ui.iedition.dessin.rendu.liens.LienEdge;
 import iepp.ui.iedition.dessin.rendu.liens.LienEdgeNote;
 import iepp.ui.iedition.dessin.vues.ComposantView;
+import iepp.ui.iedition.dessin.vues.LienEdgeView;
 import iepp.ui.iedition.dessin.vues.ProduitView;
 import iepp.ui.iedition.dessin.vues.TextView;
 
@@ -1180,7 +1181,7 @@ public class VueDPGraphe extends JGraph implements Observer, MouseListener,
 //		if (v instanceof LienEdge) {
 //			return new LienEdgeView(v, this, cm);
 //		}else {
-			return super.createEdgeView(v, cm);
+			return new EdgeView(v, this, cm);
 //		}
 	}
 

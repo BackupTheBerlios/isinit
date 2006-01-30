@@ -20,6 +20,7 @@ package iepp.ui.iedition.dessin.rendu.liens;
 
 import iepp.ui.iedition.dessin.rendu.IeppCell;
 
+import java.awt.Point;
 import java.util.Map;
 import java.util.Vector;
 
@@ -61,6 +62,8 @@ public class LienEdge extends DefaultEdge {
 	public LienEdge(IeppCell source, IeppCell destination) {
 		super();
 		
+		pointsAncrage = new Vector();
+		
 		edgeAttribute = GraphConstants.createMap();
 		
 		GraphConstants.setLineEnd(edgeAttribute, GraphConstants.ARROW_CLASSIC);
@@ -78,6 +81,7 @@ public class LienEdge extends DefaultEdge {
 	 */
 	public LienEdge(Object userObject) {
 		super(userObject);
+		
 		
 	}
 
@@ -133,8 +137,22 @@ public class LienEdge extends DefaultEdge {
 		this.source = source;
 	}
 	
-	public void creerPointAncrage(Vecteur points){
-		pointsAncrage.add(points);
+	public void creerPointAncrage(Point point){
+		pointsAncrage.addElement(point);
 	}
+	
+	public Vector getPointAncrage(){
+		return pointsAncrage;
+	}
+	
+	public void setPointAncrage(Vector p){
+		pointsAncrage = p;
+	}
+	
+	public void supprimerToutPointAncrage(){
+		pointsAncrage.removeAllElements();
+	}
+	
+		
 
 }

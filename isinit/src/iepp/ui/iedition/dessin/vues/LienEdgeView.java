@@ -20,11 +20,16 @@
  */
 package iepp.ui.iedition.dessin.vues;
 
+import iepp.Application;
+import iepp.ui.iedition.VueDPGraphe;
+import iepp.ui.iedition.dessin.rendu.liens.LienEdge;
+
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
+import java.util.Vector;
 
 import org.jgraph.JGraph;
 import org.jgraph.graph.CellHandle;
@@ -37,7 +42,7 @@ import org.jgraph.graph.PortView;
 
 /**
  * 
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class LienEdgeView extends EdgeView
 {
@@ -53,8 +58,6 @@ public class LienEdgeView extends EdgeView
 
 	public class LienEdgeHandle extends EdgeView.EdgeHandle
 	{
-		private PortView mPort = null, mFirstPort = null;
-		private Point mStart, mCurrent;
 		
 		public LienEdgeHandle(EdgeView edge, GraphContext cxt)
 		{
@@ -63,140 +66,40 @@ public class LienEdgeView extends EdgeView
 		
 		public void mousePressed(MouseEvent event)
 		{
-			System.out.println("Edge mousePressed");
-			
-			//isRemovePointEvent()
-			
-			int index = indexOfPoint(event.getPoint());
-				
-			if( index != -1 )
-			{
-				if( index == 0 )
-				{
-					mFirstPort = (PortView)getTarget();
-					mStart = edge.getPoint(r.length-1);
-				}
-				else
-				{
-					mFirstPort = (PortView)getSource();
-					mStart = edge.getPoint(0);
-				}
-				event.consume();			
-			}
-
 			super.mousePressed(event);
 		}
 		
 		public void mouseReleased(MouseEvent e)
 		{
-			System.out.println("Edge mouseReleased");
-			if( e!=null && !e.isConsumed() && mPort!=null && mFirstPort!=null && mFirstPort!=mPort)
-			{
-				graph.clearSelection();
-				
-				if( mFirstPort != null && mPort != null )
-				{
-					//((SpemGraphAdapter)graph.getModel()).moveEdge( (DefaultEdge)getCell(),(ApesGraphCell)mPort.getParentView().getCell(), mFirstPort == getTarget() );
-					System.out.println("Edge");
-				}
-				
-				graph.repaint();
-			}
-			else
-			{
-				graph.repaint();
-
+			LienEdge lien = (LienEdge)this.edge.getCell();
+			System.out.println("mouseDragged Liste PointAncrage lien "+lien.getPointAncrage());
+			
+			lien.supprimerToutPointAncrage();
+			
+			for(int i = 1;i<this.edge.getPoints().size()-1;i++)	{
+				lien.creerPointAncrage(this.edge.getPoint(i));
+				System.out.println("mouseReleased Liste point lien ajouter "+this.edge.getPoint(i));
 			}
 			
-			mFirstPort = mPort = null;
-			mStart = mCurrent = null;
-
-			//don't add an undoable change for the mouse release in a diagram
-			//Context.getInstance().getUndoManager().save();
+			System.out.println("mouseDragged Liste points "+this.edge.getPoints());
+			System.out.println("mouseDragged Liste PointAncrage lien "+lien.getPointAncrage());
+			System.out.println("");
+		
 			super.mouseReleased(e);
-			//Context.getInstance().getUndoManager().restore();
+			
+			
 		}
 		
 		public void mouseDragged(MouseEvent e)
 		{
-			System.out.println("Edge mouseDragged");
-			
-			if( mStart!=null && !e.isConsumed())
-			{
-				//Graphics g = graph.getGraphics();
-				
-				//paintConnector(Color.black, graph.getBackground(), g);
-				
-				mPort = getTargetPortAt(e.getPoint());
-					
-				if(mPort != null)
-				{
-					mCurrent = graph.toScreen(mPort.getLocation(null));
-				}
-				else
-				{
-					mCurrent = graph.snap(e.getPoint());
-				}
-					
-				//paintConnector(graph.getBackground(), Color.black, g);
-				
-				e.consume();
-			}
 			super.mouseDragged(e);
 		}
 		
 		public void mouseMoved(MouseEvent e)
 		{
-			System.out.println("Edge mouseMoved");
-			
-			
-			if( e != null && indexOfPoint(e.getPoint()) != -1 )
-			{
-				graph.setCursor(new Cursor(Cursor.HAND_CURSOR));
-				e.consume();
-			}
-			else
-			{
 				super.mouseMoved(e);
-			}
 		}
 		
-	
-		private PortView getTargetPortAt(Point point)
-		{
-			Object cell = graph.getFirstCellForLocation(point.x, point.y);
-			
-			for(int i=0; i<graph.getModel().getChildCount(cell); i++)
-			{
-				Object tmp = graph.getModel().getChild(cell, i);
-				
-				tmp = graph.getGraphLayoutCache().getMapping(tmp, false);
-				
-				if(tmp instanceof PortView)
-				{
-					PortView portView = (PortView)tmp;
-					if( portView.getCell() != ((DefaultEdge)getCell()).getSource() 
-							&& portView.getCell() != ((DefaultEdge)getCell()).getTarget())
-					{	
-						return (PortView)tmp;
-					}
-				}
-			}
 
-			return null;
-		}
-		
-		private int indexOfPoint( Point p )
-		{
-			int x = p.x;
-			int y = p.y;
-			// Detect hit on control point
-			int index = 0;
-			while( index < r.length && !r[index].contains(x, y) ) 
-			{
-				index++;
-			}
-			return (index == 0 || index == r.length-1)? index : -1;
-		}
 	}
 }
