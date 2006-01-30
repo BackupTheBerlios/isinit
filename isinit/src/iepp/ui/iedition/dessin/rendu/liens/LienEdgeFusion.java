@@ -59,6 +59,8 @@ public class LienEdgeFusion extends LienEdge {
 	public LienEdgeFusion(IeppCell source, IeppCell destination) {
 		super();
 		
+		pointsAncrage = new Vector();
+		
 		edgeAttribute = GraphConstants.createMap();
 		
 		GraphConstants.setLineEnd(edgeAttribute, GraphConstants.ARROW_CLASSIC);

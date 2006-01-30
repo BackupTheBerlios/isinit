@@ -60,6 +60,8 @@ public class LienEdgeNote extends LienEdge {
 	public LienEdgeNote(IeppCell source, IeppCell destination) {
 		super();
 		
+		pointsAncrage = new Vector();
+		
 		edgeAttribute = GraphConstants.createMap();
 		
 		GraphConstants.setLineEnd(edgeAttribute, GraphConstants.ARROW_NONE);

@@ -38,9 +38,7 @@ import iepp.ui.iedition.dessin.rendu.ProduitCellFusion;
 import iepp.ui.iedition.dessin.rendu.ProduitCellSortie;
 import iepp.ui.iedition.dessin.rendu.TextCell;
 import iepp.ui.iedition.dessin.rendu.liens.LienEdge;
-import iepp.ui.iedition.dessin.rendu.liens.LienEdgeNote;
 import iepp.ui.iedition.dessin.vues.ComposantView;
-import iepp.ui.iedition.dessin.vues.LienEdgeView;
 import iepp.ui.iedition.dessin.vues.ProduitView;
 import iepp.ui.iedition.dessin.vues.TextView;
 

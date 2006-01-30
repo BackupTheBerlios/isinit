@@ -21,28 +21,19 @@
 package iepp.ui.iedition.dessin.vues;
 
 import iepp.Application;
-import iepp.ui.iedition.VueDPGraphe;
 import iepp.ui.iedition.dessin.rendu.liens.LienEdge;
 
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Graphics;
-import java.awt.Point;
 import java.awt.event.MouseEvent;
-import java.util.Vector;
 
 import org.jgraph.JGraph;
 import org.jgraph.graph.CellHandle;
 import org.jgraph.graph.CellMapper;
-import org.jgraph.graph.DefaultEdge;
 import org.jgraph.graph.EdgeView;
-import org.jgraph.graph.GraphConstants;
 import org.jgraph.graph.GraphContext;
-import org.jgraph.graph.PortView;
 
 /**
  * 
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class LienEdgeView extends EdgeView
 {
@@ -72,19 +63,14 @@ public class LienEdgeView extends EdgeView
 		public void mouseReleased(MouseEvent e)
 		{
 			LienEdge lien = (LienEdge)this.edge.getCell();
-			System.out.println("mouseDragged Liste PointAncrage lien "+lien.getPointAncrage());
-			
 			lien.supprimerToutPointAncrage();
 			
 			for(int i = 1;i<this.edge.getPoints().size()-1;i++)	{
 				lien.creerPointAncrage(this.edge.getPoint(i));
-				System.out.println("mouseReleased Liste point lien ajouter "+this.edge.getPoint(i));
 			}
 			
-			System.out.println("mouseDragged Liste points "+this.edge.getPoints());
-			System.out.println("mouseDragged Liste PointAncrage lien "+lien.getPointAncrage());
-			System.out.println("");
-		
+			Application.getApplication().getProjet().setModified(true);
+			
 			super.mouseReleased(e);
 			
 			

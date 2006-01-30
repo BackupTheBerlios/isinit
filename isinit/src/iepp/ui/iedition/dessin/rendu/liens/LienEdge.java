@@ -27,8 +27,6 @@ import java.util.Vector;
 import org.jgraph.graph.DefaultEdge;
 import org.jgraph.graph.GraphConstants;
 
-import util.Vecteur;
-
 /**
  * @author Stéphane
  *
