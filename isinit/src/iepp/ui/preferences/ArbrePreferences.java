@@ -55,9 +55,14 @@ public class ArbrePreferences
     generalItem.add(new DefaultMutableTreeNode(new PreferenceTreeItem
                                                (PanneauLangue.LANGUAGE_PANEL_KEY, Application.getApplication().getTraduction(PanneauLangue.LANGUAGE_PANEL_KEY), PreferenceTreeItem.LANGUAGE_PANEL)));
 
+    
+    /**************************************************************************************
     generalItem.add(new DefaultMutableTreeNode(new PreferenceTreeItem
                                                (PanneauDiagramme.DIAGRAM_PANEL_KEY, Application.getApplication().getTraduction(PanneauDiagramme.DIAGRAM_PANEL_KEY), PreferenceTreeItem.DIAGRAM_PANEL)));
 
+
+     **************************************************************************************/
+    
     generalItem.add(new DefaultMutableTreeNode(new PreferenceTreeItem
                                                (PanneauRepertoireExport.EXPORT_DIRECTORY_PANEL_KEY, Application.getApplication().getTraduction(PanneauRepertoireExport.EXPORT_DIRECTORY_PANEL_KEY), PreferenceTreeItem.EXPORT_DIRECTORY_PANEL)));
 
@@ -200,6 +205,8 @@ public class ArbrePreferences
             mPrefDiag.getProprietesVerComposant().setVisible(false);
           //mPrefDiag.getProprietesPaquetage().setVisible(false);
         }
+    
+        /**********************************************************************
         else if (panel == PreferenceTreeItem.DIAGRAM_PANEL) {
           mPrefDiag.getGenOptionPanel().setVisible(false);
           mPrefDiag.getDPGenPanel().setVisible(false);
@@ -218,6 +225,8 @@ public class ArbrePreferences
             mPrefDiag.getProprietesVerComposant().setVisible(false);
           //mPrefDiag.getProprietesPaquetage().setVisible(false);
         }
+        
+        ***********************************************************************/
         else if (panel == PreferenceTreeItem.DP_PANEL) {
           mPrefDiag.getGenOptionPanel().setVisible(false);
           mPrefDiag.getDPGenPanel().setVisible(false);
