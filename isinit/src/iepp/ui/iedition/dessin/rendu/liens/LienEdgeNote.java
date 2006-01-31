@@ -25,8 +25,6 @@ import java.util.Vector;
 
 import org.jgraph.graph.GraphConstants;
 
-import util.Vecteur;
-
 /**
  * @author Stéphane
  *
@@ -46,7 +44,7 @@ public class LienEdgeNote extends LienEdge {
 		pointsAncrage = new Vector();
 		
 		this.edgeAttribute = GraphConstants.createMap();
-		
+	
 		GraphConstants.setLineEnd(edgeAttribute, GraphConstants.ARROW_NONE);
 		GraphConstants.setEndFill(edgeAttribute, true);
 		GraphConstants.setDashPattern(edgeAttribute, new float[] { 3, 3 });
@@ -134,8 +132,4 @@ public class LienEdgeNote extends LienEdge {
 		this.source = source;
 	}
 	
-	public void creerPointAncrage(Vecteur points){
-		pointsAncrage.add(points);
-	}
-
 }

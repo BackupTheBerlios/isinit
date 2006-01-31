@@ -132,8 +132,6 @@ public class LienEdgeFusion extends LienEdge {
 		this.source = source;
 	}
 	
-	public void creerPointAncrage(Vecteur points){
-		pointsAncrage.add(points);
-	}
+	
 
 }

@@ -21,6 +21,8 @@ package iepp.ui.iedition.dessin.rendu.liens;
 import iepp.ui.iedition.dessin.rendu.IeppCell;
 
 import java.awt.Point;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
@@ -145,6 +147,19 @@ public class LienEdge extends DefaultEdge {
 	
 	public void setPointAncrage(Vector p){
 		pointsAncrage = p;
+	}
+	
+	public void afficherPointAncrageChargement(){
+		
+		List list = new ArrayList(pointsAncrage.size());
+		
+		list.add(0,defaultPoints); // pas pris en compte point de liaison
+		for(int i = 1; i<pointsAncrage.size()-1;i++){
+			list.add(i,pointsAncrage.elementAt(i));
+		}
+		list.add(3,defaultPoints); // pas pris en compte point de liaison
+		
+		GraphConstants.setPoints(edgeAttribute,list);
 	}
 	
 	public void supprimerToutPointAncrage(){
