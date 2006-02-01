@@ -63,9 +63,10 @@ public class CSauvegarderDP extends CommandeNonAnnulable
 			FileOutputStream outstream = new FileOutputStream( new File( nomFichier) );
 			BufferedOutputStream buff = new BufferedOutputStream(outstream);
 			ZipOutputStream zipFile = new ZipOutputStream( buff );
+			
 			zipFile.setMethod(ZipOutputStream.DEFLATED);
 			zipFile.setLevel(9);
-			
+
 			EnregistreurDP enregistre = new EnregistreurDP(zipFile);
 			enregistre.sauver();
 			
