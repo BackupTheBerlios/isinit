@@ -53,26 +53,26 @@ public class CRenommerComposant extends CommandeAnnulable
          */
         public boolean executer()
         {
-        	System.out.println("Coucou nom 1 : "+nom+" composant : "+composant);
+//        	System.out.println("Coucou nom 1 : "+nom+" composant : "+composant);
     		
                 // Verifier si le composant est dans le diagramme, et si oui, le renommer
                 if (diagramme.contient(this.composant) != null)
                 {
-                	System.out.println("Coucou nom OK : "+nom+" composant : "+composant);
+//                	System.out.println("Coucou nom OK : "+nom+" composant : "+composant);
                         new CRenommerComposantGraphe(this.composant,this.nom).executer();
                 }
 
-                System.out.println("Coucou nom 2 : "+nom+" composant : "+composant);
+//                System.out.println("Coucou nom 2 : "+nom+" composant : "+composant);
         		
                 // Renommer le composant de la definition processus
                 Application.getApplication().getProjet().getDefProc().renommerComposant(this.composant,this.nom);
 
-                System.out.println("Coucou nom 3 : "+nom+" composant : "+composant);
+//                System.out.println("Coucou nom 3 : "+nom+" composant : "+composant);
         		
                 // Mettre a jour l'arbre
                Application.getApplication().getFenetrePrincipale().getVueDPArbre().updateUI();
 
-               System.out.println("Coucou nom 4 : "+nom+" composant : "+composant);
+//               System.out.println("Coucou nom 4 : "+nom+" composant : "+composant);
        		
                 return true;
         }

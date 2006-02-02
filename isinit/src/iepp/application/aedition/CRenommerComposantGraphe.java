@@ -68,9 +68,9 @@ public class CRenommerComposantGraphe extends CommandeAnnulable
 //                        IdObjetModele produitCourant = (IdObjetModele)listeEntree.elementAt(i);
 //                }
         		
-        		System.out.println("Coucou nom : "+nom+" cell : "+cell);
+//        		System.out.println("Coucou nom : "+nom+" cell : "+cell);
         		cell.setNomCompCell(nom);
-        		System.out.println("Coucou nom : "+nom+" cell : "+cell);
+//        		System.out.println("Coucou nom : "+nom+" cell : "+cell);
         		this.diagramme.repaint();
         		return true;
 

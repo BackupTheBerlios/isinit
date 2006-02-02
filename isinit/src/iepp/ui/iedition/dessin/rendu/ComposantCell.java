@@ -150,8 +150,8 @@ public class ComposantCell extends IeppCell {
 		this.hauteur=i.getIconHeight()+(int)dim.getHeight() + 7;
 		
 		this.setUserObject(nomComposantCellule);
-		
 		GraphConstants.setBounds(getAttributs(), new Rectangle(getAbscisse(),getOrdonnee(),getLargeur(),getHauteur()));
+		
 	}
 
 
