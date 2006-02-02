@@ -31,7 +31,7 @@ import org.jgraph.graph.GraphContext;
 
 /**
  * 
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class LienEdgeView extends EdgeView
 {
@@ -42,8 +42,6 @@ public class LienEdgeView extends EdgeView
 	
 	public CellHandle getHandle(GraphContext context)
 	{
-		System.out.println("getHandle:");
-		
 		return new LienEdgeHandle(this, context);
 	}
 	

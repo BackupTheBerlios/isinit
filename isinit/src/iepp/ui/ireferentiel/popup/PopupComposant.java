@@ -39,7 +39,7 @@ public class PopupComposant extends JPopupMenu implements ActionListener
 	private long idComp ;	// Identifiant du composant concerné
 	// Options du menu
 	private JMenuItem ajouterComposantDP ;
-        private JMenuItem actualiserComposantDP;// modif 2xmi Albert
+        //private JMenuItem actualiserComposantDP;// modif 2xmi Albert
 	private JMenuItem ajouterComposantDiagramme ;
 	private JMenuItem retirerComposant ;
 
@@ -58,14 +58,14 @@ public class PopupComposant extends JPopupMenu implements ActionListener
 		{
 			this.ajouterComposantDP = new JMenuItem (Application.getApplication().getTraduction("Ajouter_Composant_DP2")) ;
 			// DEBUT modif 2xmi Albert
-			this.actualiserComposantDP = new JMenuItem (Application.getApplication().getTraduction("Actualiser_Composant_DP2")) ;
+			//this.actualiserComposantDP = new JMenuItem (Application.getApplication().getTraduction("Actualiser_Composant_DP2")) ;
 			// FIN modif 2xmi Albert
 			this.ajouterComposantDiagramme = new JMenuItem (Application.getApplication().getTraduction("Ajouter_Composant")) ;
 			this.add (this.ajouterComposantDP) ;
-                        this.add(this.actualiserComposantDP) ; // modif 2xmi Albert
+                        //this.add(this.actualiserComposantDP) ; // modif 2xmi Albert
 			this.add (this.ajouterComposantDiagramme) ;
 			this.ajouterComposantDP.addActionListener (this) ;
-                        this.actualiserComposantDP.addActionListener (this); // modif 2xmi Albert
+                       // this.actualiserComposantDP.addActionListener (this); // modif 2xmi Albert
 			this.ajouterComposantDiagramme.addActionListener (this) ;
 		}
 		// Créer les éléments
@@ -92,11 +92,11 @@ public class PopupComposant extends JPopupMenu implements ActionListener
 		}
                 // DEBUT modif 2xmi Albert
                 // Actualiser le composant à la définition de processus
-                else if (source == this.actualiserComposantDP)
-                {
-                        FenetreVersionComposant fVersion = new FenetreVersionComposant(Application.getApplication().getFenetrePrincipale(),idComp);
-
-                }
+                //else if (source == this.actualiserComposantDP)
+                //{
+                //        FenetreVersionComposant fVersion = new FenetreVersionComposant(Application.getApplication().getFenetrePrincipale(),idComp);
+				//
+                //}
                 // FIN modif 2xmi Albert
 		// Ajout au diagramme
 		else if (source == this.ajouterComposantDiagramme)
