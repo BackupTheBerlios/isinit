@@ -35,8 +35,8 @@ public class PopupPresentation extends JPopupMenu implements ActionListener
     private long idPres; // Identifiant du paquetage de présentation concerné
     // Eléments de menu
     private JMenuItem retirerPresentation; // Retrait du référentiel
-    private JMenuItem actualiserPresentation; // Actualiser le paquetage
-    private JMenuItem proprietesPresentation; // Obtenir les proprietes d'un paquetage
+    //private JMenuItem actualiserPresentation; // Actualiser le paquetage
+    //private JMenuItem proprietesPresentation; // Obtenir les proprietes d'un paquetage
 
     /**
      * Constructeur.
@@ -49,15 +49,15 @@ public class PopupPresentation extends JPopupMenu implements ActionListener
         // Créer les éléments
         this.retirerPresentation = new JMenuItem(Application.getApplication().getTraduction("Retirer_Pres_Ref"));
         //modif 2XMI Amandine
-        this.actualiserPresentation = new JMenuItem(Application.getApplication().getTraduction("Actualiser_Pres_Ref"));
-        this.proprietesPresentation = new JMenuItem(Application.getApplication().getTraduction("Proprietes_Pres_Ref"));
+        //this.actualiserPresentation = new JMenuItem(Application.getApplication().getTraduction("Actualiser_Pres_Ref"));
+        //this.proprietesPresentation = new JMenuItem(Application.getApplication().getTraduction("Proprietes_Pres_Ref"));
         // Ajouter les éléments au menu
         this.add(this.retirerPresentation);
-        this.add(this.actualiserPresentation);
+        //this.add(this.actualiserPresentation);
         //this.add(this.proprietesPresentation);
         // Ecouter les événements
         this.retirerPresentation.addActionListener(this);
-        this.actualiserPresentation.addActionListener(this);
+        //this.actualiserPresentation.addActionListener(this);
         //this.proprietesPresentation.addActionListener(this);
     }
 
@@ -72,10 +72,10 @@ public class PopupPresentation extends JPopupMenu implements ActionListener
         {
              (new CRetirerPaqPres(this.idPres)).executer();
         }
-        else if (source == this.actualiserPresentation)
+        /*else if (source == this.actualiserPresentation)
         {
             (new CActualiserPaqPres(this.idPres)).executer() ;
-        }
+        }*/
         /*else if (source == this.proprietesPresentation)
         {
             new FenetrePreference(Application.getApplication().getFenetrePrincipale(), FenetrePreference.TYPE_PAQ, this.idPres);
