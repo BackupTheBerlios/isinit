@@ -73,7 +73,8 @@ public class CSupprimerComposant extends CommandeAnnulable
 		// initialiser le composant à supprimer
 		this.composant = compo;
 		this.diagramme = Application.getApplication().getProjet().getFenetreEdition().getVueDPGraphe();
-
+		this.composantCell = (ComposantCell)diagramme.contient(compo);
+			
 	}
 
 	/**
