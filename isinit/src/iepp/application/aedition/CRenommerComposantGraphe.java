@@ -5,6 +5,8 @@ import iepp.application.CommandeAnnulable;
 import iepp.domaine.ComposantProcessus;
 import iepp.domaine.IdObjetModele;
 import iepp.ui.iedition.VueDPGraphe;
+import iepp.ui.iedition.dessin.rendu.ComposantCell;
+import iepp.ui.iedition.dessin.rendu.IeppCell;
 
 import java.util.Vector;
 
@@ -12,11 +14,17 @@ import java.util.Vector;
 
 public class CRenommerComposantGraphe extends CommandeAnnulable
 {
-  /**
+		/**
          * Id du composant à renommer du graphe
          */
         private IdObjetModele composant;
 
+        
+        /**
+         * Cell du composant à renommer du graphe
+         */
+        private IeppCell cell;
+        
         /**
          * Diagramme duquel on veut renommer un composant
          */
@@ -39,6 +47,7 @@ public class CRenommerComposantGraphe extends CommandeAnnulable
 		                this.composant = compo ;
 		                this.diagramme = Application.getApplication().getProjet().getFenetreEdition().getVueDPGraphe();
 		                this.nom=n;
+		                this.cell = this.diagramme.contient(compo);
 		  }
         /**
          * La commande renvoie si elle s'est bien passée ou non
@@ -48,17 +57,22 @@ public class CRenommerComposantGraphe extends CommandeAnnulable
          */
         public boolean executer()
         {
-                // récupère la liste des liens du composant à renommer
-                Vector listeLiens = ((ComposantProcessus)this.composant.getRef()).getLien();
-
-                // récupérer la liste des produits en entrée du composant
-                Vector listeEntree = composant.getProduitEntree();
-                for (int i = 0; i < listeEntree.size(); i++)
-                {
-                        // récupérer le produit courant
-                        IdObjetModele produitCourant = (IdObjetModele)listeEntree.elementAt(i);
-                }
-                        return true;
+//                // récupère la liste des liens du composant à renommer
+//                Vector listeLiens = ((ComposantProcessus)this.composant.getRef()).getLien();
+//
+//                // récupérer la liste des produits en entrée du composant
+//                Vector listeEntree = composant.getProduitEntree();
+//                for (int i = 0; i < listeEntree.size(); i++)
+//                {
+//                        // récupérer le produit courant
+//                        IdObjetModele produitCourant = (IdObjetModele)listeEntree.elementAt(i);
+//                }
+        		
+        		System.out.println("Coucou nom : "+nom+" cell : "+cell);
+        		cell.setNomCompCell(nom);
+        		System.out.println("Coucou nom : "+nom+" cell : "+cell);
+        		this.diagramme.repaint();
+        		return true;
 
 
 }
