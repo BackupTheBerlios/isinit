@@ -60,7 +60,8 @@ public class ElementReferentiel extends DefaultMutableTreeNode
         public static final int PAQ_DP = 1;		// Paquetage de DP
         public static final int PAQ_PRESENTATION = 2; // Paquetage de présentation
         public static final int COMPOSANT = 3;
-
+        public static final int SCENARIO = 7;
+        public static final int PAQ_SCEN = 8;	// Paquetage de composants
         // Le type COMPOSANT_VIDE ne sert qu'à l'ajout du composant vide, ce composant vide est ensuite traité comme un composant
         public static final int COMPOSANT_VIDE = 4;
         public static final int DP = 5;

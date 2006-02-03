@@ -81,6 +81,10 @@ public class Referentiel
   private ElementReferentiel composants = null;
 
   /**
+   * Noeud contenant tous les composants
+   */
+  private ElementReferentiel scenarios = null;
+  /**
    * Noeud contenant toutes les DP
    */
   private ElementReferentiel dp = null;
@@ -151,6 +155,10 @@ public class Referentiel
     File repComp = new File(cheminReferentiel + File.separator + "Composants");
     repComp.mkdirs();
 
+    // Création du répertoire des Scenarios
+    File repScen = new File(cheminReferentiel + File.separator + "Scenarios");
+    repComp.mkdirs();
+
     // Création du répertoire des DP
     File repDP = new File(cheminReferentiel + File.separator + "DP");
     repDP.mkdirs();
@@ -202,7 +210,7 @@ public class Referentiel
     composants = new ElementReferentiel("Composants", 0, cheminReferentiel + File.separator + "Composants", ElementReferentiel.PAQ_COMP);
     dp = new ElementReferentiel("Définitions Processus", 0, cheminReferentiel + File.separator + "DP", ElementReferentiel.PAQ_DP);
     present = new ElementReferentiel("Présentation", 0, cheminReferentiel + File.separator + "Présentation", ElementReferentiel.PAQ_PRESENTATION);
-
+    scenarios = new ElementReferentiel("Scénarios", 0, cheminReferentiel + File.separator + "Scénarios", ElementReferentiel.PAQ_SCEN);
     // Création de l'arbre avec pour racine le nom du référentiel
     arbre = new DefaultTreeModel(racine);
 
@@ -210,6 +218,7 @@ public class Referentiel
     racine.add(composants);
     racine.add(dp);
     racine.add(present);
+    racine.add(scenarios);
 
     // Lecture du fichier référentiel
     raf = new RandomAccessFile(cheminReferentiel + File.separator + nomReferentiel + ".ref", "rw");
@@ -342,6 +351,10 @@ public class Referentiel
         nomRep = "Composants";
         break;
 
+      case (ElementReferentiel.SCENARIO):
+          nomRep = "Scénarios";
+          break;
+          
       case (ElementReferentiel.DP):
         nomRep = "DP";
         break;
@@ -361,6 +374,10 @@ public class Referentiel
 
       // Ajoute l'élément dans l'arbre
       switch (type) {
+      	/*case (ElementReferentiel.SCENARIO):
+      		this.getNoeudScenarios().add(new ElementReferentiel(nomElt, this.getLastId(), pathFic, ElementReferentiel.SCENARIO, version, dateDePlacement));
+      		break;
+        */    
         case (ElementReferentiel.COMPOSANT_VIDE):
         case (ElementReferentiel.COMPOSANT):
           if (type == ElementReferentiel.COMPOSANT) {
@@ -934,6 +951,10 @@ public class Referentiel
   public ElementReferentiel getNoeudComposants() {
     return composants;
   }
+
+  public ElementReferentiel getNoeudScenarios() {
+	    return scenarios;
+	  }
 
   /**
    * Retourne le noeud des composants
