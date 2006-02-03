@@ -32,7 +32,6 @@ import iepp.ui.iedition.popup.PopupDiagramme;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
@@ -47,7 +46,7 @@ import org.jgraph.graph.PortView;
  * This tool allows to create edges in the graph It use the prototype design
  * pattern to clone edges
  * 
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class OLier2Elements {
 	protected VueDPGraphe mGraph;
