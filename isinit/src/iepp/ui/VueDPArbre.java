@@ -51,6 +51,7 @@ public class VueDPArbre extends JTree implements DragGestureListener, DragSource
 	public static final String iconeComposant = "TreeComponent.gif";
 	public static final String iconeInterfaceReq = "TreeRequiredInterface.gif";
 	public static final String iconeInterfaceFour = "TreeProvidedInterface.gif";
+	public static final String iconeScenario = "TreeComponent.gif";
 	
 	/**
 	 * lien vers l'arbre courant
@@ -171,6 +172,10 @@ public class VueDPArbre extends JTree implements DragGestureListener, DragSource
 			{
 				return (IconManager.getInstance().getIcon(Application.getApplication().getConfigPropriete("dossierIcons") + VueDPArbre.iconeComposant));
 			}
+			else if (((IdObjetModele)value).estScenario())
+			{
+				return (IconManager.getInstance().getIcon(Application.getApplication().getConfigPropriete("dossierIcons") + VueDPArbre.iconeScenario));
+			}
 			else if (((IdObjetModele)value).estProduit())
 			{
 				return (IconManager.getInstance().getIcon(Application.getApplication().getConfigPropriete("dossierIcons") + VueDPArbre.iconeProduit));
@@ -198,6 +203,10 @@ public class VueDPArbre extends JTree implements DragGestureListener, DragSource
 				return (new PopupDPArbre(((IdObjetModele)value)));
 			}
 			else if (((IdObjetModele)value).estComposant())
+			{
+				return (new PopupComposantArbre((IdObjetModele)value));
+			}
+			else if (((IdObjetModele)value).estScenario())
 			{
 				return (new PopupComposantArbre((IdObjetModele)value));
 			}
