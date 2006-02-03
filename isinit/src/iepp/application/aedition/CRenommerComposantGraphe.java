@@ -47,7 +47,7 @@ public class CRenommerComposantGraphe extends CommandeAnnulable
 		                this.composant = compo ;
 		                this.diagramme = Application.getApplication().getProjet().getFenetreEdition().getVueDPGraphe();
 		                this.nom=n;
-		                this.cell = this.diagramme.contient(compo);
+		                this.cell = (IeppCell)this.diagramme.contient(compo);
 		  }
         /**
          * La commande renvoie si elle s'est bien passée ou non

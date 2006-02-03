@@ -88,6 +88,11 @@ public class IdObjetModele implements Serializable, Cloneable
 		return (this.refObjet.estComposant(this.numRang, this.numType));
 	}
 
+	public boolean estScenario()
+	{
+		return (this.refObjet.estScenario(this.numRang, this.numType));
+	}
+
 	public boolean estDefProc()
 	{
 		return (this.refObjet.estDefProc(this.numRang, this.numType));

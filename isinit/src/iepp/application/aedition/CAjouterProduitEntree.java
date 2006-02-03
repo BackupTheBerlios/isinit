@@ -68,7 +68,7 @@ public class CAjouterProduitEntree extends CommandeAnnulable
 		FenetreEdition fenetre = Application.getApplication().getProjet().getFenetreEdition() ;
 		
 		// Verifier si le composant est affiché sur le graphe
-		IeppCell comp = fenetre.getVueDPGraphe().contient(this.cp.getIdComposant());
+		IeppCell comp = (IeppCell)fenetre.getVueDPGraphe().contient(this.cp.getIdComposant());
 		if (comp != null)
 		{
 			// déselectionner tous les éléments

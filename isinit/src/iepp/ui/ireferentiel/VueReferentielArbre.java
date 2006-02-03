@@ -33,6 +33,7 @@ import iepp.domaine.IdObjetModele;
 
 import iepp.ui.IDTransferable;
 import iepp.ui.VueDPArbre;
+import iepp.ui.iedition.dessin.GraphModelView;
 import iepp.ui.ireferentiel.popup.* ;
 
 import javax.swing.* ;
@@ -149,6 +150,10 @@ public class VueReferentielArbre extends JTree
 		{
 			return (IconManager.getInstance().getIcon(Application.getApplication().getConfigPropriete("dossierIcons") + VueDPArbre.iconeComposant));
 		}
+		else if (typeElt == ElementReferentiel.SCENARIO)
+		{
+			return (IconManager.getInstance().getIcon(Application.getApplication().getConfigPropriete("dossierIcons") + VueDPArbre.iconeScenario));
+		}
 		else if (typeElt == ElementReferentiel.PAQ_COMP || typeElt == ElementReferentiel.PAQ_DP)
 		{
 			return null ;
@@ -178,6 +183,12 @@ public class VueReferentielArbre extends JTree
 		else if (typeElt == ElementReferentiel.COMPOSANT)
 		{
 			return new PopupComposant (eltRef.getIdElement()) ;
+
+		}
+		
+		else if (typeElt == ElementReferentiel.PAQ_SCEN)
+		{
+			return new PopupScenario() ;
 
 		}
 		// Paquetages de présentation
@@ -216,11 +227,11 @@ public class VueReferentielArbre extends JTree
 	 */
 	public void mousePressed(MouseEvent e)
 	{
+		
 		// on récupère la ligne sur laquelle on a cliqué
 		int selRow = getRowForLocation(e.getX(), e.getY());
 		// récupérer le chemin de l'arbre associé, le path
 		TreePath selPath = getPathForLocation(e.getX(), e.getY());
-
 		// the modifiers test is needed in order to make it work on OSes that don't correctly set the isPopupTrigger flag (swing sux0r)
 		if(selRow != -1 && (e.isPopupTrigger() || (e.getModifiers() & MouseEvent.BUTTON3_MASK)!=0) )
 		{
@@ -239,7 +250,33 @@ public class VueReferentielArbre extends JTree
 		else if(selRow != -1 && e.getClickCount()==2)
 		{
 			// ne rien faire
-			e.consume();
+			ElementReferentiel element=(ElementReferentiel)selPath.getLastPathComponent();
+			int item=element.getType();
+			
+			GraphModelView mod=Application.getApplication().getProjet().getFenetreEdition().getVueDPGraphe().ChercherModel(element.getNomElement());
+			if (mod!=null)
+			{
+				Application.getApplication().getProjet().getFenetreEdition().getVueDPGraphe().setModel(mod);
+			}
+			else if ((item==1)){//||(item==2)||(item==3)||(item==4)||(item==5)||(item==6)||(item==0)){
+				Application.getApplication().getProjet().getFenetreEdition().getVueDPGraphe().setModel((GraphModelView)Application.getApplication().getProjet().getFenetreEdition().getVueDPGraphe().getModelesDiagrammes().elementAt(0));
+			}
+			else{
+				e.consume();
+			}
+			/*
+			if (item==8){
+				//System.out.println(Application.getApplication().getProjet().getFenetreEdition().getVueDPGraphe().getModelesDiagrammes().elementAt(1).getClass().getName());
+				GraphModelView hu=(GraphModelView)Application.getApplication().getProjet().getFenetreEdition().getVueDPGraphe().getModelesDiagrammes().elementAt(1);
+				//System.out.println(hu.getNomDiagModel());
+				Application.getApplication().getProjet().getFenetreEdition().getVueDPGraphe().setModel(hu);
+			}
+			else if ((item==1)||(item==2)||(item==3)||(item==4)||(item==5)||(item==6)||(item==0)){
+				Application.getApplication().getProjet().getFenetreEdition().getVueDPGraphe().setModel((GraphModelView)Application.getApplication().getProjet().getFenetreEdition().getVueDPGraphe().getModelesDiagrammes().elementAt(0));
+			}
+			else{
+				e.consume();
+			}*/
 		}
 	}
 

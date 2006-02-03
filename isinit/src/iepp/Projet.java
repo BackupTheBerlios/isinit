@@ -116,7 +116,7 @@ public class Projet implements Serializable, Observer
 		// Créer la fenêtre d'édition et la vue du graphe
 		VueDPGraphe diagr = new VueDPGraphe (this.defProc);
 		//diagr.setElements(elements);
-		diagr.setLiens(liens);
+		//diagr.setLiens(liens);
 		this.fenEdit = new FenetreEdition (diagr) ;
 		Application.getApplication().getFenetrePrincipale().setPanneauGenerique(this.fenEdit) ;
 		this.rafraichirLangue();

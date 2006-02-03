@@ -34,6 +34,11 @@ public class ObjetModele extends Observable implements Serializable
 		return (false);
 	}
 	
+	public boolean estScenario(int numrang, int numtype)
+	{
+		return (false);
+	}
+	
 	public boolean estDefProc(int numrang, int numtype)
 	{
 		return (false);
