@@ -194,6 +194,22 @@ Proprietes_Generation_DP=Génération du site web
 Parcourir=Parcourir
 E_mail_DP=Email de l'auteur :
 
+#Fenetre creer scenario
+Ajouter_Scenario=Ajouter un nouveau scénario
+FCreer_scenario=Nouveau Scenario
+Nom_scen=*Nom du scenario
+Commentaire_scen= Commentaires :
+Auteur_scen=*Nom de l'auteur :
+E_mail_scen=*E-mail de l'auteur :
+Champs_obligatoires_scen=*Champs obligatoires
+M_nomscenario_scen=Le scenario n'a pas de nom.
+M_nomauteur_scen=Le nom de l'auteur du nouveau scenario doit être saisi.
+M_emailauteur_scen=L'e-mail de l'auteur n'a pas été saisi.
+M_emailinvalide_scen=L'e-mail de l'auteur est invalide.
+M_creer_scen_titre=Erreur de saisie
+M_repGen_scen=Le chemin de génération doit être saisi
+new_author_scen=Auteur
+new_dp_scen=Nouveau Scenario
 
 #Fenetre Propriete Composant
 Proprietes_COMPOSANT=Propriétés du composant

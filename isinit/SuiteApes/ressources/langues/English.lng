@@ -194,6 +194,23 @@ Parcourir=Browse
 E_mail_DP=Author E-mail :
 Creer_DP=Create new process
 
+#Fenetre creer scenario
+Ajouter_Scenario=Add a new scenario
+FCreer_scenario=Create one scenario
+Nom_scen=*Scenario name :
+Commentaire_scen= Comment :
+Auteur_scen=*Author name :
+E_mail_scen=*Author E-mail :
+Champs_obligatoires_scen=*Required entries
+M_nomscenario_scen=This new scenario needs a name.
+M_nomauteur_scen=You have to enter an author name for this scenario.
+M_emailauteur_scen=You have to enter author E-mail.
+M_emailinvalide_scen=Author E-mail is invalid.
+M_creer_scen_titre=Wrong data entry
+M_repGen_scen=You have to enter a website generation path
+new_author_scen=Author
+new_dp_scen=New Scenario
+
 #Fenetre Propriete Composant
 Proprietes_COMPOSANT=Component properties
 Responsable=Person in charge :   
