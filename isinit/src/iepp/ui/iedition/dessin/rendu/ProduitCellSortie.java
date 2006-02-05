@@ -25,6 +25,7 @@ public class ProduitCellSortie extends ProduitCell {
 	protected ComposantCell compParent;
 	
 	protected boolean CellLiee;
+	protected boolean Visible;
 	
 	public ProduitCellSortie(IdObjetModele prod, int x, int y, ComposantCell comp) {
 		
@@ -55,5 +56,10 @@ public class ProduitCellSortie extends ProduitCell {
 		CellLiee = l;
 	}
 
-
+	public boolean isVisible() {
+		return Visible;
+	}
+	public void setVisible(boolean visible) {
+		Visible = visible;
+	}
 }
